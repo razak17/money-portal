@@ -1,23 +1,26 @@
 import React from "react";
-import { Modal, ModalOverlay, ModalContent } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalCloseButton,
+  ModalHeader,
+} from "@chakra-ui/react";
 import { AddAccountForm } from "./forms/AddAccountForm";
 
 interface Props {
   isOpen: any;
   onClose: any;
-  initialRef: any;
 }
 
-export const AddAccountModal: React.FC<Props> = ({
-  isOpen,
-  onClose,
-  initialRef,
-}) => {
+export const AddAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
   return (
-    <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
+    <Modal size="xl" isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <AddAccountForm onClose={onClose} initialRef={initialRef} />
+        <ModalHeader>Add Bank Account</ModalHeader>
+        <ModalCloseButton />
+        <AddAccountForm onClose={onClose} />
       </ModalContent>
     </Modal>
   );

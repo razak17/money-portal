@@ -16,15 +16,10 @@ interface Props {}
 
 export const Main: React.FC<Props> = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const initialRef: any = useRef();
 
   return (
     <>
-      <AddAccountModal
-        isOpen={isOpen}
-        onClose={onClose}
-        initialRef={initialRef}
-      />
+      <AddAccountModal isOpen={isOpen} onClose={onClose} />
       <GridItem rowSpan={2} colSpan={2} borderBottom="1px solid black">
         <Flex
           top={0}
