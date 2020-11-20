@@ -1,13 +1,20 @@
+import { Box, Flex } from "@chakra-ui/react";
 import React from "react";
+import { Nav } from "./common";
 
-interface LayoutProps {
-}
+interface LayoutProps {}
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <>
-      {children}
-    </>
+    <Box bg="tan">
+      <Nav />
+      <Flex
+        flexWrap="nowrap"
+        alignItems="stretch"
+        borderBottom="1px solid black"
+      >
+        {children}
+      </Flex>
+    </Box>
   );
 };
-

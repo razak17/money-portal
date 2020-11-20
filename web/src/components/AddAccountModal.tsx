@@ -6,7 +6,7 @@ import {
   ModalCloseButton,
   ModalHeader,
 } from "@chakra-ui/react";
-import { AddAccountForm } from "./forms/AddAccountForm";
+import { AddAccountForm } from "./forms";
 
 interface Props {
   isOpen: any;

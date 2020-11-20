@@ -1,7 +1,7 @@
 import React from "react";
 import { ModalFooter, ModalBody, Button } from "@chakra-ui/react";
-import { InputField } from "../InputField";
-import { SelectField } from "../SelectField";
+import { InputField } from "../common";
+import { SelectField } from "../common";
 import { Formik, Form } from "formik";
 
 interface Props {
@@ -14,17 +14,16 @@ export const AddAccountForm: React.FC<Props> = ({ onClose }) => {
   return (
     <Formik
       initialValues={{
-        accountName: "hello",
+        accountName: "",
         accountType: "",
-        startingBalance: "hello",
-        lowBalanceAlert: "hello",
+        startingBalance: "",
+        lowBalanceAlert: "",
       }}
       onSubmit={async (values, actions) => {
         setTimeout(() => {
           console.log({ values, actions });
-          console.log(values);
           actions.setSubmitting(false);
-        }, 4000);
+        }, 400);
       }}
     >
       {({ isSubmitting }) => (

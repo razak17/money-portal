@@ -1,28 +1,26 @@
-import React, { useState } from "react";
-import { SideBar } from "./components/SideBar";
-import { Main } from "./components/Main";
-import { Nav } from "./components/Nav";
-import { Box, Grid } from "@chakra-ui/react";
+import React from "react";
+import { Route } from "react-router-dom";
+import { Lobby } from "./pages/lobby";
+import { Transactions } from "./pages/transactions";
+import { Home } from "./pages/home";
+import { ChakraProvider, theme } from "@chakra-ui/react";
 
-function App() {
-  const [isOpenSideBar, setIsOpenSideBar] = useState(false);
-  const toggling = () => setIsOpenSideBar(!isOpenSideBar);
+const App = () => {
   return (
     <>
-      <Nav />
-      <Box>
-        <Grid
-          height="92vh"
-          templateColumns="250px auto auto"
-          templateRows="auto 4fr auto"
-          gap={0}
-        >
-          <SideBar toggling={toggling} isOpen={isOpenSideBar} />
-          <Main />
-        </Grid>
-      </Box>
+      <ChakraProvider theme={theme}>
+        <switch>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/dashboard/lobby" component={Lobby} />
+          <Route
+            exact
+            path="/dashboard/accounts/accounts-details/:id"
+            component={Transactions}
+          />
+        </switch>
+      </ChakraProvider>
     </>
   );
-}
+};
 
 export default App;
