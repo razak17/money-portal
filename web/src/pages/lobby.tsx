@@ -2,12 +2,12 @@ import { useDisclosure } from "@chakra-ui/react";
 import React, { useState } from "react";
 import {
   AddAccountModal,
-  SideBar,
   Layout,
   Footer,
-  LobbyHeader,
+  PageHeader,
   LobbyOptions,
   MainContent,
+  SideBar,
 } from "../components";
 
 interface LobbyProps {}
@@ -16,13 +16,17 @@ export const Lobby: React.FC<LobbyProps> = () => {
   const [isOpenSideBar, setIsOpenSideBar] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const toggling = () => setIsOpenSideBar(!isOpenSideBar);
+  const sidebarToggling = () => setIsOpenSideBar(!isOpenSideBar);
 
   return (
     <Layout>
-      <SideBar toggling={toggling} isOpen={isOpenSideBar} />
+      <SideBar
+        onOpen={onOpen}
+        toggling={sidebarToggling}
+        isOpen={isOpenSideBar}
+      />
       <MainContent>
-        <LobbyHeader heading="Lobby" />
+        <PageHeader heading="Lobby" />
         <AddAccountModal isOpen={isOpen} onClose={onClose} />
         <LobbyOptions onOpen={onOpen} />
         <Footer />

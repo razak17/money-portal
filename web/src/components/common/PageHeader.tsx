@@ -1,22 +1,20 @@
-import { Flex, Box, Text } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import React from "react";
 
-interface PageHeaderProps {}
+interface PageHeaderProps {
+  heading: string;
+}
 
-export const PageHeader: React.FC<PageHeaderProps> = () => {
+export const PageHeader: React.FC<PageHeaderProps> = ({ heading }) => {
   return (
-    <Flex
-      top={0}
-      borderTop="1px solid black"
+    <Box
+      marginBottom="2rem"
       borderBottom="1px solid black"
-      mb={10}
-      p={6}
+      padding="1.5rem 2rem"
     >
-      <Flex flex={1} m="auto" align="center">
-        <Box mr="auto">
-          <Text mr={2}>Home</Text>
-        </Box>
-      </Flex>
-    </Flex>
+      <Box m="auto" width="100%">
+        <Heading size="md">{heading}</Heading>
+      </Box>
+    </Box>
   );
 };

@@ -10,19 +10,21 @@ import React from "react";
 type SelectFieldProps = React.InputHTMLAttributes<HTMLSelectElement> & {
   label: string;
   name: string;
+  defaultOption: string;
   selectOptions: string[];
 };
 
 export const SelectField: React.FC<SelectFieldProps> = ({
   label,
   selectOptions,
+  defaultOption,
   size: _,
   ...props
 }) => {
   const [field, { error }] = useField(props);
-  const defaultOption = (
-    <option key="default" value="Select Account Type">
-      Select Account Type
+  const defaultOptionValue = (
+    <option key="default" value={defaultOption}>
+      {defaultOption}
     </option>
   );
   const options = selectOptions.map((option) => (
@@ -35,7 +37,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
     <FormControl mt={4} isInvalid={!!error}>
       <FormLabel htmlFor={field.name}>{label}</FormLabel>
       <Select {...field} {...props}>
-        {[defaultOption, ...options]}
+        {[defaultOptionValue, ...options]}
       </Select>
       {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
     </FormControl>

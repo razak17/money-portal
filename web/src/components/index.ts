@@ -6,3 +6,4 @@ export * from "./AddTransaction";
 export * from "./EditSelectButton";
 export * from "./Layout";
 export * from "./LobbyOptions";
+export * from "./TransactionsList";

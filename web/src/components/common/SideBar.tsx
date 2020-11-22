@@ -8,9 +8,11 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React from "react";
+import { Link } from "react-router-dom";
 
 interface SideBarProps {
   isOpen: any;
+  onOpen: any;
   toggling: (
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
   ) => void | undefined;
@@ -31,9 +33,19 @@ const bankOptions = [
   },
 ];
 
-export const SideBar: React.FC<SideBarProps> = ({ toggling, isOpen }) => {
+export const SideBar: React.FC<SideBarProps> = ({
+  toggling,
+  isOpen,
+  onOpen,
+}) => {
   const home = (
-    <ChakraLink display="block" position="relative" padding="1.5rem 2rem">
+    <ChakraLink
+      as={Link}
+      to="/dashboard/lobby"
+      display="block"
+      position="relative"
+      padding="1.5rem 2rem"
+    >
       <Text>Home</Text>
     </ChakraLink>
   );
@@ -73,8 +85,9 @@ export const SideBar: React.FC<SideBarProps> = ({ toggling, isOpen }) => {
               position="relative"
               padding="1.5rem 2rem"
               paddingLeft="4rem"
+              onClick={onOpen}
             >
-              <Text>Add New Bank Account</Text>
+              <Text>Add Bank Account</Text>
             </ChakraLink>
           </ListItem>
         </List>
@@ -85,7 +98,6 @@ export const SideBar: React.FC<SideBarProps> = ({ toggling, isOpen }) => {
   return (
     <Box>
       <Box width="280px" height="100%" borderRight="1px solid black">
-        {/* User Header */}
         <Box position="relative" borderBottom="1px solid black" mb="1rem">
           <ChakraLink>
             <Flex padding="2rem" alignItems="center">
@@ -93,11 +105,9 @@ export const SideBar: React.FC<SideBarProps> = ({ toggling, isOpen }) => {
             </Flex>
           </ChakraLink>
         </Box>
-        {/* Current */}
         <Box mb="1rem" ml="2rem">
           <Heading size="md">Personal</Heading>
         </Box>
-        {/* List Items */}
         <List maxHeight="none" mt={0} mb="1rem">
           <ListItem
             fontSize={12}

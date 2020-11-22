@@ -1,26 +1,39 @@
-import { HStack, Box, Heading, Text } from "@chakra-ui/react";
+import { HStack, Box, Heading, Flex, Text } from "@chakra-ui/react";
 import React from "react";
 
-interface AccountStatsProps {}
+type statType = {
+  id: string;
+  name: string;
+  value: string;
+};
 
-export const AccountStats: React.FC<AccountStatsProps> = () => {
+interface AccountStatsProps {
+  statOptions: statType[];
+}
+
+export const AccountStats: React.FC<AccountStatsProps> = ({ statOptions }) => {
   return (
-    <HStack spacing={8} mb={9}>
-      <Box
-        padding="20px"
-        maxWidth="25%"
-        shadow="md"
-        textAlign="left"
-        flex={1}
-        borderRadius="md"
-      >
-        <Box>
-          <Heading size="md">Add Account</Heading>
-        </Box>
-        <Box>
-          <Text mt={4}>desc</Text>
-        </Box>
-      </Box>
-    </HStack>
+    <Box padding="0 2rem" marginBottom="2rem">
+      <HStack spacing={8}>
+        {statOptions.map((option) => (
+          <Box
+            key={option.id}
+            p={4}
+            maxWidth="25%"
+            shadow="md"
+            borderWidth="1px"
+            flex="1"
+            borderRadius="md"
+          >
+            <Flex justifyContent="center" mb={2} textTransform="uppercase">
+              <Heading size="xs">{option.name}</Heading>
+            </Flex>
+            <Flex justifyContent="center">
+              <Text fontSize="3xl">{option.value}</Text>
+            </Flex>
+          </Box>
+        ))}
+      </HStack>
+    </Box>
   );
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import { Lobby } from "./pages/lobby";
 import { Transactions } from "./pages/transactions";
 import { Home } from "./pages/home";
@@ -9,7 +9,7 @@ const App = () => {
   return (
     <>
       <ChakraProvider theme={theme}>
-        <switch>
+        <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/dashboard/lobby" component={Lobby} />
           <Route
@@ -17,7 +17,7 @@ const App = () => {
             path="/dashboard/accounts/accounts-details/:id"
             component={Transactions}
           />
-        </switch>
+        </Switch>
       </ChakraProvider>
     </>
   );

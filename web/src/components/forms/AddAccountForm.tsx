@@ -8,7 +8,7 @@ interface Props {
   onClose: any;
 }
 
-const selectOptions = ["Checking", "Savings", "Credit"];
+const accountOptions = ["Checking", "Savings", "Credit"];
 
 export const AddAccountForm: React.FC<Props> = ({ onClose }) => {
   return (
@@ -38,7 +38,8 @@ export const AddAccountForm: React.FC<Props> = ({ onClose }) => {
             <SelectField
               name="accountType"
               label="Account Type"
-              selectOptions={selectOptions}
+              defaultOption="Select Account Type"
+              selectOptions={accountOptions}
             />
             <InputField
               name="startingBalance"

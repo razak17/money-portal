@@ -13,13 +13,8 @@ export const Nav: React.FC<NavProps> = () => {
         justifyContent="space-between"
       >
         <ChakraLink>
-          <Flex
-            flexWrap="wrap"
-            letterSpacing="0.1em"
-            textTransform="uppercase"
-            size="md"
-          >
-            <Heading size="md">Money</Heading>
+          <Flex flexWrap="wrap" letterSpacing="0.1em" textTransform="uppercase">
+            <Heading size="md">Money|</Heading>
             <Heading size="md">Portal</Heading>
           </Flex>
         </ChakraLink>
