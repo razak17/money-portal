@@ -10,22 +10,26 @@ import {
 
 @ObjectType()
 @Entity()
-export class Transaction extends BaseEntity {
+export class BankAccount extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Field()
   @Column()
-  amount!: number;
+  name!: string;
 
   @Field()
   @Column()
-  transactionType!: string;
+  type!: string;
 
   @Field()
   @Column()
-  memo!: string;
+  startingBalance!: number;
+
+  @Field()
+  @Column()
+  lowBalanceAlert!: number;
 
   @Field(() => String)
   @CreateDateColumn()

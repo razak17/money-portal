@@ -7,37 +7,20 @@ import {
   ListItem,
   Text,
 } from "@chakra-ui/react";
-import React from "react";
+import * as React from "react";
 import { Link } from "react-router-dom";
+import { useBankAccountsQuery } from "../../generated/graphql";
 
 interface SideBarProps {
-  isOpen: any;
-  onOpen: any;
-  toggling: (
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => void | undefined;
+  onOpen: () => void;
 }
 
-const bankOptions = [
-  {
-    id: 1,
-    value: "Personal",
-  },
-  {
-    id: 2,
-    value: "Checking",
-  },
-  {
-    id: 3,
-    value: "Savings",
-  },
-];
+export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
+  const [isOpenSideBar, setIsOpenSideBar] = React.useState(false);
+  const toggling = () => setIsOpenSideBar(!isOpenSideBar);
+  const { data } = useBankAccountsQuery({});
+  console.log("Bank Accounts", data);
 
-export const SideBar: React.FC<SideBarProps> = ({
-  toggling,
-  isOpen,
-  onOpen,
-}) => {
   const home = (
     <ChakraLink
       as={Link}
@@ -65,17 +48,19 @@ export const SideBar: React.FC<SideBarProps> = ({
           </Box>
         </Flex>
       </ChakraLink>
-      {isOpen && (
+      {isOpenSideBar && (
         <List mt={0} maxHeight="none">
-          {bankOptions.map((option) => (
-            <ListItem fontSize={12} key={option.id} position="relative">
+          {data?.bankAccounts.map((b) => (
+            <ListItem fontSize={12} key={b.id} position="relative">
               <ChakraLink
+                as={Link}
+                to={`/dashboard/accounts/accounts-details/${b.id}`}
                 display="block"
                 position="relative"
                 padding="1.5rem 2rem"
                 paddingLeft="4rem"
               >
-                <Text>{option.value}</Text>
+                <Text>{b.name}</Text>
               </ChakraLink>
             </ListItem>
           ))}

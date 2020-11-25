@@ -10,8 +10,11 @@ import {
   Select,
   Input,
   chakra,
+  IconButton,
+  Link,
 } from "@chakra-ui/react";
 import React from "react";
+import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 
 interface TransactionsListProps {}
 
@@ -21,6 +24,44 @@ const filterOptions = [
   { id: "2", name: "Withdrawals", active: false },
   { id: "3", name: "Deposits", active: false },
   { id: "4", name: "Transfers", active: false },
+];
+
+const transactionOptions = [
+  {
+    id: "1",
+    amount: "$222",
+    memo: "memo",
+    date: "Tuesday, 17 November 2020",
+    time: "6:45PM",
+  },
+  {
+    id: "2",
+    amount: "$222",
+    memo: "memo",
+    date: "Tuesday, 17 November 2020",
+    time: "6:45PM",
+  },
+  {
+    id: "3",
+    amount: "$222",
+    memo: "memo",
+    date: "Tuesday, 17 November 2020",
+    time: "6:45PM",
+  },
+  {
+    id: "4",
+    amount: "$222",
+    memo: "memo",
+    date: "Tuesday, 17 November 2020",
+    time: "6:45PM",
+  },
+  {
+    id: "5",
+    amount: "$222",
+    memo: "memo",
+    date: "Tuesday, 17 November 2020",
+    time: "6:45PM",
+  },
 ];
 
 export const TransactionsList: React.FC<TransactionsListProps> = () => {
@@ -100,24 +141,74 @@ export const TransactionsList: React.FC<TransactionsListProps> = () => {
           <chakra.th width="288px" padding="0.5rem 1rem">
             Date
           </chakra.th>
+          <chakra.th width="288px" padding="0.5rem 1rem">
+            Options
+          </chakra.th>
         </chakra.tr>
       </chakra.thead>
       <chakra.tbody>
-        <chakra.tr bg="green.200">
-          <chakra.td textAlign="center" p="0.5rem">
-            <Heading size="xs">$2,220</Heading>
-          </chakra.td>
-          <chakra.td textAlign="center" p="0.5rem">
-            <Heading size="xs">Test Transfer</Heading>
-            <Text fontSize="sm">Transfer</Text>
-          </chakra.td>
-          <chakra.td textAlign="center" p="0.5rem">
-            <Heading size="xs">Tuesday, 17 November 2020</Heading>
-            <Text fontSize="sm">6:45PM</Text>
-          </chakra.td>
-        </chakra.tr>
+        {transactionOptions.map((t) => (
+          <chakra.tr bg="green.200" key={t.id}>
+            <chakra.td textAlign="center" p="1.5rem">
+              <Heading size="xs">{t.amount}</Heading>
+            </chakra.td>
+            <chakra.td textAlign="center" p="1.5rem">
+              <Heading size="xs">{t.memo}</Heading>
+              <Text fontSize="sm">Transfer</Text>
+            </chakra.td>
+            <chakra.td textAlign="center" p="1.5rem">
+              <Heading size="xs">{t.date}</Heading>
+              <Text fontSize="sm">{t.time}</Text>
+            </chakra.td>
+            <Flex
+              flexWrap="wrap"
+              alignItems="center"
+              justifyContent="center"
+              p="1.5rem"
+            >
+              <chakra.td>
+                <IconButton
+                  as={Link}
+                  colorScheme="teal"
+                  mr={4}
+                  icon={<EditIcon />}
+                  aria-label="Edit Transaction"
+                />
+              </chakra.td>
+              <chakra.td>
+                <IconButton
+                  as={Link}
+                  colorScheme="red"
+                  icon={<DeleteIcon />}
+                  aria-label="Delete Transaction"
+                />
+              </chakra.td>
+            </Flex>
+          </chakra.tr>
+        ))}
       </chakra.tbody>
     </chakra.table>
+  );
+
+  const pagination = (
+    <Flex p="1rem 0 1rem 0" flexWrap="wrap">
+      <Text> Showing 10 of entries of 40</Text>
+      <Box ml="auto">
+        <ButtonGroup variant="outline" spacing="1">
+          <Button p="0.5rem 1rem" variant="link">
+            Previous
+          </Button>
+          <Button variant="solid">1</Button>
+          <Button variant="link">2</Button>
+          <Button variant="link">3</Button>
+          <Button variant="link">4</Button>
+          <Button variant="link">5</Button>
+          <Button p="0.5rem 1rem" variant="link">
+            Next
+          </Button>
+        </ButtonGroup>
+      </Box>
+    </Flex>
   );
 
   return (
@@ -132,11 +223,10 @@ export const TransactionsList: React.FC<TransactionsListProps> = () => {
           borderRadius="md"
         >
           {nav}
-          <Box>
-            <Box marginTop={2}>
-              <Box>{filters}</Box>
-              <Box>{table}</Box>
-            </Box>
+          <Box marginTop={2}>
+            <Box>{filters}</Box>
+            {table}
+            <Box>{pagination}</Box>
           </Box>
         </Box>
       </HStack>

@@ -8,7 +8,11 @@ interface Props {
   onClose: any;
 }
 
-const accountOptions = ["Checking", "Savings", "Credit"];
+const accountOptions = [
+  { id: 1, value: "Checking" },
+  { id: 2, value: "Savings" },
+  { id: 3, value: "Credit" },
+];
 
 export const AddAccountForm: React.FC<Props> = ({ onClose }) => {
   return (

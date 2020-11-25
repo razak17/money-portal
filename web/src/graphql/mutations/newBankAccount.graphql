@@ -1,0 +1,10 @@
+mutation NewBankAccount($input: BankAccountInput!) {
+  newBankAccount(input: $input) {
+    id
+    name
+    type
+    startingBalance
+    lowBalanceAlert
+    createdAt
+  }
+}

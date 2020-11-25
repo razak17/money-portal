@@ -7,11 +7,16 @@ import {
 import { useField } from "formik";
 import React from "react";
 
+type selectOptionsType = {
+  id: number;
+  value: string;
+};
+
 type SelectFieldProps = React.InputHTMLAttributes<HTMLSelectElement> & {
   label: string;
   name: string;
   defaultOption: string;
-  selectOptions: string[];
+  selectOptions: selectOptionsType[];
 };
 
 export const SelectField: React.FC<SelectFieldProps> = ({
@@ -22,14 +27,16 @@ export const SelectField: React.FC<SelectFieldProps> = ({
   ...props
 }) => {
   const [field, { error }] = useField(props);
-  const defaultOptionValue = (
+
+  const defaultSelectOption = (
     <option key="default" value={defaultOption}>
       {defaultOption}
     </option>
   );
+
   const options = selectOptions.map((option) => (
-    <option key={Math.random()} value={option}>
-      {option}
+    <option key={option.id} value={option.value}>
+      {option.value}
     </option>
   ));
 
@@ -37,7 +44,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
     <FormControl mt={4} isInvalid={!!error}>
       <FormLabel htmlFor={field.name}>{label}</FormLabel>
       <Select {...field} {...props}>
-        {[defaultOptionValue, ...options]}
+        {[defaultSelectOption, ...options]}
       </Select>
       {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
     </FormControl>

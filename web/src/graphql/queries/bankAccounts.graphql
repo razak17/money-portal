@@ -1,0 +1,10 @@
+query BankAccounts {
+  bankAccounts {
+    id
+    name
+    type
+    startingBalance
+    lowBalanceAlert
+    createdAt
+  }
+}

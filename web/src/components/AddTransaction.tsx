@@ -6,11 +6,11 @@ import { InputField, SelectField } from "./common";
 interface AddTransactionProps {}
 
 const transactionOptions = [
-  "Cash Withdrawal",
-  "Check",
-  "Deposit",
-  "Point of Sale",
-  "Transfer",
+  { id: 1, value: "Cash Withdrawal" },
+  { id: 2, value: "Check" },
+  { id: 3, value: "Deposit" },
+  { id: 4, value: "Point of Sale" },
+  { id: 5, value: "Transfer" },
 ];
 
 export const AddTransaction: React.FC<AddTransactionProps> = () => {

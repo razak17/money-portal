@@ -1,5 +1,5 @@
 import { useDisclosure } from "@chakra-ui/react";
-import React, { useState } from "react";
+import * as React from "react";
 import {
   Footer,
   Layout,
@@ -8,10 +8,11 @@ import {
   MainContent,
   AccountStats,
   AddTransaction,
-  AddAccountModal,
+  CreateAccountModal,
   SideBar,
   TransactionsList,
 } from "../components";
+import { useGetransactionFromUrl } from "../utils/useGetTransactionFromUrl.ts ";
 
 interface TransactionsProps {}
 
@@ -23,21 +24,16 @@ const statOptions = [
 ];
 
 export const Transactions: React.FC<TransactionsProps> = () => {
-  const [isOpenSideBar, setIsOpenSideBar] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const sidebarToggling = () => setIsOpenSideBar(!isOpenSideBar);
+  const { data } = useGetransactionFromUrl();
+  console.log(data);
 
   return (
     <Layout>
-      <SideBar
-        onOpen={onOpen}
-        toggling={sidebarToggling}
-        isOpen={isOpenSideBar}
-      />
+      <SideBar onOpen={onOpen} />
       <MainContent>
         <PageHeader heading="Transactions" />
-        <AddAccountModal isOpen={isOpen} onClose={onClose} />
+        <CreateAccountModal isOpen={isOpen} onClose={onClose} />
         <EditSelectButton />
         <AccountStats statOptions={statOptions} />
         <AddTransaction />

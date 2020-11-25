@@ -1,5 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react";
-import React from "react";
+import * as React from "react";
 import { Nav } from "./common";
 
 interface LayoutProps {}
