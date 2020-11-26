@@ -19,7 +19,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
   const [isOpenSideBar, setIsOpenSideBar] = React.useState(false);
   const toggling = () => setIsOpenSideBar(!isOpenSideBar);
   const { data } = useBankAccountsQuery({});
-  console.log("Bank Accounts", data);
+  // console.log("Bank Accounts", data);
 
   const home = (
     <ChakraLink

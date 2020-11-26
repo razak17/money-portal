@@ -4,7 +4,7 @@ import {
   Footer,
   Layout,
   PageHeader,
-  EditSelectButton,
+  EditDeleteAccountButton,
   MainContent,
   AccountStats,
   AddTransaction,
@@ -12,7 +12,9 @@ import {
   SideBar,
   TransactionsList,
 } from "../components";
-import { useGetransactionFromUrl } from "../utils/useGetTransactionFromUrl.ts ";
+import { DeleteAccountModal } from "../components/DeleteAccountModal";
+import { EditAccountModal } from "../components/EditAccountModal";
+import { useGetAccountFromUrl } from "../utils/useGetAccountFromUrl";
 
 interface TransactionsProps {}
 
@@ -24,17 +26,36 @@ const statOptions = [
 ];
 
 export const Transactions: React.FC<TransactionsProps> = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { data } = useGetransactionFromUrl();
+  const {
+    isOpen: isOpenAccount,
+    onOpen: onOpenAccount,
+    onClose: onCloseAccount,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenEdit,
+    onOpen: onOpenEdit,
+    onClose: onCloseEdit,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
+  const { data } = useGetAccountFromUrl();
   console.log(data);
 
   return (
     <Layout>
-      <SideBar onOpen={onOpen} />
+      <SideBar onOpen={onOpenAccount} />
       <MainContent>
         <PageHeader heading="Transactions" />
-        <CreateAccountModal isOpen={isOpen} onClose={onClose} />
-        <EditSelectButton />
+        <CreateAccountModal isOpen={isOpenAccount} onClose={onCloseAccount} />
+        <EditAccountModal isOpen={isOpenEdit} onClose={onCloseEdit} />
+        <DeleteAccountModal isOpen={isOpenDelete} onClose={onCloseDelete} />
+        <EditDeleteAccountButton
+          onOpenEdit={onOpenEdit}
+          onOpenDelete={onOpenDelete}
+        />
         <AccountStats statOptions={statOptions} />
         <AddTransaction />
         <TransactionsList />

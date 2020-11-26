@@ -3,7 +3,7 @@ export * from "./forms";
 export * from "./AccountStats";
 export * from "./CreateAccountModal";
 export * from "./AddTransaction";
-export * from "./EditSelectButton";
+export * from "./EditDeleteAcountButton";
 export * from "./Layout";
 export * from "./LobbyOptions";
 export * from "./TransactionsList";

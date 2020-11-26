@@ -10,7 +10,7 @@ import {
 import { useField } from "formik";
 
 type InputFieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
-  label: string;
+  label?: string;
   name: string;
   amount?: boolean;
 };
@@ -43,7 +43,7 @@ export const InputField: React.FC<InputFieldProps> = ({
 
   return (
     <FormControl mt={4} isInvalid={!!error}>
-      <FormLabel htmlFor={field.name}>{label}</FormLabel>
+      {label ? <FormLabel htmlFor={field.name}>{label}</FormLabel> : null}
       {body}
       {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
     </FormControl>

@@ -14,32 +14,12 @@ import { InputField, SelectField } from ".";
 import { useNewBankAccountMutation } from "../generated/graphql";
 import { useHistory } from "react-router-dom";
 import * as Yup from "yup";
+import { accountOptions, BankAccount } from "../constants";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
 }
-
-export enum BankAccountOptions {
-  CHECKING = "Checking",
-  CREDIT = "Credit",
-  SAVINGS = "Savings",
-}
-
-type BankAccount =
-  | {
-      name: string;
-      type: string;
-      startingBalance: BankAccountOptions | number;
-      lowBalanceAlert: number;
-    }
-  | undefined;
-
-const accountOptions = [
-  { id: 1, value: BankAccountOptions.CHECKING },
-  { id: 2, value: BankAccountOptions.CREDIT },
-  { id: 3, value: BankAccountOptions.SAVINGS },
-];
 
 const NewBankAccountSchema: Yup.ObjectSchema<BankAccount> = Yup.object({
   name: Yup.string()
@@ -94,7 +74,6 @@ export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
             <SelectField
               name="type"
               label="Account Type"
-              defaultOption="Select Account Type"
               selectOptions={accountOptions}
             />
             <InputField

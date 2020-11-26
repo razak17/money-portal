@@ -15,25 +15,19 @@ type selectOptionsType = {
 type SelectFieldProps = React.InputHTMLAttributes<HTMLSelectElement> & {
   label: string;
   name: string;
-  defaultOption: string;
+  defaultOption?: string;
   selectOptions: selectOptionsType[];
 };
 
 export const SelectField: React.FC<SelectFieldProps> = ({
   label,
   selectOptions,
-  defaultOption,
   size: _,
   ...props
 }) => {
   const [field, { error }] = useField(props);
 
-  const defaultSelectOption = (
-    <option key="default" value={defaultOption}>
-      {defaultOption}
-    </option>
-  );
-
+  let body;
   const options = selectOptions.map((option) => (
     <option key={option.id} value={option.value}>
       {option.value}
@@ -44,8 +38,9 @@ export const SelectField: React.FC<SelectFieldProps> = ({
     <FormControl mt={4} isInvalid={!!error}>
       <FormLabel htmlFor={field.name}>{label}</FormLabel>
       <Select {...field} {...props}>
-        {[defaultSelectOption, ...options]}
+        {[...options]}
       </Select>
+      {body}
       {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
     </FormControl>
   );
