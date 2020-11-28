@@ -1,19 +1,20 @@
-import { Arg, Ctx, InputType, ObjectType, Field, Mutation, Resolver, Query } from 'type-graphql';
-import { User } from '../entities/User';
-import { getConnection } from 'typeorm';
-import { MyContext } from '../types';
+import {
+  Arg,
+  Ctx,
+  ObjectType,
+  Field,
+  Mutation,
+  Resolver,
+  Query,
+} from "type-graphql";
+import { User } from "../entities/User";
+import { getConnection } from "typeorm";
+import { MyContext } from "../types";
 import argon2 from "argon2";
-
-
-@InputType()
-class UsernamePasswordInput {
-  @Field()
-  username: string;
-  @Field()
-  email: string;
-  @Field()
-  password: string;
-}
+import { UsernamePasswordInput } from "./UsernamePasswordInput.ts";
+import { validateRegister } from "../utils/validateRegister";
+import { validateEmail } from "../utils/validateEmail";
+import { COOKIE_NAME } from "../constants";
 
 @ObjectType()
 class FieldError {
@@ -32,48 +33,6 @@ class UserResponse {
   user?: User;
 }
 
-export const validateRegister = (options: UsernamePasswordInput) => {
-  if (options.username.trim().length <= 2) {
-    return [
-      {
-        field: "username",
-        message: "length must be greater than 2",
-      },
-    ];
-  }
-
-  if (!options.email.includes("@")) {
-    return [
-      {
-        field: "email",
-        message: "invalid email",
-      },
-    ];
-  }
-
-  if (options.username.includes("@")) {
-    return [
-      {
-        field: "username",
-        message: "cannot include an @",
-      },
-    ];
-  }
-
-  if (options.password.trim().length <= 2) {
-    return [
-      {
-        field: "password",
-        message: "length must be greater than 2",
-      },
-    ];
-  }
-
-  return null;
-};
-
-
-
 @Resolver(User)
 export class UserResolver {
   @Query(() => String)
@@ -81,15 +40,23 @@ export class UserResolver {
     return "Hello";
   }
 
-  // Register
+  // Current User
+  @Query(() => User, { nullable: true })
+  me(@Ctx() { req }: MyContext) {
+    if (!req.session.id) {
+      return null;
+    }
+    return User.findOne(req.session.userId);
+  }
+
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UsernamePasswordInput,
-    @Ctx() {req}: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     const errors = validateRegister(options);
-    if(errors) {
-      return {errors};
+    if (errors) {
+      return { errors };
     }
     const passwordHash = await argon2.hash(options.password);
     let user;
@@ -102,7 +69,7 @@ export class UserResolver {
         .values({
           username: options.username,
           email: options.email,
-          password: passwordHash
+          password: passwordHash,
         })
         .returning("*")
         .execute();
@@ -124,5 +91,62 @@ export class UserResolver {
     // it will keep user logged
     req.session.userId = user.id;
     return { user };
+  }
+
+  // Login
+  @Mutation(() => UserResponse)
+  async login(
+    @Arg("usernameOrEmail") usernameOrEmail: string,
+    @Arg("password") password: string,
+    @Ctx() { req }: MyContext
+  ): Promise<UserResponse> {
+    const user = await User.findOne(
+      validateEmail(usernameOrEmail)
+        ? { where: { email: usernameOrEmail } }
+        : { where: { username: usernameOrEmail } }
+    );
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "usernameOrEmail",
+            message: "that user does not exist.",
+          },
+        ],
+      };
+    }
+    const valid = await argon2.verify(user.password, password);
+    if (!valid) {
+      return {
+        errors: [
+          {
+            field: "password",
+            message: "incorrect password.",
+          },
+        ],
+      };
+    }
+
+    req.session.userId = user.id;
+
+    return {
+      user,
+    };
+  }
+
+  // Logout
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: MyContext) {
+    return new Promise((resolve) =>
+      req.session.destroy((err) => {
+        res.clearCookie(COOKIE_NAME);
+        if (err) {
+          console.log(err);
+          resolve(false);
+          return;
+        }
+        resolve(true);
+      })
+    );
   }
 }

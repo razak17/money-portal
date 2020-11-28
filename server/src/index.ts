@@ -10,12 +10,11 @@ import { Transaction } from "./entities/Transaction";
 import { BankAccount } from "./entities/BankAccount";
 import { User } from "./entities/User";
 import { BankAccountResolver } from "./resolvers/bankAccount";
-import { __prod__, COOKIE_NAME } from './constants';
-import Redis from 'ioredis';
+import { __prod__, COOKIE_NAME } from "./constants";
+import Redis from "ioredis";
 import session from "express-session";
 import connectRedis from "connect-redis";
-import { UserResolver } from './resolvers/user';
-
+import { UserResolver } from "./resolvers/user";
 
 const main = async () => {
   await createConnection({
@@ -29,8 +28,8 @@ const main = async () => {
     entities: [Transaction, BankAccount, User],
   });
 
-  const app = express();
   const PORT = 4000;
+  const app = express();
 
   const redis: any = new Redis();
   const RedisStore = connectRedis(session);
@@ -69,7 +68,7 @@ const main = async () => {
     context: ({ req, res }) => ({
       req,
       res,
-      redis
+      redis,
     }),
   });
 

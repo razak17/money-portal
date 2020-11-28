@@ -9,7 +9,8 @@ import {
 } from "@chakra-ui/react";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { useBankAccountsQuery } from "../../generated/graphql";
+import { useBankAccountsQuery, useMeQuery } from "../../generated/graphql";
+import { toTitleCase } from "../../utils/toTitleCase";
 
 interface SideBarProps {
   onOpen: () => void;
@@ -19,7 +20,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
   const [isOpenSideBar, setIsOpenSideBar] = React.useState(false);
   const toggling = () => setIsOpenSideBar(!isOpenSideBar);
   const { data } = useBankAccountsQuery({});
-  // console.log("Bank Accounts", data);
+  const { data: MeData, loading } = useMeQuery();
 
   const home = (
     <ChakraLink
@@ -32,6 +33,22 @@ export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
       <Text>Home</Text>
     </ChakraLink>
   );
+
+  let heading = null;
+  if (loading) {
+  } else if (!MeData?.me) {
+    heading = (
+      <Flex padding="2rem" alignItems="center">
+        <Heading size="xl">Demo Personal</Heading>
+      </Flex>
+    );
+  } else {
+    heading = (
+      <Flex padding="2rem" alignItems="center">
+        <Heading size="xl">Hello, {toTitleCase(MeData.me.username)}</Heading>
+      </Flex>
+    );
+  }
 
   const bankAccounts = (
     <>
@@ -84,11 +101,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
     <Box>
       <Box width="280px" height="100%" borderRight="1px solid black">
         <Box position="relative" borderBottom="1px solid black" mb="1rem">
-          <ChakraLink>
-            <Flex padding="2rem" alignItems="center">
-              <Heading size="xl">Demo Personal</Heading>
-            </Flex>
-          </ChakraLink>
+          {heading}
         </Box>
         <Box mb="1rem" ml="2rem">
           <Heading size="md">Personal</Heading>
