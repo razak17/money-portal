@@ -13,17 +13,30 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  hello: Scalars['String'];
-  allTransactions: Array<Transaction>;
+  transactions: PaginatedTransactions;
   transaction?: Maybe<Transaction>;
-  bankAccounts: Array<BankAccount>;
+  bankAccounts: PaginatedBankAccounts;
   bankAccount?: Maybe<BankAccount>;
   me?: Maybe<User>;
 };
 
 
+export type QueryTransactionsArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  bankAccountId: Scalars['Int'];
+};
+
+
 export type QueryTransactionArgs = {
+  bankAccountId: Scalars['Int'];
   id: Scalars['Int'];
+};
+
+
+export type QueryBankAccountsArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -31,25 +44,24 @@ export type QueryBankAccountArgs = {
   id: Scalars['Int'];
 };
 
+export type PaginatedTransactions = {
+  __typename?: 'PaginatedTransactions';
+  transactions: Array<Transaction>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type Transaction = {
   __typename?: 'Transaction';
   id: Scalars['Float'];
   amount: Scalars['Float'];
-  transactionType: Scalars['String'];
-  memo: Scalars['String'];
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['String'];
-};
-
-export type BankAccount = {
-  __typename?: 'BankAccount';
-  id: Scalars['Float'];
-  name: Scalars['String'];
   type: Scalars['String'];
-  startingBalance: Scalars['Float'];
-  lowBalanceAlert: Scalars['Float'];
+  memo: Scalars['String'];
+  creatorId: Scalars['Float'];
+  creator: User;
+  bankAccountId: Scalars['Float'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  bankAccount: BankAccount;
 };
 
 export type User = {
@@ -61,9 +73,32 @@ export type User = {
   updatedAt: Scalars['String'];
 };
 
+export type BankAccount = {
+  __typename?: 'BankAccount';
+  id: Scalars['Float'];
+  name: Scalars['String'];
+  type: Scalars['String'];
+  startingBalance: Scalars['Float'];
+  lowBalanceAlert: Scalars['Float'];
+  currentBalance: Scalars['Float'];
+  monthlySpending: Scalars['Float'];
+  monthlyDeposits: Scalars['Float'];
+  monthlyTransactions: Scalars['Float'];
+  creatorId: Scalars['Float'];
+  creator: User;
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
+export type PaginatedBankAccounts = {
+  __typename?: 'PaginatedBankAccounts';
+  bankAccounts: Array<BankAccount>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  createTransaction: Transaction;
+  newTransaction: Transaction;
   updateTransaction?: Maybe<Transaction>;
   deleteTransaction: Scalars['Boolean'];
   newBankAccount: BankAccount;
@@ -75,20 +110,23 @@ export type Mutation = {
 };
 
 
-export type MutationCreateTransactionArgs = {
+export type MutationNewTransactionArgs = {
+  bankAccountId: Scalars['Int'];
   input: TransactionInput;
 };
 
 
 export type MutationUpdateTransactionArgs = {
   memo: Scalars['String'];
-  transactionType: Scalars['String'];
-  amount: Scalars['Int'];
+  type: Scalars['String'];
+  amount: Scalars['Float'];
+  bankAccountId: Scalars['Int'];
   id: Scalars['Int'];
 };
 
 
 export type MutationDeleteTransactionArgs = {
+  bankAccountId: Scalars['Int'];
   id: Scalars['Int'];
 };
 
@@ -123,7 +161,7 @@ export type MutationLoginArgs = {
 
 export type TransactionInput = {
   amount: Scalars['Float'];
-  transactionType: Scalars['String'];
+  type: Scalars['String'];
   memo: Scalars['String'];
 };
 
@@ -160,6 +198,17 @@ export type DeleteBankAccountMutationVariables = Exact<{
 export type DeleteBankAccountMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deleteBankAccount'>
+);
+
+export type DeleteTransactionMutationVariables = Exact<{
+  id: Scalars['Int'];
+  bankAccountId: Scalars['Int'];
+}>;
+
+
+export type DeleteTransactionMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteTransaction'>
 );
 
 export type LoginMutationVariables = Exact<{
@@ -203,6 +252,27 @@ export type NewBankAccountMutation = (
   ) }
 );
 
+export type NewTransactionMutationVariables = Exact<{
+  input: TransactionInput;
+  bankAccountId: Scalars['Int'];
+}>;
+
+
+export type NewTransactionMutation = (
+  { __typename?: 'Mutation' }
+  & { newTransaction: (
+    { __typename?: 'Transaction' }
+    & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo' | 'createdAt'>
+    & { creator: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'email'>
+    ), bankAccount: (
+      { __typename?: 'BankAccount' }
+      & Pick<BankAccount, 'id' | 'name' | 'type'>
+    ) }
+  ) }
+);
+
 export type RegisterMutationVariables = Exact<{
   options: UsernamePasswordInput;
 }>;
@@ -238,6 +308,23 @@ export type UpdateBankAccountMutation = (
   )> }
 );
 
+export type UpdateTransactionMutationVariables = Exact<{
+  id: Scalars['Int'];
+  bankAccountId: Scalars['Int'];
+  amount: Scalars['Float'];
+  memo: Scalars['String'];
+  type: Scalars['String'];
+}>;
+
+
+export type UpdateTransactionMutation = (
+  { __typename?: 'Mutation' }
+  & { updateTransaction?: Maybe<(
+    { __typename?: 'Transaction' }
+    & Pick<Transaction, 'id' | 'type' | 'memo' | 'createdAt' | 'updatedAt'>
+  )> }
+);
+
 export type BankAccountQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
@@ -247,19 +334,34 @@ export type BankAccountQuery = (
   { __typename?: 'Query' }
   & { bankAccount?: Maybe<(
     { __typename?: 'BankAccount' }
-    & Pick<BankAccount, 'id' | 'name' | 'type' | 'startingBalance' | 'lowBalanceAlert' | 'createdAt'>
+    & Pick<BankAccount, 'id' | 'name' | 'type' | 'startingBalance' | 'lowBalanceAlert' | 'currentBalance' | 'monthlySpending' | 'monthlyTransactions' | 'monthlyDeposits' | 'createdAt'>
+    & { creator: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'email'>
+    ) }
   )> }
 );
 
-export type BankAccountsQueryVariables = Exact<{ [key: string]: never; }>;
+export type BankAccountsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
 
 
 export type BankAccountsQuery = (
   { __typename?: 'Query' }
-  & { bankAccounts: Array<(
-    { __typename?: 'BankAccount' }
-    & Pick<BankAccount, 'id' | 'name' | 'type' | 'startingBalance' | 'lowBalanceAlert' | 'createdAt'>
-  )> }
+  & { bankAccounts: (
+    { __typename?: 'PaginatedBankAccounts' }
+    & Pick<PaginatedBankAccounts, 'hasMore'>
+    & { bankAccounts: Array<(
+      { __typename?: 'BankAccount' }
+      & Pick<BankAccount, 'id' | 'name' | 'type' | 'startingBalance' | 'lowBalanceAlert' | 'currentBalance' | 'monthlySpending' | 'monthlyTransactions' | 'monthlyDeposits'>
+      & { creator: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'email'>
+      ) }
+    )> }
+  ) }
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -271,6 +373,50 @@ export type MeQuery = (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'username' | 'email'>
   )> }
+);
+
+export type TransactionQueryVariables = Exact<{
+  bankAccountId: Scalars['Int'];
+  id: Scalars['Int'];
+}>;
+
+
+export type TransactionQuery = (
+  { __typename?: 'Query' }
+  & { transaction?: Maybe<(
+    { __typename?: 'Transaction' }
+    & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo'>
+    & { creator: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username'>
+    ), bankAccount: (
+      { __typename?: 'BankAccount' }
+      & Pick<BankAccount, 'id' | 'name' | 'type'>
+    ) }
+  )> }
+);
+
+export type TransactionsQueryVariables = Exact<{
+  bankAccountId: Scalars['Int'];
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
+
+
+export type TransactionsQuery = (
+  { __typename?: 'Query' }
+  & { transactions: (
+    { __typename?: 'PaginatedTransactions' }
+    & Pick<PaginatedTransactions, 'hasMore'>
+    & { transactions: Array<(
+      { __typename?: 'Transaction' }
+      & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo' | 'createdAt' | 'updatedAt'>
+      & { creator: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username'>
+      ) }
+    )> }
+  ) }
 );
 
 
@@ -304,6 +450,37 @@ export function useDeleteBankAccountMutation(baseOptions?: Apollo.MutationHookOp
 export type DeleteBankAccountMutationHookResult = ReturnType<typeof useDeleteBankAccountMutation>;
 export type DeleteBankAccountMutationResult = Apollo.MutationResult<DeleteBankAccountMutation>;
 export type DeleteBankAccountMutationOptions = Apollo.BaseMutationOptions<DeleteBankAccountMutation, DeleteBankAccountMutationVariables>;
+export const DeleteTransactionDocument = gql`
+    mutation DeleteTransaction($id: Int!, $bankAccountId: Int!) {
+  deleteTransaction(id: $id, bankAccountId: $bankAccountId)
+}
+    `;
+export type DeleteTransactionMutationFn = Apollo.MutationFunction<DeleteTransactionMutation, DeleteTransactionMutationVariables>;
+
+/**
+ * __useDeleteTransactionMutation__
+ *
+ * To run a mutation, you first call `useDeleteTransactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTransactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTransactionMutation, { data, loading, error }] = useDeleteTransactionMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      bankAccountId: // value for 'bankAccountId'
+ *   },
+ * });
+ */
+export function useDeleteTransactionMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTransactionMutation, DeleteTransactionMutationVariables>) {
+        return Apollo.useMutation<DeleteTransactionMutation, DeleteTransactionMutationVariables>(DeleteTransactionDocument, baseOptions);
+      }
+export type DeleteTransactionMutationHookResult = ReturnType<typeof useDeleteTransactionMutation>;
+export type DeleteTransactionMutationResult = Apollo.MutationResult<DeleteTransactionMutation>;
+export type DeleteTransactionMutationOptions = Apollo.BaseMutationOptions<DeleteTransactionMutation, DeleteTransactionMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($usernameOrEmail: String!, $password: String!) {
   login(usernameOrEmail: $usernameOrEmail, password: $password) {
@@ -412,6 +589,53 @@ export function useNewBankAccountMutation(baseOptions?: Apollo.MutationHookOptio
 export type NewBankAccountMutationHookResult = ReturnType<typeof useNewBankAccountMutation>;
 export type NewBankAccountMutationResult = Apollo.MutationResult<NewBankAccountMutation>;
 export type NewBankAccountMutationOptions = Apollo.BaseMutationOptions<NewBankAccountMutation, NewBankAccountMutationVariables>;
+export const NewTransactionDocument = gql`
+    mutation NewTransaction($input: TransactionInput!, $bankAccountId: Int!) {
+  newTransaction(input: $input, bankAccountId: $bankAccountId) {
+    id
+    amount
+    type
+    memo
+    creator {
+      id
+      username
+      email
+    }
+    bankAccount {
+      id
+      name
+      type
+    }
+    createdAt
+  }
+}
+    `;
+export type NewTransactionMutationFn = Apollo.MutationFunction<NewTransactionMutation, NewTransactionMutationVariables>;
+
+/**
+ * __useNewTransactionMutation__
+ *
+ * To run a mutation, you first call `useNewTransactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useNewTransactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [newTransactionMutation, { data, loading, error }] = useNewTransactionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *      bankAccountId: // value for 'bankAccountId'
+ *   },
+ * });
+ */
+export function useNewTransactionMutation(baseOptions?: Apollo.MutationHookOptions<NewTransactionMutation, NewTransactionMutationVariables>) {
+        return Apollo.useMutation<NewTransactionMutation, NewTransactionMutationVariables>(NewTransactionDocument, baseOptions);
+      }
+export type NewTransactionMutationHookResult = ReturnType<typeof useNewTransactionMutation>;
+export type NewTransactionMutationResult = Apollo.MutationResult<NewTransactionMutation>;
+export type NewTransactionMutationOptions = Apollo.BaseMutationOptions<NewTransactionMutation, NewTransactionMutationVariables>;
 export const RegisterDocument = gql`
     mutation Register($options: UsernamePasswordInput!) {
   register(options: $options) {
@@ -497,6 +721,52 @@ export function useUpdateBankAccountMutation(baseOptions?: Apollo.MutationHookOp
 export type UpdateBankAccountMutationHookResult = ReturnType<typeof useUpdateBankAccountMutation>;
 export type UpdateBankAccountMutationResult = Apollo.MutationResult<UpdateBankAccountMutation>;
 export type UpdateBankAccountMutationOptions = Apollo.BaseMutationOptions<UpdateBankAccountMutation, UpdateBankAccountMutationVariables>;
+export const UpdateTransactionDocument = gql`
+    mutation UpdateTransaction($id: Int!, $bankAccountId: Int!, $amount: Float!, $memo: String!, $type: String!) {
+  updateTransaction(
+    id: $id
+    bankAccountId: $bankAccountId
+    amount: $amount
+    type: $type
+    memo: $memo
+  ) {
+    id
+    type
+    memo
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type UpdateTransactionMutationFn = Apollo.MutationFunction<UpdateTransactionMutation, UpdateTransactionMutationVariables>;
+
+/**
+ * __useUpdateTransactionMutation__
+ *
+ * To run a mutation, you first call `useUpdateTransactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTransactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTransactionMutation, { data, loading, error }] = useUpdateTransactionMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      bankAccountId: // value for 'bankAccountId'
+ *      amount: // value for 'amount'
+ *      memo: // value for 'memo'
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useUpdateTransactionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTransactionMutation, UpdateTransactionMutationVariables>) {
+        return Apollo.useMutation<UpdateTransactionMutation, UpdateTransactionMutationVariables>(UpdateTransactionDocument, baseOptions);
+      }
+export type UpdateTransactionMutationHookResult = ReturnType<typeof useUpdateTransactionMutation>;
+export type UpdateTransactionMutationResult = Apollo.MutationResult<UpdateTransactionMutation>;
+export type UpdateTransactionMutationOptions = Apollo.BaseMutationOptions<UpdateTransactionMutation, UpdateTransactionMutationVariables>;
 export const BankAccountDocument = gql`
     query BankAccount($id: Int!) {
   bankAccount(id: $id) {
@@ -505,6 +775,15 @@ export const BankAccountDocument = gql`
     type
     startingBalance
     lowBalanceAlert
+    currentBalance
+    monthlySpending
+    monthlyTransactions
+    monthlyDeposits
+    creator {
+      id
+      username
+      email
+    }
     createdAt
   }
 }
@@ -536,14 +815,25 @@ export type BankAccountQueryHookResult = ReturnType<typeof useBankAccountQuery>;
 export type BankAccountLazyQueryHookResult = ReturnType<typeof useBankAccountLazyQuery>;
 export type BankAccountQueryResult = Apollo.QueryResult<BankAccountQuery, BankAccountQueryVariables>;
 export const BankAccountsDocument = gql`
-    query BankAccounts {
-  bankAccounts {
-    id
-    name
-    type
-    startingBalance
-    lowBalanceAlert
-    createdAt
+    query BankAccounts($limit: Int!, $cursor: String) {
+  bankAccounts(limit: $limit, cursor: $cursor) {
+    hasMore
+    bankAccounts {
+      id
+      name
+      type
+      startingBalance
+      lowBalanceAlert
+      currentBalance
+      monthlySpending
+      monthlyTransactions
+      monthlyDeposits
+      creator {
+        id
+        username
+        email
+      }
+    }
   }
 }
     `;
@@ -560,10 +850,12 @@ export const BankAccountsDocument = gql`
  * @example
  * const { data, loading, error } = useBankAccountsQuery({
  *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */
-export function useBankAccountsQuery(baseOptions?: Apollo.QueryHookOptions<BankAccountsQuery, BankAccountsQueryVariables>) {
+export function useBankAccountsQuery(baseOptions: Apollo.QueryHookOptions<BankAccountsQuery, BankAccountsQueryVariables>) {
         return Apollo.useQuery<BankAccountsQuery, BankAccountsQueryVariables>(BankAccountsDocument, baseOptions);
       }
 export function useBankAccountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BankAccountsQuery, BankAccountsQueryVariables>) {
@@ -606,3 +898,96 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const TransactionDocument = gql`
+    query Transaction($bankAccountId: Int!, $id: Int!) {
+  transaction(bankAccountId: $bankAccountId, id: $id) {
+    id
+    amount
+    type
+    memo
+    creator {
+      id
+      username
+    }
+    bankAccount {
+      id
+      name
+      type
+    }
+  }
+}
+    `;
+
+/**
+ * __useTransactionQuery__
+ *
+ * To run a query within a React component, call `useTransactionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTransactionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTransactionQuery({
+ *   variables: {
+ *      bankAccountId: // value for 'bankAccountId'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTransactionQuery(baseOptions: Apollo.QueryHookOptions<TransactionQuery, TransactionQueryVariables>) {
+        return Apollo.useQuery<TransactionQuery, TransactionQueryVariables>(TransactionDocument, baseOptions);
+      }
+export function useTransactionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionQuery, TransactionQueryVariables>) {
+          return Apollo.useLazyQuery<TransactionQuery, TransactionQueryVariables>(TransactionDocument, baseOptions);
+        }
+export type TransactionQueryHookResult = ReturnType<typeof useTransactionQuery>;
+export type TransactionLazyQueryHookResult = ReturnType<typeof useTransactionLazyQuery>;
+export type TransactionQueryResult = Apollo.QueryResult<TransactionQuery, TransactionQueryVariables>;
+export const TransactionsDocument = gql`
+    query Transactions($bankAccountId: Int!, $limit: Int!, $cursor: String) {
+  transactions(bankAccountId: $bankAccountId, limit: $limit, cursor: $cursor) {
+    hasMore
+    transactions {
+      id
+      amount
+      type
+      memo
+      creator {
+        id
+        username
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useTransactionsQuery__
+ *
+ * To run a query within a React component, call `useTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTransactionsQuery({
+ *   variables: {
+ *      bankAccountId: // value for 'bankAccountId'
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useTransactionsQuery(baseOptions: Apollo.QueryHookOptions<TransactionsQuery, TransactionsQueryVariables>) {
+        return Apollo.useQuery<TransactionsQuery, TransactionsQueryVariables>(TransactionsDocument, baseOptions);
+      }
+export function useTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionsQuery, TransactionsQueryVariables>) {
+          return Apollo.useLazyQuery<TransactionsQuery, TransactionsQueryVariables>(TransactionsDocument, baseOptions);
+        }
+export type TransactionsQueryHookResult = ReturnType<typeof useTransactionsQuery>;
+export type TransactionsLazyQueryHookResult = ReturnType<typeof useTransactionsLazyQuery>;
+export type TransactionsQueryResult = Apollo.QueryResult<TransactionsQuery, TransactionsQueryVariables>;

@@ -7,11 +7,7 @@ interface PageHeaderProps {
 
 export const PageHeader: React.FC<PageHeaderProps> = ({ heading }) => {
   return (
-    <Box
-      marginBottom="2rem"
-      borderBottom="1px solid black"
-      padding="1.5rem 2rem"
-    >
+    <Box mb="1rem" borderBottom="1px solid black" padding="1.5rem 2rem">
       <Box m="auto" width="100%">
         <Heading size="md">{heading}</Heading>
       </Box>

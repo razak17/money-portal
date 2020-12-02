@@ -12,7 +12,7 @@ export const PublicRoute = ({ ...rest }) => {
       history.push("/dashboard/lobby");
     }
     return () => {};
-  }, []);
+  }, [data?.me, history, loading]);
 
   return <Route {...rest} />;
 };

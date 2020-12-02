@@ -1,0 +1,17 @@
+query Transactions($bankAccountId: Int!, $limit: Int!, $cursor: String) {
+  transactions(bankAccountId: $bankAccountId, limit: $limit, cursor: $cursor) {
+    hasMore
+    transactions {
+      id
+      amount
+      type
+      memo
+      creator {
+        id
+        username
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}

@@ -15,7 +15,7 @@ import { Formik, Form } from "formik";
 import * as React from "react";
 import { useHistory } from "react-router-dom";
 import { InputField, SelectField } from ".";
-import { accountOptions } from "../constants";
+import { accountOptions } from "../types";
 import {
   useBankAccountQuery,
   useUpdateBankAccountMutation,
@@ -39,7 +39,7 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
       id: intId,
     },
   });
-  console.log(data);
+  // console.log(data);
 
   let body = null;
   if (loading) {
@@ -93,7 +93,6 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
                 <SelectField
                   name="type"
                   label="Account Type"
-                  value={data.bankAccount.type}
                   selectOptions={accountOptions}
                 />
               ) : (

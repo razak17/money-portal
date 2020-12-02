@@ -1,13 +1,15 @@
 import { ObjectType, Field } from "type-graphql";
-import { 
+import {
   UpdateDateColumn,
   CreateDateColumn,
   Entity,
   Column,
   PrimaryGeneratedColumn,
   OneToMany,
-  BaseEntity
+  BaseEntity,
 } from "typeorm";
+import { BankAccount } from "./BankAccount";
+import { Transaction } from "./Transaction";
 
 @ObjectType()
 @Entity()
@@ -27,12 +29,17 @@ export class User extends BaseEntity {
   @Column()
   password!: string;
 
+  @OneToMany(() => BankAccount, (bankAccount) => bankAccount.creator)
+  bankAccounts: BankAccount[];
+
+  @OneToMany(() => Transaction, (transaction) => transaction.creator)
+  transactions: Transaction[];
+
   @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;
 
   @Field(() => String)
   @UpdateDateColumn()
-  updatedAt:  Date;
+  updatedAt: Date;
 }
-

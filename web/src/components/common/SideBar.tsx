@@ -19,8 +19,14 @@ interface SideBarProps {
 export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
   const [isOpenSideBar, setIsOpenSideBar] = React.useState(false);
   const toggling = () => setIsOpenSideBar(!isOpenSideBar);
-  const { data } = useBankAccountsQuery({});
-  const { data: MeData, loading } = useMeQuery();
+  const { data, loading } = useBankAccountsQuery({
+    variables: {
+      limit: 10,
+      cursor: null,
+    },
+    notifyOnNetworkStatusChange: true,
+  });
+  const { data: MeData, loading: MeLoading } = useMeQuery();
 
   const home = (
     <ChakraLink
@@ -35,8 +41,13 @@ export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
   );
 
   let heading = null;
-  if (loading) {
-  } else if (!MeData?.me) {
+  if (MeLoading) {
+    heading = (
+      <Flex padding="2rem" alignItems="center">
+        <Text fontSize="md">Loading...</Text>
+      </Flex>
+    );
+  } else if (!MeData?.me?.username) {
     heading = (
       <Flex padding="2rem" alignItems="center">
         <Heading size="xl">Demo Personal</Heading>
@@ -66,33 +77,46 @@ export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
         </Flex>
       </ChakraLink>
       {isOpenSideBar && (
-        <List mt={0} maxHeight="none">
-          {data?.bankAccounts.map((b) => (
-            <ListItem fontSize={12} key={b.id} position="relative">
+        <>
+          <List mt={0} maxHeight="none">
+            {data?.bankAccounts &&
+              data?.bankAccounts.bankAccounts.map((b) => (
+                <ListItem fontSize={12} key={b.id} position="relative">
+                  <ChakraLink
+                    as={Link}
+                    to={`/dashboard/accounts/accounts-details/${b.id}`}
+                    display="block"
+                    position="relative"
+                    padding="1.5rem 2rem"
+                    paddingLeft="4rem"
+                  >
+                    <Text>{b.name}</Text>
+                  </ChakraLink>
+                </ListItem>
+              ))}
+            <ListItem position="relative">
               <ChakraLink
-                as={Link}
-                to={`/dashboard/accounts/accounts-details/${b.id}`}
                 display="block"
                 position="relative"
                 padding="1.5rem 2rem"
                 paddingLeft="4rem"
+                onClick={onOpen}
               >
-                <Text>{b.name}</Text>
+                <Text>Add Bank Account</Text>
               </ChakraLink>
             </ListItem>
-          ))}
-          <ListItem position="relative">
-            <ChakraLink
-              display="block"
-              position="relative"
-              padding="1.5rem 2rem"
-              paddingLeft="4rem"
-              onClick={onOpen}
-            >
-              <Text>Add Bank Account</Text>
-            </ChakraLink>
-          </ListItem>
-        </List>
+          </List>
+          {loading && (
+            <Box textAlign="center" p="1.5rem">
+              <Text fontSize="lg">loading...</Text>
+            </Box>
+          )}
+          {data?.bankAccounts?.bankAccounts.length === 0 && (
+            <Box textAlign="center" p="1.5rem">
+              <Text fontSize="lg">No Bank Accounts yet.</Text>
+            </Box>
+          )}
+        </>
       )}
     </>
   );

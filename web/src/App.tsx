@@ -6,24 +6,30 @@ import { Home } from "./pages/home";
 import { ChakraProvider, theme } from "@chakra-ui/react";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
-import { PrivateRoute } from "./components/PrivateRoute";
-import { PublicRoute } from "./components/PublicRoute";
+import { NotFoundPage } from "./pages/404";
+import { ApolloProvider } from "@apollo/client";
+import { client } from "./utils/withApollo";
+// import { PrivateRoute } from "./components/PrivateRoute";
+// import { PublicRoute } from "./components/PublicRoute";
 
 const App = () => {
   return (
-    <ChakraProvider theme={theme}>
-      <Switch>
-        <Route exact path="/" component={Home} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/register" component={Register} />
-        <PrivateRoute exact path="/dashboard/lobby">
-          <Lobby />
-        </PrivateRoute>
-        <PrivateRoute exact path="/dashboard/accounts/accounts-details/:id">
-          <Transactions />
-        </PrivateRoute>
-      </Switch>
-    </ChakraProvider>
+    <ApolloProvider client={client}>
+      <ChakraProvider theme={theme}>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/register" component={Register} />
+          <Route exact path="/dashboard/lobby" component={Lobby} />
+          <Route
+            exact
+            path="/dashboard/accounts/accounts-details/:id"
+            component={Transactions}
+          />
+          <Route exact path="*" component={NotFoundPage} />
+        </Switch>
+      </ChakraProvider>
+    </ApolloProvider>
   );
 };
 

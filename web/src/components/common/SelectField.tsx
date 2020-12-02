@@ -7,16 +7,11 @@ import {
 import { useField } from "formik";
 import React from "react";
 
-type selectOptionsType = {
-  id: number;
-  value: string;
-};
-
 type SelectFieldProps = React.InputHTMLAttributes<HTMLSelectElement> & {
   label: string;
   name: string;
   defaultOption?: string;
-  selectOptions: selectOptionsType[];
+  selectOptions: string[];
 };
 
 export const SelectField: React.FC<SelectFieldProps> = ({
@@ -28,9 +23,9 @@ export const SelectField: React.FC<SelectFieldProps> = ({
   const [field, { error }] = useField(props);
 
   let body;
-  const options = selectOptions.map((option) => (
-    <option key={option.id} value={option.value}>
-      {option.value}
+  const options = selectOptions.map((option, index) => (
+    <option key={index} value={option}>
+      {option}
     </option>
   ));
 

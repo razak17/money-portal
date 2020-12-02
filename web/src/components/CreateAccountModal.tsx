@@ -12,53 +12,45 @@ import {
 import { Formik, Form } from "formik";
 import { InputField, SelectField } from ".";
 import { useNewBankAccountMutation } from "../generated/graphql";
-import { useHistory } from "react-router-dom";
-import * as Yup from "yup";
-import { accountOptions, BankAccount } from "../constants";
+import { accountOptions } from "../types";
+import { NewBankAccountSchema } from "../utils/validate";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const NewBankAccountSchema: Yup.ObjectSchema<BankAccount> = Yup.object({
-  name: Yup.string()
-    .min(2, "Must be at least two charaters long.")
-    .required("Please enter account name."),
-  type: Yup.string().required("Please select account type."),
-  startingBalance: Yup.number()
-    .min(0, "Must be greater than 0.")
-    .required("Please enter a number."),
-  lowBalanceAlert: Yup.number()
-    .max(
-      Yup.ref("startingBalance"),
-      "Must not be greater than starting balance"
-    )
-    .required("Please Enter a number."),
-});
-
 export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [newBankAccount] = useNewBankAccountMutation();
-  let history = useHistory();
 
   const form = (
     <Formik
       initialValues={{
         name: "",
-        type: "",
-        startingBalance: 0,
-        lowBalanceAlert: 0,
+        type: accountOptions[0],
+        startingBalance: "",
+        lowBalanceAlert: "",
       }}
       validationSchema={NewBankAccountSchema}
+      validateOnBlur={false}
+      validateOnChange={false}
       onSubmit={async (values, actions) => {
         console.log(values);
         const { errors } = await newBankAccount({
           variables: {
-            input: values,
+            input: {
+              ...values,
+              startingBalance: parseInt(values.startingBalance),
+              lowBalanceAlert: parseInt(values.lowBalanceAlert),
+            },
+          },
+          update: (cache) => {
+            cache.evict({ fieldName: "bankAccounts: {}" });
+            cache.gc();
           },
         });
         if (!errors) {
-          history.push("/dashboard/lobby");
+          actions.resetForm();
         }
       }}
     >

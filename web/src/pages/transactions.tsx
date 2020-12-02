@@ -11,19 +11,13 @@ import {
   CreateAccountModal,
   SideBar,
   TransactionsList,
+  DeleteAccountModal,
+  EditAccountModal,
 } from "../components";
-import { DeleteAccountModal } from "../components/DeleteAccountModal";
-import { EditAccountModal } from "../components/EditAccountModal";
 import { useGetAccountFromUrl } from "../utils/useGetAccountFromUrl";
+import { useGetIntId } from "../utils/useGetIntId";
 
 interface TransactionsProps {}
-
-const statOptions = [
-  { id: "1", name: "Current Balalnce", value: "$272,00.48" },
-  { id: "2", name: "Monthly Spending", value: "$22,00.48" },
-  { id: "3", name: "Monthly Deposits", value: "$17,00.48" },
-  { id: "4", name: "Monthly Transactions", value: "22" },
-];
 
 export const Transactions: React.FC<TransactionsProps> = () => {
   const {
@@ -41,8 +35,10 @@ export const Transactions: React.FC<TransactionsProps> = () => {
     onOpen: onOpenDelete,
     onClose: onCloseDelete,
   } = useDisclosure();
-  const { data } = useGetAccountFromUrl();
-  console.log(data);
+  const { data, loading } = useGetAccountFromUrl();
+  const intId = useGetIntId();
+  console.log(intId);
+  // console.log(data);
 
   return (
     <Layout>
@@ -56,7 +52,13 @@ export const Transactions: React.FC<TransactionsProps> = () => {
           onOpenEdit={onOpenEdit}
           onOpenDelete={onOpenDelete}
         />
-        <AccountStats statOptions={statOptions} />
+        <AccountStats
+          balance={data?.bankAccount?.currentBalance}
+          spending={data?.bankAccount?.monthlySpending}
+          deposits={data?.bankAccount?.monthlyDeposits}
+          transactions={data?.bankAccount?.monthlyTransactions}
+          loading={loading}
+        />
         <AddTransaction />
         <TransactionsList />
         <Footer />

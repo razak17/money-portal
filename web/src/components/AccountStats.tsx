@@ -1,38 +1,48 @@
-import { HStack, Box, Heading, Flex, Text } from "@chakra-ui/react";
 import React from "react";
-
-type statType = {
-  id: string;
-  name: string;
-  value: string;
-};
+import { HStack, Box } from "@chakra-ui/react";
+import { StatStack } from "./common";
 
 interface AccountStatsProps {
-  statOptions: statType[];
+  balance: number | undefined;
+  spending: number | undefined;
+  deposits: number | undefined;
+  transactions: number | undefined;
+  loading: boolean;
 }
 
-export const AccountStats: React.FC<AccountStatsProps> = ({ statOptions }) => {
+export const AccountStats: React.FC<AccountStatsProps> = ({
+  balance,
+  spending,
+  deposits,
+  transactions,
+  loading,
+}) => {
   return (
-    <Box padding="0 2rem" marginBottom="2rem">
+    <Box padding="0 2rem" mb="1rem">
       <HStack spacing={8}>
-        {statOptions.map((option) => (
-          <Box
-            key={option.id}
-            p={4}
-            maxWidth="25%"
-            shadow="md"
-            borderWidth="1px"
-            flex="1"
-            borderRadius="md"
-          >
-            <Flex justifyContent="center" mb={2} textTransform="uppercase">
-              <Heading size="xs">{option.name}</Heading>
-            </Flex>
-            <Flex justifyContent="center">
-              <Text fontSize="3xl">{option.value}</Text>
-            </Flex>
-          </Box>
-        ))}
+        <StatStack
+          withSign={balance ? true : false}
+          title="Current Balalnce"
+          value={balance}
+          loading={loading}
+        />
+        <StatStack
+          withSign={spending ? true : false}
+          title="Monthly Spending"
+          value={spending}
+          loading={loading}
+        />
+        <StatStack
+          withSign={deposits ? true : false}
+          title="Monthly Deposits"
+          value={deposits}
+          loading={loading}
+        />
+        <StatStack
+          title="Monthly Transactions"
+          value={transactions}
+          loading={loading}
+        />
       </HStack>
     </Box>
   );

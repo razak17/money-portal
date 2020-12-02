@@ -6,7 +6,11 @@ import {
   Column,
   PrimaryGeneratedColumn,
   BaseEntity,
+  ManyToOne,
 } from "typeorm";
+import { User } from "./User";
+import { BankAccount } from "./BankAccount";
+import { transactionType } from "../types";
 
 @ObjectType()
 @Entity()
@@ -21,11 +25,28 @@ export class Transaction extends BaseEntity {
 
   @Field()
   @Column()
-  transactionType!: string;
+  type!: transactionType;
 
   @Field()
   @Column()
   memo!: string;
+
+  @Field()
+  @Column()
+  creatorId: number;
+
+  @Field()
+  @ManyToOne(() => User, (user) => user.transactions)
+  creator: User;
+
+  @Field()
+  @Column()
+  bankAccountId: number;
+
+  @ManyToOne(() => BankAccount, (bankAccount) => bankAccount.transactions, {
+    onDelete: "CASCADE",
+  })
+  bankAccount: BankAccount;
 
   @Field(() => String)
   @CreateDateColumn()

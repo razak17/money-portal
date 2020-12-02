@@ -6,6 +6,8 @@ import {
   Mutation,
   Resolver,
   Query,
+  FieldResolver,
+  Root,
 } from "type-graphql";
 import { User } from "../entities/User";
 import { getConnection } from "typeorm";
@@ -35,9 +37,22 @@ class UserResponse {
 
 @Resolver(User)
 export class UserResolver {
-  @Query(() => String)
-  hello() {
-    return "Hello";
+  // Hide current user email
+  @FieldResolver(() => String)
+  email(@Root() user: User, @Ctx() { req }: MyContext) {
+    if (req.session.userId === user.id) {
+      return user.email;
+    }
+    return "";
+  }
+
+  // Hide current user username
+  @FieldResolver(() => String)
+  username(@Root() user: User, @Ctx() { req }: MyContext) {
+    if (req.session.userId === user.id) {
+      return user.username;
+    }
+    return "";
   }
 
   // Current User

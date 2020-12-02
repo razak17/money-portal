@@ -15,6 +15,8 @@ import Redis from "ioredis";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import { UserResolver } from "./resolvers/user";
+import { createUserLoader } from "./utils/createUserLoader";
+import { createBankAccountLoader } from "./utils/createBankAccountLoader";
 
 const main = async () => {
   await createConnection({
@@ -27,6 +29,8 @@ const main = async () => {
     migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Transaction, BankAccount, User],
   });
+
+  // await BankAccount.delete({});
 
   const PORT = 4000;
   const app = express();
@@ -69,6 +73,8 @@ const main = async () => {
       req,
       res,
       redis,
+      userLoader: createUserLoader(),
+      bankAccountLoader: createBankAccountLoader(),
     }),
   });
 

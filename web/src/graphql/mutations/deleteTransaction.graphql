@@ -1,0 +1,3 @@
+mutation DeleteTransaction($id: Int!, $bankAccountId: Int!) {
+  deleteTransaction(id: $id, bankAccountId: $bankAccountId)
+}

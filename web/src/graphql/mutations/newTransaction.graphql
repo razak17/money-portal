@@ -1,0 +1,19 @@
+mutation NewTransaction($input: TransactionInput!, $bankAccountId: Int!) {
+  newTransaction(input: $input, bankAccountId: $bankAccountId) {
+    id
+    amount
+    type
+    memo
+    creator {
+      id
+      username
+      email
+    }
+    bankAccount {
+      id
+      name
+      type
+    }
+    createdAt
+  }
+}

@@ -6,7 +6,12 @@ import {
   Column,
   PrimaryGeneratedColumn,
   BaseEntity,
+  ManyToOne,
+  OneToMany,
 } from "typeorm";
+import { User } from "./User";
+import { Transaction } from "./Transaction";
+import { accountType } from "../types";
 
 @ObjectType()
 @Entity()
@@ -21,7 +26,7 @@ export class BankAccount extends BaseEntity {
 
   @Field()
   @Column()
-  type!: string;
+  type!: accountType;
 
   @Field()
   @Column()
@@ -30,6 +35,33 @@ export class BankAccount extends BaseEntity {
   @Field()
   @Column()
   lowBalanceAlert!: number;
+
+  @Field()
+  @Column({ type: "int", default: 0 })
+  currentBalance: number;
+
+  @Field()
+  @Column({ type: "int", default: 0 })
+  monthlySpending: number;
+
+  @Field()
+  @Column({ type: "int", default: 0 })
+  monthlyDeposits: number;
+
+  @Field()
+  @Column({ type: "int", default: 0 })
+  monthlyTransactions: number;
+
+  @Field()
+  @Column()
+  creatorId: number;
+
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.bankAccounts)
+  creator: User;
+
+  @OneToMany(() => Transaction, (transaction) => transaction.bankAccount)
+  transactions: Transaction[];
 
   @Field(() => String)
   @CreateDateColumn()

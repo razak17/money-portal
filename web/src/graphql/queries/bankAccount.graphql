@@ -5,6 +5,15 @@ query BankAccount($id: Int!) {
     type
     startingBalance
     lowBalanceAlert
+    currentBalance
+    monthlySpending
+    monthlyTransactions
+    monthlyDeposits
+    creator {
+      id
+      username
+      email
+    }
     createdAt
   }
 }
