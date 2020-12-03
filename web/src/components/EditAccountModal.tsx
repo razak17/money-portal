@@ -1,4 +1,3 @@
-import { WarningTwoIcon } from "@chakra-ui/icons";
 import {
   ModalBody,
   ModalFooter,
@@ -6,21 +5,17 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
-  ModalCloseButton,
   Box,
-  Text,
 } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import * as React from "react";
-import { useHistory } from "react-router-dom";
-import { InputField, SelectField } from ".";
+import { FormikInputField, FormikSelectField } from "./";
 import { accountOptions } from "../types";
+import { useGetIntId } from "../utils/useGetIntId";
 import {
   useBankAccountQuery,
   useUpdateBankAccountMutation,
 } from "../generated/graphql";
-import { useGetIntId } from "../utils/useGetIntId";
 
 interface EditAccountModalProps {
   isOpen: boolean;
@@ -31,15 +26,15 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const [updateBankAccount] = useUpdateBankAccountMutation();
+  const initialRef = React.useRef<HTMLInputElement>(null);
+
   const intId = useGetIntId();
-  let history = useHistory();
+  const [updateBankAccount] = useUpdateBankAccountMutation();
   const { data, loading } = useBankAccountQuery({
     variables: {
       id: intId,
     },
   });
-  // console.log(data);
 
   let body = null;
   if (loading) {
@@ -51,12 +46,7 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
   } else if (!data?.bankAccount) {
     body = (
       <Box textAlign="center" p={4}>
-        <Box mt={4}>
-          <WarningTwoIcon w="6rem" h="6rem" color="red.500" />
-        </Box>
-        <Text fontSize="lg" mt={4}>
-          could not find account
-        </Text>
+        Not Found
       </Box>
     );
   } else {
@@ -74,35 +64,40 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
               id: intId,
               ...values,
             },
+            update: (cache) => {
+              cache.evict({ fieldName: "bankAccounts:{}" });
+              cache.gc();
+            },
           });
           if (!errors) {
-            history.goBack();
+            onClose();
           }
         }}
       >
         {({ isSubmitting }) => (
           <Form>
             <ModalBody pb={4}>
-              <InputField
+              <FormikInputField
                 name="name"
                 type="text"
                 label="Account Name"
                 placeholder="Enter Account Name"
+                elementRef={initialRef}
               />
               {data.bankAccount ? (
-                <SelectField
+                <FormikSelectField
                   name="type"
                   label="Account Type"
                   selectOptions={accountOptions}
                 />
               ) : (
-                <SelectField
+                <FormikSelectField
                   name="type"
                   label="Account Type"
                   selectOptions={accountOptions}
                 />
               )}
-              <InputField
+              <FormikInputField
                 amount
                 type="number"
                 name="lowBalanceAlert"
@@ -119,7 +114,9 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
               >
                 Update
               </Button>
-              <Button onClick={onClose}>Cancel</Button>
+              <Button colorScheme="red" onClick={onClose}>
+                Cancel
+              </Button>
             </ModalFooter>
           </Form>
         )}
@@ -128,13 +125,14 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
   }
 
   return (
-    <Modal size="lg" isOpen={isOpen} onClose={onClose}>
+    <Modal
+      initialFocusRef={initialRef}
+      size="lg"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Add Bank Account</ModalHeader>
-        <ModalCloseButton />
-        {body}
-      </ModalContent>
+      <ModalContent>{body}</ModalContent>
     </Modal>
   );
 };

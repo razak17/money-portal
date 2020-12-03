@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Formik, Form } from "formik";
 import { Wrapper } from "../components/Wrapper";
-import { InputField } from "../components";
+import { FormikInputField } from "../components";
 import { Box, Button, Link as ChakraLink, Flex } from "@chakra-ui/react";
 import { useLoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
@@ -32,13 +32,13 @@ export const Login: React.FC<loginProps> = () => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <InputField
+            <FormikInputField
               name="usernameOrEmail"
               placeholder="Username or Email"
               label="Username or Email"
             />
             <Box mt={4}>
-              <InputField
+              <FormikInputField
                 name="password"
                 placeholder="Password"
                 label="Password"

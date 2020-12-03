@@ -1,30 +1,29 @@
 import * as React from "react";
 import {
+  InputGroup,
+  InputLeftElement,
   FormControl,
   FormLabel,
-  InputGroup,
   Input,
-  InputLeftElement,
   FormErrorMessage,
 } from "@chakra-ui/react";
+import { useField } from "formik";
 
 type InputFieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
   name: string;
   label?: string;
   amount?: boolean;
   elementRef?: React.RefObject<HTMLInputElement>;
-  error: any;
 };
 
-export const InputField: React.FC<InputFieldProps> = ({
+export const FormikInputField: React.FC<InputFieldProps> = ({
   label,
   size: _,
-  amount = false,
-  elementRef: ref = null,
-  error,
+  amount,
+  elementRef = null,
   ...props
 }) => {
-  const field = props;
+  const [field, { error }] = useField(props);
 
   let body = null;
 
@@ -37,14 +36,15 @@ export const InputField: React.FC<InputFieldProps> = ({
           fontSize="1.2em"
           children="$"
         />
-        <Input ref={ref} {...props} type="number" id={field.name} />
+        <Input ref={elementRef} {...props} {...field} id={field.name} />;
       </InputGroup>
     );
   } else {
-    body = <Input ref={ref} {...props} type="text" id={field.name} />;
+    body = <Input ref={elementRef} {...props} {...field} id={field.name} />;
   }
+
   return (
-    <FormControl isInvalid={error ? !!error : false}>
+    <FormControl mt={4} isInvalid={!!error}>
       {label ? <FormLabel htmlFor={field.name}>{label}</FormLabel> : null}
       {body}
       {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}

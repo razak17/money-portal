@@ -25,6 +25,20 @@ export const AddTransactionSchema: Yup.ObjectSchema<TransactionType> = Yup.objec
       .min(1, "Must be greater than 0.")
       .required("Please enter an amount."),
     type: Yup.string().required("Please select transaction type."),
-    memo: Yup.string().required("Please enter memo."),
+    memo: Yup.string()
+      .max(20, "Must be 20 characters or less.")
+      .required("Please enter memo."),
+  }
+);
+
+export const EditTransactionSchema: Yup.ObjectSchema<TransactionType> = Yup.object(
+  {
+    amount: Yup.number()
+      .min(1, "Must be greater than 0.")
+      .required("Please enter an amount."),
+    type: Yup.string().required("Please select transaction type."),
+    memo: Yup.string()
+      .max(20, "Must be 20 characters or less.")
+      .required("Please enter memo."),
   }
 );

@@ -83,6 +83,7 @@ export class TransactionResolver {
 
     if (cursor) {
       replacements.push(new Date(parseInt(cursor)));
+      console.log(new Date(parseInt(cursor)));
     }
 
     const transactions = await getConnection().query(
@@ -91,7 +92,7 @@ export class TransactionResolver {
     from transaction t 
     ${
       cursor
-        ? `where t."creatorId" = $2, t."bankAccountId" = $3 and t."createdAt" < $4`
+        ? `where t."creatorId" = $2 and t."bankAccountId" = $3 and t."createdAt" < $4`
         : `where t."creatorId" = $2 and t."bankAccountId" = $3`
     }
     order by t."createdAt" DESC
@@ -167,7 +168,7 @@ export class TransactionResolver {
     const { userId } = req.session;
 
     const oldTransaction = await Transaction.findOne({
-      where: { id, userId, bankAccountId },
+      where: { id, creatorId: userId, bankAccountId },
     });
 
     const result = await getConnection()
@@ -175,7 +176,7 @@ export class TransactionResolver {
       .update(Transaction)
       .set({ amount, type, memo })
       .where(
-        "id = :id, bankAccountId = :bankAccountId and creatorId = :creatorId",
+        "id = :id and bankAccountId = :bankAccountId and creatorId = :creatorId",
         {
           id,
           creatorId: userId,

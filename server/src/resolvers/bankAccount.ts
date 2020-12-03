@@ -71,7 +71,7 @@ export class BankAccountResolver {
     from bank_account b 
     ${
       cursor
-        ? `where b."creatorId" = $2, and b."createdAt" < $5`
+        ? `where b."creatorId" = $2 and b."createdAt" < $3`
         : `where b."creatorId" = $2`
     }
     order by b."createdAt" DESC

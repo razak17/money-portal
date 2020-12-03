@@ -3,15 +3,18 @@ import { Box, IconButton } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 
 interface EditDeleteTraansactionProps {
-  onOpenDelete: () => void;
+  onOpenDelete: any;
+  isEditing: any;
 }
 
 export const EditDeleteTransactionButton: React.FC<EditDeleteTraansactionProps> = ({
   onOpenDelete,
+  isEditing,
 }) => {
   return (
     <Box textAlign="center">
       <IconButton
+        onClick={isEditing}
         colorScheme="teal"
         mr={4}
         icon={<EditIcon />}

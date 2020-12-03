@@ -14,8 +14,21 @@ interface NavProps {}
 
 export const Nav: React.FC<NavProps> = () => {
   const [logout, { loading: logoutFetching }] = useLogoutMutation();
-  const { data: MeData, loading: MeLoading } = useMeQuery();
   const history = useHistory();
+
+  let status = null;
+
+  status = (
+    <Button
+      isLoading={logoutFetching}
+      onClick={async () => {
+        await logout();
+        history.push("/login");
+      }}
+    >
+      Logout
+    </Button>
+  );
 
   return (
     <Flex padding="1.5rem 2rem" borderBottom="1px solid black">
@@ -32,30 +45,7 @@ export const Nav: React.FC<NavProps> = () => {
           </Flex>
         </ChakraLink>
       </Flex>
-      <Box ml="auto">
-        {MeLoading ? (
-          <Text>Loading</Text>
-        ) : MeData?.me && MeData?.me.email ? (
-          <Button
-            isLoading={logoutFetching}
-            onClick={async () => {
-              await logout();
-              history.push("/login");
-            }}
-          >
-            Logout
-          </Button>
-        ) : (
-          <Button
-            isLoading={MeLoading}
-            onClick={() => {
-              history.push("/login");
-            }}
-          >
-            Login
-          </Button>
-        )}
-      </Box>
+      <Box ml="auto">{status}</Box>
     </Flex>
   );
 };

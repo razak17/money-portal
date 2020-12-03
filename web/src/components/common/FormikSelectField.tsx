@@ -4,24 +4,23 @@ import {
   FormLabel,
   Select,
 } from "@chakra-ui/react";
+import { useField } from "formik";
 import React from "react";
 
 type SelectFieldProps = React.InputHTMLAttributes<HTMLSelectElement> & {
-  label?: string;
+  label: string;
   name: string;
   defaultOption?: string;
   selectOptions: string[];
-  error?: any;
 };
 
-export const SelectField: React.FC<SelectFieldProps> = ({
+export const FormikSelectField: React.FC<SelectFieldProps> = ({
   label,
   selectOptions,
   size: _,
-  error,
   ...props
 }) => {
-  const field = props;
+  const [field, { error }] = useField(props);
 
   const options = selectOptions.map((option, index) => (
     <option key={index} value={option}>
@@ -30,8 +29,8 @@ export const SelectField: React.FC<SelectFieldProps> = ({
   ));
 
   return (
-    <FormControl isInvalid={error ? !!error : false}>
-      {label ? <FormLabel htmlFor={field.name}>{label}</FormLabel> : null}
+    <FormControl mt={4} isInvalid={!!error}>
+      <FormLabel htmlFor={field.name}>{label}</FormLabel>
       <Select {...field} {...props}>
         {[...options]}
       </Select>

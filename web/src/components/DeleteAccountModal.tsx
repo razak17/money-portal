@@ -10,11 +10,12 @@ import {
   ModalOverlay,
   Text,
 } from "@chakra-ui/react";
-import { InputField } from "./common";
+import { FormikInputField } from "./";
 import * as React from "react";
 import { Form, Formik } from "formik";
 import { useGetIntId } from "../utils/useGetIntId";
 import { useDeleteBankAccountMutation } from "../generated/graphql";
+import { useHistory } from "react-router-dom";
 
 interface DeleteAccountModalProps {
   isOpen: boolean;
@@ -26,10 +27,16 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
   onClose,
 }) => {
   const intId = useGetIntId();
+  const initialRef = React.useRef<HTMLInputElement>(null);
+
   const [deleteBankAccount] = useDeleteBankAccountMutation();
-  const body = (
+
+  let history = useHistory();
+
+  let body = null;
+  body = (
     <Formik
-      initialValues={{ deleteAccount: "Hello" }}
+      initialValues={{ deleteAccount: "DELETE" }}
       onSubmit={async (values) => {
         console.log(values);
         if (values.deleteAccount === "DELETE") {
@@ -37,8 +44,13 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
             variables: {
               id: intId,
             },
+            update: (cache) => {
+              cache.evict({ fieldName: "bankAccounts:{}" });
+              cache.gc();
+            },
           });
           if (!errors) {
+            history.push("/dashboard/lobby");
           }
         }
       }}
@@ -52,11 +64,13 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
             <Heading>Are you sure?</Heading>
             <Box p={4}>
               <Text fontSize="lg">
-                This will permanently delete your account and all transactions!
+                This will permanently delete your account and all transactions
+                under it!
               </Text>
-              <InputField
+              <FormikInputField
                 name="deleteAccount"
                 placeholder="Enter DELETE if you wish to proceed."
+                elementRef={initialRef}
               />
             </Box>
           </ModalBody>
@@ -64,12 +78,12 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
             <Button
               isLoading={isSubmitting}
               type="submit"
-              colorScheme="blue"
+              colorScheme="red"
               mr={3}
             >
               Delete
             </Button>
-            <Button colorScheme="red" onClick={onClose}>
+            <Button colorScheme="blue" onClick={onClose}>
               Cancel
             </Button>
           </ModalFooter>
@@ -77,8 +91,14 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
       )}
     </Formik>
   );
+
   return (
-    <Modal size="lg" isOpen={isOpen} onClose={onClose}>
+    <Modal
+      initialFocusRef={initialRef}
+      size="md"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
       <ModalOverlay />
       <ModalContent>{body}</ModalContent>
     </Modal>

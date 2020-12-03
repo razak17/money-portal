@@ -11,8 +11,8 @@ export const deleteDeposit = async (
           update bank_account
           set 
           "monthlyDeposits" = "monthlyDeposits" - $4,
-          "currentBalance" = "currentBalance" - $4
-          "monthlyTransactions" = "monthlyTransactions" - $3,
+          "currentBalance" = "currentBalance" - $4,
+          "monthlyTransactions" = "monthlyTransactions" - $3
           where "id" = $1 and "creatorId" = $2
           `,
       [bankAccountId, userId, 1, oldAmount]
@@ -29,7 +29,7 @@ export const deleteTransfer = async (
       `
           update bank_account
           set 
-          "monthlyTransactions" = "monthlyTransactions" - $3,
+          "monthlyTransactions" = "monthlyTransactions" - $3
           where "id" = $1 and "creatorId" = $2
           `,
       [bankAccountId, userId, 1]

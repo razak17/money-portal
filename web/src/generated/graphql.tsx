@@ -355,7 +355,7 @@ export type BankAccountsQuery = (
     & Pick<PaginatedBankAccounts, 'hasMore'>
     & { bankAccounts: Array<(
       { __typename?: 'BankAccount' }
-      & Pick<BankAccount, 'id' | 'name' | 'type' | 'startingBalance' | 'lowBalanceAlert' | 'currentBalance' | 'monthlySpending' | 'monthlyTransactions' | 'monthlyDeposits'>
+      & Pick<BankAccount, 'id' | 'name' | 'type' | 'startingBalance' | 'lowBalanceAlert' | 'currentBalance' | 'monthlySpending' | 'monthlyTransactions' | 'monthlyDeposits' | 'createdAt' | 'updatedAt'>
       & { creator: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'username' | 'email'>
@@ -833,6 +833,8 @@ export const BankAccountsDocument = gql`
         username
         email
       }
+      createdAt
+      updatedAt
     }
   }
 }

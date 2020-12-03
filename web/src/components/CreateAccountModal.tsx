@@ -1,19 +1,18 @@
 import * as React from "react";
 import {
+  ModalBody,
+  ModalFooter,
+  Button,
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalCloseButton,
-  ModalHeader,
-  Button,
-  ModalBody,
-  ModalFooter,
 } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
-import { InputField, SelectField } from ".";
+import { FormikInputField, FormikSelectField } from "./";
 import { useNewBankAccountMutation } from "../generated/graphql";
 import { accountOptions } from "../types";
 import { NewBankAccountSchema } from "../utils/validate";
+import { useHistory } from "react-router-dom";
 
 interface Props {
   isOpen: boolean;
@@ -21,9 +20,14 @@ interface Props {
 }
 
 export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
+  const initialRef = React.useRef<HTMLInputElement>(null);
+  const history = useHistory();
+
   const [newBankAccount] = useNewBankAccountMutation();
 
-  const form = (
+  let body = null;
+
+  body = (
     <Formik
       initialValues={{
         name: "",
@@ -35,8 +39,7 @@ export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
       validateOnBlur={false}
       validateOnChange={false}
       onSubmit={async (values, actions) => {
-        console.log(values);
-        const { errors } = await newBankAccount({
+        const { errors, data } = await newBankAccount({
           variables: {
             input: {
               ...values,
@@ -49,33 +52,37 @@ export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
             cache.gc();
           },
         });
-        if (!errors) {
+        if (!errors && data?.newBankAccount) {
           actions.resetForm();
+          history.push(
+            `/dashboard/accounts/accounts-details/${data.newBankAccount.id}`
+          );
         }
       }}
     >
       {({ isSubmitting }) => (
         <Form>
           <ModalBody pb={6}>
-            <InputField
+            <FormikInputField
               name="name"
               type="text"
               label="Account Name"
               placeholder="Enter Account Name"
+              elementRef={initialRef}
             />
-            <SelectField
+            <FormikSelectField
               name="type"
               label="Account Type"
               selectOptions={accountOptions}
             />
-            <InputField
+            <FormikInputField
               amount
               name="startingBalance"
               type="number"
               label="Starting Balance"
               placeholder="Enter Starting Balance"
             />
-            <InputField
+            <FormikInputField
               amount
               type="number"
               name="lowBalanceAlert"
@@ -92,7 +99,9 @@ export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
             >
               Save
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button colorScheme="red" onClick={onClose}>
+              Cancel
+            </Button>
           </ModalFooter>
         </Form>
       )}
@@ -100,13 +109,14 @@ export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
   );
 
   return (
-    <Modal size="xl" isOpen={isOpen} onClose={onClose}>
+    <Modal
+      initialFocusRef={initialRef}
+      size="lg"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Add Bank Account</ModalHeader>
-        <ModalCloseButton />
-        {form}
-      </ModalContent>
+      <ModalContent>{body}</ModalContent>
     </Modal>
   );
 };

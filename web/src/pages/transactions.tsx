@@ -1,4 +1,3 @@
-import { useDisclosure } from "@chakra-ui/react";
 import * as React from "react";
 import {
   Footer,
@@ -16,41 +15,62 @@ import {
 } from "../components";
 import { useGetAccountFromUrl } from "../utils/useGetAccountFromUrl";
 import { useGetIntId } from "../utils/useGetIntId";
+import { toTitleCase } from "../utils/toTitleCase";
 
 interface TransactionsProps {}
 
 export const Transactions: React.FC<TransactionsProps> = () => {
-  const {
-    isOpen: isOpenAccount,
-    onOpen: onOpenAccount,
-    onClose: onCloseAccount,
-  } = useDisclosure();
-  const {
-    isOpen: isOpenEdit,
-    onOpen: onOpenEdit,
-    onClose: onCloseEdit,
-  } = useDisclosure();
-  const {
-    isOpen: isOpenDelete,
-    onOpen: onOpenDelete,
-    onClose: onCloseDelete,
-  } = useDisclosure();
+  const [showDeleteAccountModal, setShowDeleteAccountModal] = React.useState(
+    false
+  );
+  const [showEditAccountModal, setShowEditAccountModal] = React.useState(false);
+  const [showCreateAccountModal, setShowCreateAccountModal] = React.useState(
+    false
+  );
+
+  const handleShowDeleteAccountModal = () => setShowDeleteAccountModal(true);
+  const handleClosDeleteAccounteModal = () => setShowDeleteAccountModal(false);
+
+  const handleShowEditAccountModal = () => setShowEditAccountModal(true);
+  const handleCloseEditAccountModal = () => setShowEditAccountModal(false);
+
+  const handleShowCreateAccountModal = () => setShowCreateAccountModal(true);
+  const handleCloseCreateAccountModal = () => setShowCreateAccountModal(false);
+
   const { data, loading } = useGetAccountFromUrl();
   const intId = useGetIntId();
-  console.log(intId);
-  // console.log(data);
+  console.log("intId", intId);
 
   return (
     <Layout>
-      <SideBar onOpen={onOpenAccount} />
+      <SideBar onOpen={handleShowCreateAccountModal} />
       <MainContent>
-        <PageHeader heading="Transactions" />
-        <CreateAccountModal isOpen={isOpenAccount} onClose={onCloseAccount} />
-        <EditAccountModal isOpen={isOpenEdit} onClose={onCloseEdit} />
-        <DeleteAccountModal isOpen={isOpenDelete} onClose={onCloseDelete} />
+        <PageHeader
+          heading={
+            loading
+              ? "loading..."
+              : data && data?.bankAccount
+              ? `${toTitleCase(
+                  data?.bankAccount?.name
+                )} Account - ${toTitleCase(data?.bankAccount?.type)}`
+              : "Transactions"
+          }
+        />
+        <CreateAccountModal
+          isOpen={showCreateAccountModal}
+          onClose={handleCloseCreateAccountModal}
+        />
+        <EditAccountModal
+          isOpen={showEditAccountModal}
+          onClose={handleCloseEditAccountModal}
+        />
+        <DeleteAccountModal
+          isOpen={showDeleteAccountModal}
+          onClose={handleClosDeleteAccounteModal}
+        />
         <EditDeleteAccountButton
-          onOpenEdit={onOpenEdit}
-          onOpenDelete={onOpenDelete}
+          onOpenEdit={handleShowEditAccountModal}
+          onOpenDelete={handleShowDeleteAccountModal}
         />
         <AccountStats
           balance={data?.bankAccount?.currentBalance}
