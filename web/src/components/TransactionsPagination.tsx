@@ -1,12 +1,19 @@
 import { Box, Flex, Text, Button, ButtonGroup } from "@chakra-ui/react";
 import React from "react";
+import { LIMIT } from "../constants";
 
-interface TransactionsPaginationProps {}
+interface TransactionsPaginationProps {
+  count: number;
+}
 
-export const TransactionsPagination: React.FC<TransactionsPaginationProps> = () => {
+export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
+  count,
+}) => {
   return (
     <Flex p="1rem 0 1rem 0" flexWrap="wrap">
-      <Text> Showing 10 of entries of 40</Text>
+      <Text>
+        Showing {Math.min(count, LIMIT)} of entries of {count}
+      </Text>
       <Box ml="auto">
         <ButtonGroup variant="outline" spacing="1">
           <Button p="0.5rem 1rem" variant="link">

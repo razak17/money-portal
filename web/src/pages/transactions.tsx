@@ -43,16 +43,17 @@ export const Transactions: React.FC<TransactionsProps> = () => {
 
   return (
     <Layout>
-      <SideBar onOpen={handleShowCreateAccountModal} />
+      <SideBar />
       <MainContent>
         <PageHeader
+          onOpen={handleShowCreateAccountModal}
           heading={
             loading
               ? "loading..."
               : data && data?.bankAccount
-              ? `${toTitleCase(
-                  data?.bankAccount?.name
-                )} Account - ${toTitleCase(data?.bankAccount?.type)}`
+              ? `${toTitleCase(data?.bankAccount?.name)} - ${toTitleCase(
+                  data?.bankAccount?.type
+                )}`
               : "Transactions"
           }
         />

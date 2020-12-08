@@ -1,18 +1,23 @@
-import React, { useEffect } from "react";
-import { Route, useHistory } from "react-router-dom";
+import * as React from "react";
+import { Route, RouteProps, useHistory } from "react-router-dom";
+import { AuthRoutes } from "../api/routes";
 import { useMeQuery } from "../generated/graphql";
 
-export const PublicRoute = ({ ...rest }) => {
+interface PublicRouteProps extends RouteProps {}
+
+export const PublicRoute: React.FC<PublicRouteProps> = ({
+  children,
+  ...rest
+}) => {
   const { data, loading } = useMeQuery();
+
   let history = useHistory();
 
-  useEffect(() => {
-    if (loading) {
-    } else if (data?.me) {
-      history.push("/dashboard/lobby");
+  React.useEffect(() => {
+    if (data?.me) {
+      history.push(AuthRoutes.DASHBOARD);
     }
-    return () => {};
-  }, [data?.me, history, loading]);
+  }, [data, history]);
 
-  return <Route {...rest} />;
+  return loading ? <div>loading...</div> : <Route {...rest} />;
 };

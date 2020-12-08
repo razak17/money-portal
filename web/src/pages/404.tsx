@@ -6,7 +6,7 @@ interface Props {}
 export const NotFoundPage: React.FC<Props> = () => {
   return (
     <Box textAlign="center" mt="20rem">
-      <Text fontSize="3xl">404 | That Page does not exist!</Text>
+      <Text fontSize="3xl">404 | That page does not exist!</Text>
     </Box>
   );
 };

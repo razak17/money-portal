@@ -17,4 +17,5 @@ export * from "./TransactionView";
 export * from "./TransactionsTableEntries";
 export * from "./TransactionsTableFilters";
 export * from "./TransactionsTable";
+export * from "./TransactionsWrapper";
 export * from "./TransactionsPagination";

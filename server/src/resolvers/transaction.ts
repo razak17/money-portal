@@ -47,6 +47,8 @@ class PaginatedTransactions {
   transactions: Transaction[];
   @Field()
   hasMore: boolean;
+  @Field()
+  count: number;
 }
 
 @Resolver(Transaction)
@@ -104,6 +106,7 @@ export class TransactionResolver {
     return {
       transactions: transactions.slice(0, realLimit),
       hasMore: transactions.length === reaLimitPlusOne,
+      count: transactions.length,
     };
   }
 
@@ -141,7 +144,7 @@ export class TransactionResolver {
     if (input.type === TransactionOptions.DEPOSIT) {
       newDeposit(input.amount, bankAccountId, userId);
     } else if (input.type === TransactionOptions.TRANSFER) {
-      newTransfer(bankAccountId, userId);
+      newTransfer(input.amount, bankAccountId, userId);
     } else if (
       input.type === TransactionOptions.CASH_WITHDRAWAL ||
       input.type === TransactionOptions.CARD_NUMBER_ENTERED ||

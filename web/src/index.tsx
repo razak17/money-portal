@@ -3,11 +3,17 @@ import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { client } from "./utils/withApollo";
+import { ApolloProvider } from "@apollo/client";
+import { ColorModeScript } from "@chakra-ui/react";
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
-      <App />
+      <ApolloProvider client={client}>
+        <ColorModeScript />
+        <App />
+      </ApolloProvider>
     </Router>
   </React.StrictMode>,
   document.getElementById("root")

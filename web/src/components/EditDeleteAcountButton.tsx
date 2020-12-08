@@ -11,11 +11,11 @@ export const EditDeleteAccountButton: React.FC<EditSelectButtonProps> = ({
   onOpenDelete,
 }) => {
   return (
-    <Flex flexWrap="wrap" mb="1rem" p="1.5rem 2rem">
+    <Flex flexWrap="wrap" mb="1rem" p="1.5rem">
       <Flex flex={1}>
         <Box ml="auto">
           <Button onClick={onOpenEdit}>Edit Account</Button>
-          <Button ml={4} onClick={onOpenDelete}>
+          <Button bg="red.500" ml={4} onClick={onOpenDelete}>
             Delete Account
           </Button>
         </Box>

@@ -48,12 +48,13 @@ export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
             },
           },
           update: (cache) => {
-            cache.evict({ fieldName: "bankAccounts: {}" });
+            cache.evict({ fieldName: "bankAccounts" });
             cache.gc();
           },
         });
         if (!errors && data?.newBankAccount) {
-          actions.resetForm();
+          // actions.resetForm();
+          onClose();
           history.push(
             `/dashboard/accounts/accounts-details/${data.newBankAccount.id}`
           );

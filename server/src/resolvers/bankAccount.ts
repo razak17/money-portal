@@ -37,6 +37,8 @@ class PaginatedBankAccounts {
   bankAccounts: BankAccount[];
   @Field()
   hasMore: boolean;
+  @Field()
+  count: number;
 }
 
 @Resolver(BankAccount)
@@ -74,7 +76,7 @@ export class BankAccountResolver {
         ? `where b."creatorId" = $2 and b."createdAt" < $3`
         : `where b."creatorId" = $2`
     }
-    order by b."createdAt" DESC
+    order by b."name" 
     limit $1
     `,
       replacements
@@ -83,6 +85,7 @@ export class BankAccountResolver {
     return {
       bankAccounts: bankAccounts.slice(0, realLimit),
       hasMore: bankAccounts.length === reaLimitPlusOne,
+      count: bankAccounts.length,
     };
   }
 

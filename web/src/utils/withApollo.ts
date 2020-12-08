@@ -1,8 +1,4 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import {
-  PaginatedTransactions,
-  PaginatedBankAccounts,
-} from "../generated/graphql";
 
 export const createClient = (ctx: any) => {
   new ApolloClient({
@@ -25,35 +21,17 @@ export const client = new ApolloClient({
     typePolicies: {
       Query: {
         fields: {
-          transactions: {
-            keyArgs: [],
-            merge(
-              existing: PaginatedTransactions | undefined,
-              incoming: PaginatedTransactions
-            ): PaginatedTransactions {
-              return {
-                ...incoming,
-                transactions: [
-                  ...(existing?.transactions || []),
-                  ...incoming.transactions,
-                ],
-              };
-            },
-          },
           bankAccounts: {
             keyArgs: [],
-            merge(
-              existing: PaginatedBankAccounts | undefined,
-              incoming: PaginatedBankAccounts
-            ): PaginatedBankAccounts {
-              return {
-                ...incoming,
-                bankAccounts: [
-                  ...(existing?.bankAccounts || []),
-                  ...incoming.bankAccounts,
-                ],
-              };
-            },
+            merge: true,
+          },
+        },
+      },
+      Query2: {
+        fields: {
+          transactions: {
+            keyArgs: [],
+            merge: true,
           },
         },
       },

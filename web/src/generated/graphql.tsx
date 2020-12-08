@@ -48,6 +48,7 @@ export type PaginatedTransactions = {
   __typename?: 'PaginatedTransactions';
   transactions: Array<Transaction>;
   hasMore: Scalars['Boolean'];
+  count: Scalars['Float'];
 };
 
 export type Transaction = {
@@ -407,11 +408,14 @@ export type TransactionsQuery = (
   { __typename?: 'Query' }
   & { transactions: (
     { __typename?: 'PaginatedTransactions' }
-    & Pick<PaginatedTransactions, 'hasMore'>
+    & Pick<PaginatedTransactions, 'hasMore' | 'count'>
     & { transactions: Array<(
       { __typename?: 'Transaction' }
       & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo' | 'createdAt' | 'updatedAt'>
-      & { creator: (
+      & { bankAccount: (
+        { __typename?: 'BankAccount' }
+        & Pick<BankAccount, 'id' | 'name' | 'type'>
+      ), creator: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'username'>
       ) }
@@ -950,11 +954,17 @@ export const TransactionsDocument = gql`
     query Transactions($bankAccountId: Int!, $limit: Int!, $cursor: String) {
   transactions(bankAccountId: $bankAccountId, limit: $limit, cursor: $cursor) {
     hasMore
+    count
     transactions {
       id
       amount
       type
       memo
+      bankAccount {
+        id
+        name
+        type
+      }
       creator {
         id
         username

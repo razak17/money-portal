@@ -7,7 +7,12 @@ export const MainContent: React.FC<MainContentProps> = ({ children }) => {
   return (
     <Box
       position="relative"
-      minHeight="100vh"
+      top={0}
+      bottom={0}
+      left={0}
+      right={0}
+      overflow="visible"
+      display="block"
       width="100%"
       paddingBottom="70px"
     >

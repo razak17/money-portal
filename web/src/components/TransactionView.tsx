@@ -15,6 +15,14 @@ interface TransactionViewProps {
   editButtonRef: React.RefObject<HTMLButtonElement>;
 }
 
+const TableData: React.FC = ({ children }) => {
+  return (
+    <chakra.td textAlign="left" p="0.5rem">
+      {children}
+    </chakra.td>
+  );
+};
+
 export const TransactionView: React.FC<TransactionViewProps> = ({
   id,
   index,
@@ -33,40 +41,23 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
 
   return (
     <chakra.tr borderWidth="1px" borderRadius="md">
-      <chakra.td textAlign="center" p="1rem">
-        <Text>{`${index + 1}.`}</Text>
-      </chakra.td>
-      <chakra.td textAlign="center" p="1rem">
-        <Heading color="teal" size="xs">{`$${amount}`}</Heading>
-      </chakra.td>
-      <chakra.td textAlign="center" p="1rem">
-        <Text fontSize="md">{type}</Text>
-      </chakra.td>
-      <chakra.td textAlign="center" p="1rem">
-        <Text fontSize="md">{memo}</Text>
-      </chakra.td>
-      <chakra.td textAlign="center" p="1rem">
-        <Heading size="xs">
-          {new Date(parseInt(updatedAt)).toISOString()}
-        </Heading>
-        <Text fontSize="sm">{updatedAt}</Text>
-      </chakra.td>
-      <chakra.td>
+      <chakra.td textAlign="center" p="0.5rem">
         <DeleteTransactionModal
           id={id}
           bankAccountId={intId}
           isOpen={show}
           onClose={handleClose}
         />
-        <Box textAlign="center">
+        <Box p="0.5em">
           <IconButton
             ref={editButtonRef}
             onClick={() => setEditing(true)}
             colorScheme="teal"
-            mr={4}
             icon={<EditIcon />}
             aria-label="Edit Transaction"
           />
+        </Box>
+        <Box p="0.5em">
           <IconButton
             onClick={handleShow}
             colorScheme="red"
@@ -75,6 +66,22 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
           />
         </Box>
       </chakra.td>
+
+      <TableData>
+        <Heading color="teal" size="xs">{`$${amount}`}</Heading>
+      </TableData>
+      <TableData>
+        <Text fontSize="md">{type}</Text>
+      </TableData>
+      <TableData>
+        <Text fontSize="md">{memo}</Text>
+      </TableData>
+      <TableData>
+        <Heading size="xs">
+          {new Date(parseInt(updatedAt)).toISOString()}
+        </Heading>
+        <Text fontSize="sm">{updatedAt}</Text>
+      </TableData>
     </chakra.tr>
   );
 };

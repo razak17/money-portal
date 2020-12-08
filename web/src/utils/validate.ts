@@ -26,7 +26,7 @@ export const AddTransactionSchema: Yup.ObjectSchema<TransactionType> = Yup.objec
       .required("Please enter an amount."),
     type: Yup.string().required("Please select transaction type."),
     memo: Yup.string()
-      .max(20, "Must be 20 characters or less.")
+      .max(30, "Must be 30 characters or less.")
       .required("Please enter memo."),
   }
 );

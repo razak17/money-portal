@@ -11,24 +11,19 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { useBankAccountsQuery, useMeQuery } from "../../generated/graphql";
 import { toTitleCase } from "../../utils/toTitleCase";
+import { LIMIT } from "../../constants";
 
-interface SideBarProps {
-  onOpen: () => void;
-}
+interface SideBarProps {}
 
-export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
+export const SideBar: React.FC<SideBarProps> = () => {
   const [isOpenSideBar, setIsOpenSideBar] = React.useState(false);
 
   const toggling = () => setIsOpenSideBar(!isOpenSideBar);
 
-  React.useEffect(() => {
-    console.log("hey!");
-  });
-
   const { data: MeData, loading: MeLoading } = useMeQuery();
   const { data, loading, variables, fetchMore } = useBankAccountsQuery({
     variables: {
-      limit: 4,
+      limit: LIMIT,
       cursor: null,
     },
     notifyOnNetworkStatusChange: true,
@@ -55,25 +50,14 @@ export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
         </Flex>
       ) : MeData && MeData?.me?.username ? (
         <Flex padding="2rem" alignItems="center">
-          <Heading size="xl">Hello, {toTitleCase(MeData.me.username)}</Heading>
+          <Heading size="md">Hello, {toTitleCase(MeData.me.username)}</Heading>
         </Flex>
       ) : !MeLoading && !MeData ? (
         <Flex padding="2rem" alignItems="center">
-          <Heading size="xl">Demo Personal</Heading>
+          <Heading size="md">Demo Personal</Heading>
         </Flex>
       ) : null}
     </>
-  );
-
-  const addBankAccount = (
-    <ChakraLink
-      display="block"
-      position="relative"
-      padding="1.5rem 2rem"
-      onClick={onOpen}
-    >
-      <Text>Add Bank Account</Text>
-    </ChakraLink>
   );
 
   const accountsButton = (
@@ -104,7 +88,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
       {isOpenSideBar && loading ? (
         accountsLoading
       ) : isOpenSideBar && data?.bankAccounts.bankAccounts.length === 0 ? (
-        <List mt={0} borderBottom="1px solid black" maxHeight="none">
+        <List mt={0} maxHeight="none">
           <ListItem fontSize={12} position="relative">
             <Box
               display="block"
@@ -117,7 +101,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
           </ListItem>
         </List>
       ) : isOpenSideBar && data?.bankAccounts ? (
-        <List mt={0} borderBottom="1px solid black" maxHeight="none">
+        <List mt={0} maxHeight="none">
           {data?.bankAccounts &&
             data?.bankAccounts.bankAccounts.map((b) => (
               <ListItem fontSize={12} key={b.id} position="relative">
@@ -129,7 +113,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
                   padding="1.5rem 2rem"
                   paddingLeft="4rem"
                 >
-                  <Text>{b.name}</Text>
+                  <Text>{toTitleCase(b.name)}</Text>
                 </ChakraLink>
               </ListItem>
             ))}
@@ -158,36 +142,56 @@ export const SideBar: React.FC<SideBarProps> = ({ onOpen }) => {
           ) : null}
         </List>
       ) : null}
-      {addBankAccount}
     </>
   );
 
   return (
-    <Box>
-      <Box width="280px" height="100%" borderRight="1px solid black">
-        <Box position="relative" borderBottom="1px solid black" mb="1rem">
-          {heading}
-        </Box>
-        <Box mb="1rem" ml="2rem">
-          <Heading size="md">Personal</Heading>
-        </Box>
-        <List maxHeight="none" mt={0} mb="1rem">
-          <ListItem
-            fontSize={12}
-            position="relative"
-            borderBottom="1px solid black"
+    <Box
+      position="sticky"
+      borderRight="1px solid black"
+      top={0}
+      bottom={0}
+      left={0}
+      zIndex={1}
+      height="100vh"
+      maxH="100%"
+      overflowY="auto"
+      width={{ base: "0", sm: "0", md: "0", lg: "260px" }}
+      overflowWrap="break-word"
+      flexShrink={0}
+    >
+      <Box position="relative" borderBottom="1px solid black">
+        <ChakraLink as={Link} to="/">
+          <Flex
+            p="2rem"
+            flexWrap="wrap"
+            letterSpacing="0.1em"
+            textTransform="uppercase"
           >
-            {home}
-          </ListItem>
-          <ListItem
-            fontSize={12}
-            position="relative"
-            borderBottom="1px solid black"
-          >
-            {bankAccounts}
-          </ListItem>
-        </List>
+            <Heading size="lg">Money|</Heading>
+            <Heading size="lg">Portal</Heading>
+          </Flex>
+        </ChakraLink>
       </Box>
+
+      <Box position="relative" borderBottom="1px solid black" mb="1rem">
+        {heading}
+      </Box>
+      <Box mb="1rem" ml="2rem">
+        <Heading size="md">Personal</Heading>
+      </Box>
+      <List maxHeight="none" mt={0} mb="1rem">
+        <ListItem fontSize={12} position="relative">
+          {home}
+        </ListItem>
+        <ListItem
+          fontSize={12}
+          position="relative"
+          borderBottom="1px solid black"
+        >
+          {bankAccounts}
+        </ListItem>
+      </List>
     </Box>
   );
 };

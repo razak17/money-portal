@@ -5,14 +5,18 @@ import { FormikInputField } from "../components";
 import { Box, Button, Link as ChakraLink, Flex } from "@chakra-ui/react";
 import { useLoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
+import { AuthRoutes } from "../api/routes";
 
 interface loginProps {}
 
 export const Login: React.FC<loginProps> = () => {
-  let history = useHistory();
   const [login] = useLoginMutation();
-  // const [{ data: meData }] = useMeQuery();
+
+  let history = useHistory();
+  let location: any = useLocation();
+
+  let { from } = location.state || { from: { pathname: AuthRoutes.DASHBOARD } };
 
   return (
     <Wrapper variant="small">
@@ -26,7 +30,7 @@ export const Login: React.FC<loginProps> = () => {
           if (response.data?.login.errors) {
             setErrors(toErrorMap(response.data.login.errors));
           } else if (response.data?.login.user) {
-            history.push("/dashboard/lobby");
+            history.replace(from);
           }
         }}
       >

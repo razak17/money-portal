@@ -18,6 +18,14 @@ interface Props {
   inputFieldRef: React.RefObject<HTMLInputElement>;
 }
 
+const TableData: React.FC = ({ children }) => {
+  return (
+    <chakra.td textAlign="left" p="0.5rem">
+      {children}
+    </chakra.td>
+  );
+};
+
 export const EditTransactionView: React.FC<Props> = ({
   id,
   amount,
@@ -48,7 +56,7 @@ export const EditTransactionView: React.FC<Props> = ({
           ...values,
         },
         update: (cache) => {
-          cache.evict({ fieldName: "transactions:{}" });
+          cache.evict({ fieldName: "transactions" });
           cache.gc();
         },
       });
@@ -62,49 +70,17 @@ export const EditTransactionView: React.FC<Props> = ({
   return (
     <chakra.tr borderWidth="1px" borderRadius="md">
       <chakra.td textAlign="center" p="1rem">
-        <Text>Edit</Text>
-      </chakra.td>
-      <chakra.td textAlign="center" p="1rem">
-        <InputField
-          amount
-          elementRef={inputFieldRef}
-          {...getFieldProps("amount")}
-          name="amount"
-          error={errors.amount}
-        />
-      </chakra.td>
-      <chakra.td textAlign="center" p="1rem">
-        <SelectField
-          {...getFieldProps("type")}
-          name="type"
-          error={errors.type}
-          selectOptions={transactionOptions}
-        />
-      </chakra.td>
-      <chakra.td textAlign="center" p="1rem">
-        <InputField
-          {...getFieldProps("memo")}
-          name="memo"
-          error={errors.memo}
-        />
-      </chakra.td>
-      <chakra.td textAlign="center" p="1rem">
-        <Heading size="xs">
-          {new Date(parseInt(updatedAt)).toISOString()}
-        </Heading>
-        <Text fontSize="sm">{updatedAt}</Text>
-      </chakra.td>
-      <chakra.td>
-        <Box textAlign="center">
+        <Box p="0.5em">
           <IconButton
             isLoading={isSubmitting}
             onClick={() => handleSubmit()}
-            mr={4}
             type="submit"
             colorScheme="teal"
             icon={<CheckIcon />}
             aria-label="Confirm Edit Transaction"
           />
+        </Box>
+        <Box p="0.5em">
           <IconButton
             colorScheme="red"
             onClick={() => setEditing(false)}
@@ -114,6 +90,36 @@ export const EditTransactionView: React.FC<Props> = ({
           />
         </Box>
       </chakra.td>
+      <TableData>
+        <InputField
+          amount
+          elementRef={inputFieldRef}
+          {...getFieldProps("amount")}
+          name="amount"
+          error={errors.amount}
+        />
+      </TableData>
+      <TableData>
+        <SelectField
+          {...getFieldProps("type")}
+          name="type"
+          error={errors.type}
+          selectOptions={transactionOptions}
+        />
+      </TableData>
+      <TableData>
+        <InputField
+          {...getFieldProps("memo")}
+          name="memo"
+          error={errors.memo}
+        />
+      </TableData>
+      <TableData>
+        <Heading size="xs">
+          {new Date(parseInt(updatedAt)).toISOString()}
+        </Heading>
+        <Text fontSize="sm">{updatedAt}</Text>
+      </TableData>
     </chakra.tr>
   );
 };
