@@ -43,7 +43,7 @@ export const Transactions: React.FC<TransactionsProps> = () => {
 
   return (
     <Layout>
-      <SideBar />
+      <SideBar showModal={handleShowCreateAccountModal} />
       <MainContent>
         <PageHeader
           onOpen={handleShowCreateAccountModal}

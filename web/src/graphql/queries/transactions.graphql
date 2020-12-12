@@ -1,7 +1,6 @@
-query Transactions($bankAccountId: Int!, $limit: Int!, $cursor: String) {
-  transactions(bankAccountId: $bankAccountId, limit: $limit, cursor: $cursor) {
+query Transactions($bankAccountId: Int!, $limit: Int!, $offset: Int) {
+  transactions(bankAccountId: $bankAccountId, limit: $limit, offset: $offset) {
     hasMore
-    count
     transactions {
       id
       amount

@@ -45,8 +45,9 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
               id: intId,
             },
             update: (cache) => {
-              cache.evict({ fieldName: "bankAccounts:{}" });
-              cache.gc();
+              cache.evict({ fieldName: "bankAccounts" });
+              cache.evict({ fieldName: "totalBankAccounts" });
+              // cache.gc();
             },
           });
           if (!errors) {

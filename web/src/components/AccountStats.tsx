@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex } from "@chakra-ui/react";
-import { StatStack } from "./common";
+import { StatStack } from "./";
 
 interface AccountStatsProps {
   balance: number | undefined;

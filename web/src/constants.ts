@@ -1,1 +1,2 @@
-export const LIMIT = 50;
+export const LIMIT = 10;
+export const PAGE = 1;

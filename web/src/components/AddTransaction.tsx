@@ -8,9 +8,6 @@ export const AddTransaction: React.FC<AddTransactionProps> = () => {
   const heading = (
     <Flex m={0} p={2}>
       <Heading size="md">Add Transaction</Heading>
-      <Box ml="auto" cursor="pointer" onClick={() => console.log("close")}>
-        <Heading size="md">x</Heading>
-      </Box>
     </Flex>
   );
 

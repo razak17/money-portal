@@ -6,5 +6,4 @@ export * from "./MainContent";
 export * from "./Nav";
 export * from "./SelectField";
 export * from "./FormikSelectField";
-export * from "./SideBar";
 export * from "./StatStack";

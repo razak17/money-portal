@@ -1,0 +1,3 @@
+query TotalTransactions($bankAccountId: Int!) {
+  totalTransactions(bankAccountId: $bankAccountId)
+}

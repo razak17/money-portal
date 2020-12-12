@@ -20,7 +20,7 @@ interface Props {
 
 const TableData: React.FC = ({ children }) => {
   return (
-    <chakra.td textAlign="left" p="0.5rem">
+    <chakra.td textAlign="left" p="1.5em 0.5em">
       {children}
     </chakra.td>
   );
@@ -57,6 +57,7 @@ export const EditTransactionView: React.FC<Props> = ({
         },
         update: (cache) => {
           cache.evict({ fieldName: "transactions" });
+          cache.evict({ fieldName: "bankAccount" });
           cache.gc();
         },
       });
@@ -69,7 +70,7 @@ export const EditTransactionView: React.FC<Props> = ({
 
   return (
     <chakra.tr borderWidth="1px" borderRadius="md">
-      <chakra.td textAlign="center" p="1rem">
+      <chakra.td textAlign="center" p="0.5em">
         <Box p="0.5em">
           <IconButton
             isLoading={isSubmitting}

@@ -3,7 +3,6 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverBody,
-  Text,
   Link as ChakraLink,
   Box,
   Flex,

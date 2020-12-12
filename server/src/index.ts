@@ -19,7 +19,7 @@ import { createUserLoader } from "./utils/createUserLoader";
 import { createBankAccountLoader } from "./utils/createBankAccountLoader";
 
 const main = async () => {
-  await createConnection({
+  const conn = await createConnection({
     type: "postgres",
     database: "moneyportal",
     username: "postgres",
@@ -29,6 +29,8 @@ const main = async () => {
     migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Transaction, BankAccount, User],
   });
+
+  // await conn.runMigrations();
 
   // await BankAccount.delete({});
 

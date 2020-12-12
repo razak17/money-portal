@@ -7,4 +7,5 @@ export enum NonAuthRoutes {
   HOME = "/",
   LOGIN = "/login",
   REGISTER = "/register",
+  NOT_FOUND = "/404",
 }

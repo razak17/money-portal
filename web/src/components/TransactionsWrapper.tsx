@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Flex, Heading, chakra, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, chakra } from "@chakra-ui/react";
 import { TransactionsTableFilters } from "./";
 
 interface TransactionsWrapperProps {

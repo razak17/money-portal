@@ -17,7 +17,7 @@ export const Lobby: React.FC<LobbyProps> = () => {
 
   return (
     <Layout>
-      <SideBar />
+      <SideBar showModal={onOpen} />
       <MainContent>
         <PageHeader heading="Lobby" onOpen={onOpen} />
         <CreateAccountModal isOpen={isOpen} onClose={onClose} />

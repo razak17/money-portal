@@ -17,7 +17,7 @@ interface TransactionViewProps {
 
 const TableData: React.FC = ({ children }) => {
   return (
-    <chakra.td textAlign="left" p="0.5rem">
+    <chakra.td textAlign="left" p="1.5em 0.5em">
       {children}
     </chakra.td>
   );
@@ -41,7 +41,7 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
 
   return (
     <chakra.tr borderWidth="1px" borderRadius="md">
-      <chakra.td textAlign="center" p="0.5rem">
+      <chakra.td textAlign="center" p="0.5em">
         <DeleteTransactionModal
           id={id}
           bankAccountId={intId}

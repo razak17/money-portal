@@ -9,8 +9,10 @@ import { useGetIntId } from "../../utils/useGetIntId";
 
 interface AddTransactionFormProps {}
 
-export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({}) => {
+export const AddTransactionForm: React.FC<AddTransactionFormProps> = () => {
   const intId = useGetIntId();
+
+  const inputFieldRef = React.useRef<HTMLInputElement>(null);
 
   const [newTransaction] = useNewTransactionMutation();
 
@@ -34,13 +36,15 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({}) => {
           bankAccountId: intId,
         },
         update: (cache) => {
+          cache.evict({ fieldName: "totalTransactions" });
           cache.evict({ fieldName: "transactions" });
-          cache.evict({ fieldName: "bankAccounts" });
+          cache.evict({ fieldName: "bankAccount" });
           cache.gc();
         },
       });
-      if (!errors) {
+      if (!errors && inputFieldRef.current) {
         actions.resetForm();
+        inputFieldRef.current.focus();
       }
     },
   });
@@ -62,6 +66,7 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({}) => {
               {...getFieldProps("amount")}
               name="amount"
               error={errors.amount}
+              elementRef={inputFieldRef}
             />
           </Box>
         </Flex>

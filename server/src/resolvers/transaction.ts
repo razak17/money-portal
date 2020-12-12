@@ -47,8 +47,6 @@ class PaginatedTransactions {
   transactions: Transaction[];
   @Field()
   hasMore: boolean;
-  @Field()
-  count: number;
 }
 
 @Resolver(Transaction)
@@ -68,13 +66,35 @@ export class TransactionResolver {
     return bankAccountLoader.load(transaction.bankAccountId);
   }
 
+  // Total Transactions
+  @Query(() => Number)
+  @UseMiddleware(isAuth)
+  async totalTransactions(
+    @Ctx() { req }: MyContext,
+    @Arg("bankAccountId", () => Int) bankAccountId: number
+  ): Promise<number> {
+    const { userId } = req.session;
+    // const bankAccounts =  BankAccount.find({creatorId: userId});
+    const transactions = await getConnection().query(
+      `
+    select t.*
+    from transaction t 
+    where t."creatorId" = $1 and t."bankAccountId" = $2
+    order by t."creatorId" 
+    `,
+      [userId, bankAccountId]
+    );
+
+    return transactions.length;
+  }
+
   // Get All Transactions
   @Query(() => PaginatedTransactions)
   @UseMiddleware(isAuth)
   async transactions(
     @Arg("bankAccountId", () => Int) bankAccountId: number,
     @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => String, { nullable: true }) cursor: string | null,
+    @Arg("offset", () => Int, { nullable: true }) offset: number | null,
     @Ctx() { req }: MyContext
   ): Promise<PaginatedTransactions> {
     const { userId } = req.session;
@@ -83,9 +103,9 @@ export class TransactionResolver {
     const reaLimitPlusOne = realLimit + 1;
     const replacements: any[] = [reaLimitPlusOne, userId, bankAccountId];
 
-    if (cursor) {
-      replacements.push(new Date(parseInt(cursor)));
-      console.log(new Date(parseInt(cursor)));
+    if (offset) {
+      const page = (offset - 1) * limit;
+      replacements.push(page);
     }
 
     const transactions = await getConnection().query(
@@ -93,12 +113,13 @@ export class TransactionResolver {
     select t.*
     from transaction t 
     ${
-      cursor
-        ? `where t."creatorId" = $2 and t."bankAccountId" = $3 and t."createdAt" < $4`
+      offset
+        ? `where t."creatorId" = $2 and t."bankAccountId" = $3`
         : `where t."creatorId" = $2 and t."bankAccountId" = $3`
     }
-    order by t."createdAt" DESC
+    order by t."createdAt"
     limit $1
+    offset $4
     `,
       replacements
     );
@@ -106,7 +127,6 @@ export class TransactionResolver {
     return {
       transactions: transactions.slice(0, realLimit),
       hasMore: transactions.length === reaLimitPlusOne,
-      count: transactions.length,
     };
   }
 

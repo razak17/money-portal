@@ -2,6 +2,7 @@ import * as React from "react";
 import { Route, Redirect, RouteProps } from "react-router-dom";
 import { useMeQuery } from "../generated/graphql";
 import { NonAuthRoutes } from "../api/routes";
+import { Spinner, Box } from "@chakra-ui/react";
 
 interface PrivateRouteProps extends RouteProps {}
 
@@ -12,7 +13,11 @@ export const PrivateRoute: React.FC<PrivateRouteProps> = ({
   const { data, loading } = useMeQuery();
 
   if (loading) {
-    return <div>please wait...</div>;
+    return (
+      <Box display="flex" alignItems="center" justifyContent="center">
+        <Spinner />
+      </Box>
+    );
   }
 
   return (

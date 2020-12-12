@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Flex, Heading, Button, ButtonGroup } from "@chakra-ui/react";
+import { Flex, Button, ButtonGroup } from "@chakra-ui/react";
 import { filterOptions } from "../types";
 
 interface Props {}
@@ -14,21 +14,6 @@ export const TransactionsTableFilters: React.FC<Props> = () => {
           </Button>
         ))}
       </ButtonGroup>
-      <Box
-        width="auto"
-        maxW="100%"
-        cursor="pointer"
-        flex="0 0 auto"
-        position="relative"
-        ml={{ base: "auto", sm: "auto", md: "2em" }}
-        textAlign="center"
-        p={{
-          sm: "0.25em 0 0 1.5em",
-          md: "0.25em 0 0 2em",
-        }}
-      >
-        <Heading size="md">x</Heading>
-      </Box>
     </Flex>
   );
 };

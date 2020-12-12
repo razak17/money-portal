@@ -13,16 +13,23 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
+  totalTransactions: Scalars['Float'];
   transactions: PaginatedTransactions;
   transaction?: Maybe<Transaction>;
+  totalBankAccounts: Scalars['Float'];
   bankAccounts: PaginatedBankAccounts;
   bankAccount?: Maybe<BankAccount>;
   me?: Maybe<User>;
 };
 
 
+export type QueryTotalTransactionsArgs = {
+  bankAccountId: Scalars['Int'];
+};
+
+
 export type QueryTransactionsArgs = {
-  cursor?: Maybe<Scalars['String']>;
+  offset?: Maybe<Scalars['Int']>;
   limit: Scalars['Int'];
   bankAccountId: Scalars['Int'];
 };
@@ -48,7 +55,6 @@ export type PaginatedTransactions = {
   __typename?: 'PaginatedTransactions';
   transactions: Array<Transaction>;
   hasMore: Scalars['Boolean'];
-  count: Scalars['Float'];
 };
 
 export type Transaction = {
@@ -376,6 +382,24 @@ export type MeQuery = (
   )> }
 );
 
+export type TotalBankAccountsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TotalBankAccountsQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'totalBankAccounts'>
+);
+
+export type TotalTransactionsQueryVariables = Exact<{
+  bankAccountId: Scalars['Int'];
+}>;
+
+
+export type TotalTransactionsQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'totalTransactions'>
+);
+
 export type TransactionQueryVariables = Exact<{
   bankAccountId: Scalars['Int'];
   id: Scalars['Int'];
@@ -400,7 +424,7 @@ export type TransactionQuery = (
 export type TransactionsQueryVariables = Exact<{
   bankAccountId: Scalars['Int'];
   limit: Scalars['Int'];
-  cursor?: Maybe<Scalars['String']>;
+  offset?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -408,7 +432,7 @@ export type TransactionsQuery = (
   { __typename?: 'Query' }
   & { transactions: (
     { __typename?: 'PaginatedTransactions' }
-    & Pick<PaginatedTransactions, 'hasMore' | 'count'>
+    & Pick<PaginatedTransactions, 'hasMore'>
     & { transactions: Array<(
       { __typename?: 'Transaction' }
       & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo' | 'createdAt' | 'updatedAt'>
@@ -904,6 +928,67 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const TotalBankAccountsDocument = gql`
+    query TotalBankAccounts {
+  totalBankAccounts
+}
+    `;
+
+/**
+ * __useTotalBankAccountsQuery__
+ *
+ * To run a query within a React component, call `useTotalBankAccountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTotalBankAccountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTotalBankAccountsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTotalBankAccountsQuery(baseOptions?: Apollo.QueryHookOptions<TotalBankAccountsQuery, TotalBankAccountsQueryVariables>) {
+        return Apollo.useQuery<TotalBankAccountsQuery, TotalBankAccountsQueryVariables>(TotalBankAccountsDocument, baseOptions);
+      }
+export function useTotalBankAccountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TotalBankAccountsQuery, TotalBankAccountsQueryVariables>) {
+          return Apollo.useLazyQuery<TotalBankAccountsQuery, TotalBankAccountsQueryVariables>(TotalBankAccountsDocument, baseOptions);
+        }
+export type TotalBankAccountsQueryHookResult = ReturnType<typeof useTotalBankAccountsQuery>;
+export type TotalBankAccountsLazyQueryHookResult = ReturnType<typeof useTotalBankAccountsLazyQuery>;
+export type TotalBankAccountsQueryResult = Apollo.QueryResult<TotalBankAccountsQuery, TotalBankAccountsQueryVariables>;
+export const TotalTransactionsDocument = gql`
+    query TotalTransactions($bankAccountId: Int!) {
+  totalTransactions(bankAccountId: $bankAccountId)
+}
+    `;
+
+/**
+ * __useTotalTransactionsQuery__
+ *
+ * To run a query within a React component, call `useTotalTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTotalTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTotalTransactionsQuery({
+ *   variables: {
+ *      bankAccountId: // value for 'bankAccountId'
+ *   },
+ * });
+ */
+export function useTotalTransactionsQuery(baseOptions: Apollo.QueryHookOptions<TotalTransactionsQuery, TotalTransactionsQueryVariables>) {
+        return Apollo.useQuery<TotalTransactionsQuery, TotalTransactionsQueryVariables>(TotalTransactionsDocument, baseOptions);
+      }
+export function useTotalTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TotalTransactionsQuery, TotalTransactionsQueryVariables>) {
+          return Apollo.useLazyQuery<TotalTransactionsQuery, TotalTransactionsQueryVariables>(TotalTransactionsDocument, baseOptions);
+        }
+export type TotalTransactionsQueryHookResult = ReturnType<typeof useTotalTransactionsQuery>;
+export type TotalTransactionsLazyQueryHookResult = ReturnType<typeof useTotalTransactionsLazyQuery>;
+export type TotalTransactionsQueryResult = Apollo.QueryResult<TotalTransactionsQuery, TotalTransactionsQueryVariables>;
 export const TransactionDocument = gql`
     query Transaction($bankAccountId: Int!, $id: Int!) {
   transaction(bankAccountId: $bankAccountId, id: $id) {
@@ -951,10 +1036,9 @@ export type TransactionQueryHookResult = ReturnType<typeof useTransactionQuery>;
 export type TransactionLazyQueryHookResult = ReturnType<typeof useTransactionLazyQuery>;
 export type TransactionQueryResult = Apollo.QueryResult<TransactionQuery, TransactionQueryVariables>;
 export const TransactionsDocument = gql`
-    query Transactions($bankAccountId: Int!, $limit: Int!, $cursor: String) {
-  transactions(bankAccountId: $bankAccountId, limit: $limit, cursor: $cursor) {
+    query Transactions($bankAccountId: Int!, $limit: Int!, $offset: Int) {
+  transactions(bankAccountId: $bankAccountId, limit: $limit, offset: $offset) {
     hasMore
-    count
     transactions {
       id
       amount
@@ -990,7 +1074,7 @@ export const TransactionsDocument = gql`
  *   variables: {
  *      bankAccountId: // value for 'bankAccountId'
  *      limit: // value for 'limit'
- *      cursor: // value for 'cursor'
+ *      offset: // value for 'offset'
  *   },
  * });
  */

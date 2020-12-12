@@ -65,8 +65,8 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
               ...values,
             },
             update: (cache) => {
-              cache.evict({ fieldName: "bankAccounts:{}" });
-              cache.gc();
+              cache.evict({ fieldName: "bankAccount" });
+              // cache.gc();
             },
           });
           if (!errors) {

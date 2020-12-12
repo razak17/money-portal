@@ -17,7 +17,7 @@ const App = () => {
   return (
     <ChakraProvider theme={overrides}>
       <Switch>
-        <Route exact path={NonAuthRoutes.HOME} component={Home} />
+        <PublicRoute exact path={NonAuthRoutes.HOME} component={Home} />
         <Route exact path="/admin" component={Admin} />
         <PublicRoute exact path={NonAuthRoutes.LOGIN} component={Login} />
         <Route exact path={NonAuthRoutes.REGISTER} component={Register} />
@@ -27,7 +27,8 @@ const App = () => {
         <PrivateRoute exact path={AuthRoutes.TRANSACTIONS}>
           <Transactions />
         </PrivateRoute>
-        <Route exact path="*" component={NotFoundPage} />
+        <Route exact path="/404" component={NotFoundPage} />
+        <Route component={NotFoundPage} />
       </Switch>
     </ChakraProvider>
   );

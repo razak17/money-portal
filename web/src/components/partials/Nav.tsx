@@ -50,8 +50,7 @@ export const Nav: React.FC<NavProps> = () => {
             <Heading size="md">Money|</Heading>
           </Flex>
         </ChakraLink>
-
-        <Box ml={"auto"}></Box>
+        <Box ml={"auto"}>{status}</Box>
       </Flex>
     </Flex>
   );

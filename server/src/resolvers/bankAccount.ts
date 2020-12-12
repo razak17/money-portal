@@ -37,8 +37,6 @@ class PaginatedBankAccounts {
   bankAccounts: BankAccount[];
   @Field()
   hasMore: boolean;
-  @Field()
-  count: number;
 }
 
 @Resolver(BankAccount)
@@ -47,6 +45,25 @@ export class BankAccountResolver {
   @FieldResolver(() => User)
   creator(@Root() bankAccount: BankAccount, @Ctx() { userLoader }: MyContext) {
     return userLoader.load(bankAccount.creatorId);
+  }
+
+  // Total BankAccounts
+  @Query(() => Number)
+  @UseMiddleware(isAuth)
+  async totalBankAccounts(@Ctx() { req }: MyContext): Promise<number> {
+    const { userId } = req.session;
+    // const bankAccounts =  BankAccount.find({creatorId: userId});
+    const bankAccounts = await getConnection().query(
+      `
+    select b.*
+    from bank_account b 
+    where b."creatorId" = $1
+    order by b."name" 
+    `,
+      [userId]
+    );
+
+    return bankAccounts.length;
   }
 
   // Get All Accounts
@@ -65,6 +82,7 @@ export class BankAccountResolver {
 
     if (cursor) {
       replacements.push(new Date(parseInt(cursor)));
+      // replacements.push(cursor);
     }
 
     const bankAccounts = await getConnection().query(
@@ -76,7 +94,7 @@ export class BankAccountResolver {
         ? `where b."creatorId" = $2 and b."createdAt" < $3`
         : `where b."creatorId" = $2`
     }
-    order by b."name" 
+    order by b."createdAt" DESC
     limit $1
     `,
       replacements
@@ -85,7 +103,6 @@ export class BankAccountResolver {
     return {
       bankAccounts: bankAccounts.slice(0, realLimit),
       hasMore: bankAccounts.length === reaLimitPlusOne,
-      count: bankAccounts.length,
     };
   }
 

@@ -4,7 +4,7 @@ import { extendTheme } from "@chakra-ui/react";
 import { styles } from "./styles";
 
 import { colors } from "./colors";
-import { Button } from "./components/Button";
+// import { Button } from "./components/Button";
 import { breakpoints } from "./breakpoints";
 
 // Foundational style overrides
@@ -19,7 +19,7 @@ const overrides = {
   breakpoints,
   // Other foundational style overrides go here
   components: {
-    Button,
+    // Button,
     // Other components go here
   },
 };

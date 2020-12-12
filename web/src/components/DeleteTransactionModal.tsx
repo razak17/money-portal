@@ -58,6 +58,9 @@ export const DeleteTransactionModal: React.FC<DeleteTransactionModalProps> = ({
                 update: (cache) => {
                   // Transaction: 77
                   cache.evict({ id: "Transaction:" + id });
+                  cache.evict({ fieldName: "totalTransactions" });
+                  cache.evict({ fieldName: "transactions" });
+                  cache.evict({ fieldName: "bankAccount" });
                 },
               });
               setDeleteLoading(false);
