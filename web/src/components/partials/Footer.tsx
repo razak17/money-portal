@@ -6,6 +6,7 @@ interface FooterProps {}
 export const Footer: React.FC<FooterProps> = () => {
   return (
     <Flex
+      height="4em"
       width="100%"
       position="absolute"
       marginTop="auto"
@@ -19,7 +20,7 @@ export const Footer: React.FC<FooterProps> = () => {
         flex={1}
         alignItems="center"
       >
-        <Text>Footer</Text>
+        <Text>Razak Mo - {new Date().getFullYear()}</Text>
       </Flex>
     </Flex>
   );

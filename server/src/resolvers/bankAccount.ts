@@ -2,7 +2,6 @@ import {
   Arg,
   Mutation,
   Resolver,
-  InputType,
   Field,
   Query,
   Int,
@@ -17,24 +16,32 @@ import { BankAccount } from "../entities/BankAccount";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
 import { User } from "../entities/User";
-import { accountType } from "../types";
+import { BankAccountOptions } from "../types";
+import { BankAccountInput } from "./BankAccountInput";
+import { validateNew, validateUpdate } from "../utils/validateBankAccount";
 
-@InputType()
-class BankAccountInput {
+@ObjectType()
+class BankAccountError {
   @Field()
-  name: string;
+  field: string;
   @Field()
-  type: accountType;
-  @Field()
-  startingBalance: number;
-  @Field()
-  lowBalanceAlert: number;
+  message: string;
+}
+
+@ObjectType()
+class BankAccountResponse {
+  @Field(() => [BankAccountError], { nullable: true })
+  errors?: BankAccountError[];
+
+  @Field(() => BankAccount, { nullable: true })
+  bankAccount?: BankAccount | null;
 }
 
 @ObjectType()
 class PaginatedBankAccounts {
   @Field(() => [BankAccount])
   bankAccounts: BankAccount[];
+
   @Field()
   hasMore: boolean;
 }
@@ -52,17 +59,7 @@ export class BankAccountResolver {
   @UseMiddleware(isAuth)
   async totalBankAccounts(@Ctx() { req }: MyContext): Promise<number> {
     const { userId } = req.session;
-    // const bankAccounts =  BankAccount.find({creatorId: userId});
-    const bankAccounts = await getConnection().query(
-      `
-    select b.*
-    from bank_account b 
-    where b."creatorId" = $1
-    order by b."name" 
-    `,
-      [userId]
-    );
-
+    const bankAccounts = await BankAccount.find({ creatorId: userId });
     return bankAccounts.length;
   }
 
@@ -76,13 +73,12 @@ export class BankAccountResolver {
   ): Promise<PaginatedBankAccounts> {
     const { userId } = req.session;
 
-    const realLimit = Math.min(50, limit);
+    const realLimit = Math.min(500, limit);
     const reaLimitPlusOne = realLimit + 1;
     const replacements: any[] = [reaLimitPlusOne, userId];
 
     if (cursor) {
       replacements.push(new Date(parseInt(cursor)));
-      // replacements.push(cursor);
     }
 
     const bankAccounts = await getConnection().query(
@@ -113,44 +109,67 @@ export class BankAccountResolver {
     @Arg("id", () => Int) id: number,
     @Ctx() { req }: MyContext
   ): Promise<BankAccount | undefined> {
-    return BankAccount.findOne({ id, creatorId: req.session.userId });
+    const { userId } = req.session;
+    return BankAccount.findOne({ id, creatorId: userId });
   }
 
   // Create New Account
-  @Mutation(() => BankAccount)
+  @Mutation(() => BankAccountResponse)
   @UseMiddleware(isAuth)
   async newBankAccount(
     @Arg("input") input: BankAccountInput,
     @Ctx() { req }: MyContext
-  ): Promise<BankAccount> {
-    return BankAccount.create({
+  ): Promise<BankAccountResponse> {
+    const { userId } = req.session;
+    const errors = validateNew(input);
+    if (errors) {
+      return { errors };
+    }
+
+    const bankAccount = await BankAccount.create({
       ...input,
-      creatorId: req.session.userId,
+      creatorId: userId,
       currentBalance: input.startingBalance,
     }).save();
+
+    return { bankAccount };
   }
 
   // Update Account
-  @Mutation(() => BankAccount, { nullable: true })
+  @Mutation(() => BankAccountResponse)
   @UseMiddleware(isAuth)
   async updateBankAccount(
     @Arg("id", () => Int!) id: number,
     @Arg("name") name: string,
-    @Arg("type") type: accountType,
-    @Arg("lowBalanceAlert", () => Int) lowBalanceAlert: number,
+    @Arg("type") type: BankAccountOptions,
+    @Arg("lowBalanceAlert") lowBalanceAlert: number,
     @Ctx() { req }: MyContext
-  ): Promise<BankAccount | null> {
-    const result = await getConnection()
+  ): Promise<BankAccountResponse> {
+    const { userId } = req.session;
+    const oldBankAccount = await BankAccount.findOne({ id, creatorId: userId });
+    const errors = validateUpdate(
+      name,
+      type,
+      lowBalanceAlert,
+      oldBankAccount?.currentBalance
+    );
+    if (errors) {
+      return { errors };
+    }
+
+    const res = await getConnection()
       .createQueryBuilder()
       .update(BankAccount)
       .set({ name, type, lowBalanceAlert })
       .where("id = :id and creatorId = :creatorId", {
         id,
-        creatorId: req.session.userId,
+        creatorId: userId,
       })
       .returning("*")
       .execute();
-    return result.raw[0];
+
+    console.log("RES", res);
+    return res.raw[0];
   }
 
   // Delete Account
@@ -160,7 +179,8 @@ export class BankAccountResolver {
     @Arg("id", () => Int) id: number,
     @Ctx() { req }: MyContext
   ): Promise<boolean> {
-    await BankAccount.delete({ id, creatorId: req.session.userId });
+    const { userId } = req.session;
+    await BankAccount.delete({ id, creatorId: userId });
     return true;
   }
 }

@@ -10,7 +10,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import * as React from "react";
-import { useDeleteTransactionMutation } from "../generated/graphql";
+import { useDeleteTransactionMutation } from "../../generated/graphql";
 
 interface DeleteTransactionModalProps {
   isOpen: boolean;

@@ -1,7 +1,7 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
 
-export const Wrapper: React.FC = ({ children }) => {
+export const SideBarWrapper: React.FC = ({ children }) => {
   return (
     <Box
       position="sticky"
@@ -13,7 +13,7 @@ export const Wrapper: React.FC = ({ children }) => {
       height="100vh"
       maxH="100%"
       overflowY="auto"
-      width={{ base: "0", sm: "0", md: "0", lg: "260px" }}
+      width={{ base: "0", sm: "0", md: "0", xl: "260px" }}
       overflowWrap="break-word"
       flexShrink={0}
     >

@@ -1,32 +1,48 @@
 import * as Yup from "yup";
-import { BankAccountType, TransactionType } from "../types";
+import {
+  BankAccountType,
+  UpdateBankAccountType,
+  TransactionType,
+} from "../types";
 
 export const NewBankAccountSchema: Yup.ObjectSchema<BankAccountType> = Yup.object(
   {
     name: Yup.string()
-      .min(2, "Must be at least two charaters long.")
-      .required("Please enter account name."),
-    type: Yup.string().required("Please select account type."),
+      .min(2, "must be 2 to 20 characters.")
+      .max(20, "must be 2 to 20 characters.")
+      .required("please enter account name."),
+    type: Yup.string().required("please select account type."),
     startingBalance: Yup.number()
-      .min(1, "Must be greater than 0.")
-      .required("Please enter a number."),
+      .min(1, "must be greater than 0.")
+      .required("please enter starting balance."),
     lowBalanceAlert: Yup.number()
       .max(
         Yup.ref("startingBalance"),
-        "Must not be greater than starting balance"
+        "must not be greater than starting balance"
       )
-      .required("Please Enter a number."),
+      .required("please enter low balance alert."),
   }
 );
 
+export const updateBankAccountSchema: Yup.ObjectSchema<UpdateBankAccountType> = Yup.object(
+  {
+    name: Yup.string()
+      .min(2, "must be 2 to 20 characters.")
+      .max(20, "must be 2 to 20 characters.")
+      .required("please enter account name."),
+    type: Yup.string().required("please select account type."),
+    lowBalanceAlert: Yup.number().required("please enter low balance alert."),
+  }
+);
 export const AddTransactionSchema: Yup.ObjectSchema<TransactionType> = Yup.object(
   {
     amount: Yup.number()
-      .min(1, "Must be greater than 0.")
-      .required("Please enter an amount."),
-    type: Yup.string().required("Please select transaction type."),
+      .min(1, "must be greater than 0.")
+      .required("please enter an amount."),
+    type: Yup.string().required("please select transaction type."),
     memo: Yup.string()
-      .max(30, "Must be 30 characters or less.")
+      .min(2, "must be 2 to 20 characters.")
+      .max(20, "must be 2 to 20 characters.")
       .required("Please enter memo."),
   }
 );
@@ -34,11 +50,12 @@ export const AddTransactionSchema: Yup.ObjectSchema<TransactionType> = Yup.objec
 export const EditTransactionSchema: Yup.ObjectSchema<TransactionType> = Yup.object(
   {
     amount: Yup.number()
-      .min(1, "Must be greater than 0.")
+      .min(1, "must be greater than 0.")
       .required("Please enter an amount."),
-    type: Yup.string().required("Please select transaction type."),
+    type: Yup.string().required("please select transaction type."),
     memo: Yup.string()
-      .max(20, "Must be 20 characters or less.")
+      .min(2, "must be 2 to 20 characters.")
+      .max(20, "must be 2 to 20 characters.")
       .required("Please enter memo."),
   }
 );

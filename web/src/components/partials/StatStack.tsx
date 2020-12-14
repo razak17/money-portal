@@ -1,9 +1,10 @@
 import React from "react";
 import { Box, Heading, Flex, Text } from "@chakra-ui/react";
+import { LoadingSpinner } from "./";
 
 interface StatStackProps {
   title: string;
-  value: number | undefined;
+  value: string | undefined;
   loading: boolean;
   withSign?: boolean;
 }
@@ -20,7 +21,13 @@ export const StatStack: React.FC<StatStackProps> = ({
       p={2}
       w={{ base: "100%", sm: "100%", md: "50%", xl: "25%" }}
     >
-      <Flex position="relative" borderWidth="1px" borderRadius="md" shadow="xs">
+      <Flex
+        height="100px"
+        position="relative"
+        borderWidth="1px"
+        borderRadius="md"
+        shadow="xs"
+      >
         <Box flex="1 1 auto" p="0.5em 1em">
           <Flex
             justifyContent="center"
@@ -36,9 +43,7 @@ export const StatStack: React.FC<StatStackProps> = ({
           </Flex>
           <Flex justifyContent="center">
             {loading ? (
-              <Box textAlign="center">
-                <Text fontSize="md">loading...</Text>
-              </Box>
+              <LoadingSpinner variant="small" />
             ) : (
               <Text fontSize="3xl">{withSign ? `$${value}` : value}</Text>
             )}

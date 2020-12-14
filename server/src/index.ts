@@ -4,19 +4,22 @@ import path from "path";
 import cors from "cors";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { TransactionResolver } from "./resolvers/transaction";
 import { createConnection } from "typeorm";
-import { Transaction } from "./entities/Transaction";
-import { BankAccount } from "./entities/BankAccount";
-import { User } from "./entities/User";
-import { BankAccountResolver } from "./resolvers/bankAccount";
-import { __prod__, COOKIE_NAME } from "./constants";
 import Redis from "ioredis";
 import session from "express-session";
 import connectRedis from "connect-redis";
+import { Transaction } from "./entities/Transaction";
+import { BankAccount } from "./entities/BankAccount";
+import { User } from "./entities/User";
+import { TransactionCategory } from "./entities/TransactionCategory";
+import { TransactionResolver } from "./resolvers/transaction";
+import { BankAccountResolver } from "./resolvers/bankAccount";
+import { TransactionCategoryResolver } from "./resolvers/transactionCategory";
 import { UserResolver } from "./resolvers/user";
+import { __prod__, COOKIE_NAME } from "./constants";
 import { createUserLoader } from "./utils/createUserLoader";
 import { createBankAccountLoader } from "./utils/createBankAccountLoader";
+import { createTransactionCategoryLoader } from "./utils/createTransactionCategoryLoader";
 
 const main = async () => {
   const conn = await createConnection({
@@ -27,10 +30,10 @@ const main = async () => {
     logging: true,
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [Transaction, BankAccount, User],
+    entities: [Transaction, BankAccount, User, TransactionCategory],
   });
 
-  // await conn.runMigrations();
+  await conn.runMigrations();
 
   // await BankAccount.delete({});
 
@@ -68,7 +71,12 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [TransactionResolver, BankAccountResolver, UserResolver],
+      resolvers: [
+        TransactionResolver,
+        BankAccountResolver,
+        UserResolver,
+        TransactionCategoryResolver,
+      ],
       validate: false,
     }),
     context: ({ req, res }) => ({
@@ -77,6 +85,7 @@ const main = async () => {
       redis,
       userLoader: createUserLoader(),
       bankAccountLoader: createBankAccountLoader(),
+      transactionCategoryLoader: createTransactionCategoryLoader(),
     }),
   });
 

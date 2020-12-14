@@ -37,7 +37,7 @@ export const deleteTransfer = async (
   });
 };
 
-export const deleteOther = async (
+export const deleteWithdrawal = async (
   oldAmount: number,
   bankAccountId: number,
   userId: number | undefined

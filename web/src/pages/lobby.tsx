@@ -1,14 +1,7 @@
 import { useDisclosure } from "@chakra-ui/react";
 import * as React from "react";
-import {
-  Layout,
-  Footer,
-  PageHeader,
-  LobbyOptions,
-  MainContent,
-  SideBar,
-  CreateAccountModal,
-} from "../components";
+import { Layout, LobbyOptions, CreateAccountModal } from "../components";
+import { Footer, PageHeader } from "../components/partials";
 
 interface LobbyProps {}
 
@@ -17,13 +10,10 @@ export const Lobby: React.FC<LobbyProps> = () => {
 
   return (
     <Layout>
-      <SideBar showModal={onOpen} />
-      <MainContent>
-        <PageHeader heading="Lobby" onOpen={onOpen} />
-        <CreateAccountModal isOpen={isOpen} onClose={onClose} />
-        <LobbyOptions onOpen={onOpen} />
-        <Footer />
-      </MainContent>
+      <PageHeader heading="Lobby" />
+      <CreateAccountModal isOpen={isOpen} onClose={onClose} />
+      <LobbyOptions onOpen={onOpen} />
+      <Footer />
     </Layout>
   );
 };

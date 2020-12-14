@@ -1,12 +1,13 @@
 import * as React from "react";
-import { Box, IconButton, Heading, Text, chakra } from "@chakra-ui/react";
+import { IconButton, Heading, Text, chakra } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
-import { transactionOptions } from "../types";
-import { EditTransactionSchema } from "../utils/validate";
-import { InputField, SelectField } from "./";
-import { useUpdateTransactionMutation } from "../generated/graphql";
-import { useGetIntId } from "../utils/useGetIntId";
+import { transactionOptions } from "../../types";
+import { EditTransactionSchema } from "../../utils/validate";
+import { InputField, SelectField } from "../partials";
+import { useUpdateTransactionMutation } from "../../generated/graphql";
+import { useGetIntId } from "../../utils/useGetIntId";
+import { getRound } from "../../utils/getRound";
 
 interface Props {
   id: number;
@@ -20,7 +21,7 @@ interface Props {
 
 const TableData: React.FC = ({ children }) => {
   return (
-    <chakra.td textAlign="left" p="1.5em 0.5em">
+    <chakra.td textAlign="left" p="1em 0.5em">
       {children}
     </chakra.td>
   );
@@ -40,7 +41,7 @@ export const EditTransactionView: React.FC<Props> = ({
 
   const formik = useFormik({
     initialValues: {
-      amount,
+      amount: getRound(amount),
       type,
       memo,
     },
@@ -52,8 +53,10 @@ export const EditTransactionView: React.FC<Props> = ({
       const { errors } = await updateTransaction({
         variables: {
           id,
+          amount: parseFloat(values.amount),
+          type,
+          memo,
           bankAccountId: intId,
-          ...values,
         },
         update: (cache) => {
           cache.evict({ fieldName: "transactions" });
@@ -71,25 +74,26 @@ export const EditTransactionView: React.FC<Props> = ({
   return (
     <chakra.tr borderWidth="1px" borderRadius="md">
       <chakra.td textAlign="center" p="0.5em">
-        <Box p="0.5em">
-          <IconButton
-            isLoading={isSubmitting}
-            onClick={() => handleSubmit()}
-            type="submit"
-            colorScheme="teal"
-            icon={<CheckIcon />}
-            aria-label="Confirm Edit Transaction"
-          />
-        </Box>
-        <Box p="0.5em">
-          <IconButton
-            colorScheme="red"
-            onClick={() => setEditing(false)}
-            type="submit"
-            icon={<CloseIcon />}
-            aria-label="Cancel Edit Transaction"
-          />
-        </Box>
+        <IconButton
+          height="2em"
+          minW="2em"
+          mr={2}
+          isLoading={isSubmitting}
+          onClick={() => handleSubmit()}
+          type="submit"
+          colorScheme="teal"
+          icon={<CheckIcon />}
+          aria-label="Confirm Edit Transaction"
+        />
+        <IconButton
+          height="2em"
+          minW="2em"
+          colorScheme="red"
+          onClick={() => setEditing(false)}
+          type="submit"
+          icon={<CloseIcon />}
+          aria-label="Cancel Edit Transaction"
+        />
       </chakra.td>
       <TableData>
         <InputField

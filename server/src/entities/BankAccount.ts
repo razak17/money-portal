@@ -11,7 +11,7 @@ import {
 } from "typeorm";
 import { User } from "./User";
 import { Transaction } from "./Transaction";
-import { accountType } from "../types";
+import { BankAccountOptions } from "../types";
 
 @ObjectType()
 @Entity()
@@ -21,31 +21,35 @@ export class BankAccount extends BaseEntity {
   id!: number;
 
   @Field()
-  @Column()
+  @Column({ length: 20 })
   name!: string;
 
   @Field()
-  @Column()
-  type!: accountType;
+  @Column({
+    type: "enum",
+    enum: BankAccountOptions,
+    default: BankAccountOptions.CHECKING,
+  })
+  type!: BankAccountOptions;
 
   @Field()
-  @Column()
+  @Column({ type: "float", default: 0 })
   startingBalance!: number;
 
   @Field()
-  @Column()
+  @Column({ type: "float", default: 0 })
   lowBalanceAlert!: number;
 
   @Field()
-  @Column({ type: "int", default: 0 })
-  currentBalance: number;
+  @Column({ type: "float", default: 0 })
+  currentBalance!: number;
 
   @Field()
-  @Column({ type: "int", default: 0 })
+  @Column({ type: "float", default: 0 })
   monthlySpending: number;
 
   @Field()
-  @Column({ type: "int", default: 0 })
+  @Column({ type: "float", default: 0 })
   monthlyDeposits: number;
 
   @Field()

@@ -19,17 +19,20 @@ export type Query = {
   totalBankAccounts: Scalars['Float'];
   bankAccounts: PaginatedBankAccounts;
   bankAccount?: Maybe<BankAccount>;
+  hi: Scalars['String'];
   me?: Maybe<User>;
 };
 
 
 export type QueryTotalTransactionsArgs = {
   bankAccountId: Scalars['Int'];
+  filter?: Maybe<Scalars['String']>;
 };
 
 
 export type QueryTransactionsArgs = {
-  offset?: Maybe<Scalars['Int']>;
+  offset: Scalars['Int'];
+  filter?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
   bankAccountId: Scalars['Int'];
 };
@@ -64,11 +67,13 @@ export type Transaction = {
   type: Scalars['String'];
   memo: Scalars['String'];
   creatorId: Scalars['Float'];
-  creator: User;
   bankAccountId: Scalars['Float'];
+  categoryId: Scalars['Float'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  creator: User;
   bankAccount: BankAccount;
+  category: TransactionCategory;
 };
 
 export type User = {
@@ -97,6 +102,14 @@ export type BankAccount = {
   updatedAt: Scalars['String'];
 };
 
+export type TransactionCategory = {
+  __typename?: 'TransactionCategory';
+  id: Scalars['Float'];
+  name: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
 export type PaginatedBankAccounts = {
   __typename?: 'PaginatedBankAccounts';
   bankAccounts: Array<BankAccount>;
@@ -108,9 +121,10 @@ export type Mutation = {
   newTransaction: Transaction;
   updateTransaction?: Maybe<Transaction>;
   deleteTransaction: Scalars['Boolean'];
-  newBankAccount: BankAccount;
-  updateBankAccount?: Maybe<BankAccount>;
+  newBankAccount: BankAccountResponse;
+  updateBankAccount: BankAccountResponse;
   deleteBankAccount: Scalars['Boolean'];
+  hello: Scalars['String'];
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
@@ -144,7 +158,7 @@ export type MutationNewBankAccountArgs = {
 
 
 export type MutationUpdateBankAccountArgs = {
-  lowBalanceAlert: Scalars['Int'];
+  lowBalanceAlert: Scalars['Float'];
   type: Scalars['String'];
   name: Scalars['String'];
   id: Scalars['Int'];
@@ -153,6 +167,11 @@ export type MutationUpdateBankAccountArgs = {
 
 export type MutationDeleteBankAccountArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationHelloArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -170,6 +189,18 @@ export type TransactionInput = {
   amount: Scalars['Float'];
   type: Scalars['String'];
   memo: Scalars['String'];
+};
+
+export type BankAccountResponse = {
+  __typename?: 'BankAccountResponse';
+  errors?: Maybe<Array<BankAccountError>>;
+  bankAccount?: Maybe<BankAccount>;
+};
+
+export type BankAccountError = {
+  __typename?: 'BankAccountError';
+  field: Scalars['String'];
+  message: Scalars['String'];
 };
 
 export type BankAccountInput = {
@@ -254,8 +285,18 @@ export type NewBankAccountMutationVariables = Exact<{
 export type NewBankAccountMutation = (
   { __typename?: 'Mutation' }
   & { newBankAccount: (
-    { __typename?: 'BankAccount' }
-    & Pick<BankAccount, 'id' | 'name' | 'type' | 'startingBalance' | 'lowBalanceAlert' | 'createdAt'>
+    { __typename?: 'BankAccountResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'BankAccountError' }
+      & Pick<BankAccountError, 'field' | 'message'>
+    )>>, bankAccount?: Maybe<(
+      { __typename?: 'BankAccount' }
+      & Pick<BankAccount, 'id' | 'name' | 'type' | 'startingBalance' | 'currentBalance' | 'lowBalanceAlert' | 'monthlySpending' | 'monthlyTransactions' | 'monthlyDeposits' | 'createdAt'>
+      & { creator: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'email'>
+      ) }
+    )> }
   ) }
 );
 
@@ -269,8 +310,11 @@ export type NewTransactionMutation = (
   { __typename?: 'Mutation' }
   & { newTransaction: (
     { __typename?: 'Transaction' }
-    & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo' | 'createdAt'>
-    & { creator: (
+    & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo' | 'categoryId' | 'createdAt'>
+    & { category: (
+      { __typename?: 'TransactionCategory' }
+      & Pick<TransactionCategory, 'id' | 'name'>
+    ), creator: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username' | 'email'>
     ), bankAccount: (
@@ -303,16 +347,22 @@ export type UpdateBankAccountMutationVariables = Exact<{
   id: Scalars['Int'];
   name: Scalars['String'];
   type: Scalars['String'];
-  lowBalanceAlert: Scalars['Int'];
+  lowBalanceAlert: Scalars['Float'];
 }>;
 
 
 export type UpdateBankAccountMutation = (
   { __typename?: 'Mutation' }
-  & { updateBankAccount?: Maybe<(
-    { __typename?: 'BankAccount' }
-    & Pick<BankAccount, 'id' | 'type' | 'lowBalanceAlert' | 'createdAt' | 'updatedAt'>
-  )> }
+  & { updateBankAccount: (
+    { __typename?: 'BankAccountResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'BankAccountError' }
+      & Pick<BankAccountError, 'field' | 'message'>
+    )>>, bankAccount?: Maybe<(
+      { __typename?: 'BankAccount' }
+      & Pick<BankAccount, 'id' | 'lowBalanceAlert' | 'createdAt' | 'updatedAt'>
+    )> }
+  ) }
 );
 
 export type UpdateTransactionMutationVariables = Exact<{
@@ -392,6 +442,7 @@ export type TotalBankAccountsQuery = (
 
 export type TotalTransactionsQueryVariables = Exact<{
   bankAccountId: Scalars['Int'];
+  filter?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -424,7 +475,8 @@ export type TransactionQuery = (
 export type TransactionsQueryVariables = Exact<{
   bankAccountId: Scalars['Int'];
   limit: Scalars['Int'];
-  offset?: Maybe<Scalars['Int']>;
+  offset: Scalars['Int'];
+  filter?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -435,8 +487,11 @@ export type TransactionsQuery = (
     & Pick<PaginatedTransactions, 'hasMore'>
     & { transactions: Array<(
       { __typename?: 'Transaction' }
-      & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo' | 'createdAt' | 'updatedAt'>
-      & { bankAccount: (
+      & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo' | 'categoryId' | 'createdAt' | 'updatedAt'>
+      & { category: (
+        { __typename?: 'TransactionCategory' }
+        & Pick<TransactionCategory, 'id' | 'name'>
+      ), bankAccount: (
         { __typename?: 'BankAccount' }
         & Pick<BankAccount, 'id' | 'name' | 'type'>
       ), creator: (
@@ -583,12 +638,27 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, L
 export const NewBankAccountDocument = gql`
     mutation NewBankAccount($input: BankAccountInput!) {
   newBankAccount(input: $input) {
-    id
-    name
-    type
-    startingBalance
-    lowBalanceAlert
-    createdAt
+    errors {
+      field
+      message
+    }
+    bankAccount {
+      id
+      name
+      type
+      startingBalance
+      currentBalance
+      lowBalanceAlert
+      monthlySpending
+      monthlyTransactions
+      monthlyDeposits
+      creator {
+        id
+        username
+        email
+      }
+      createdAt
+    }
   }
 }
     `;
@@ -624,6 +694,11 @@ export const NewTransactionDocument = gql`
     amount
     type
     memo
+    categoryId
+    category {
+      id
+      name
+    }
     creator {
       id
       username
@@ -706,18 +781,23 @@ export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const UpdateBankAccountDocument = gql`
-    mutation UpdateBankAccount($id: Int!, $name: String!, $type: String!, $lowBalanceAlert: Int!) {
+    mutation UpdateBankAccount($id: Int!, $name: String!, $type: String!, $lowBalanceAlert: Float!) {
   updateBankAccount(
     id: $id
     name: $name
     type: $type
     lowBalanceAlert: $lowBalanceAlert
   ) {
-    id
-    type
-    lowBalanceAlert
-    createdAt
-    updatedAt
+    errors {
+      field
+      message
+    }
+    bankAccount {
+      id
+      lowBalanceAlert
+      createdAt
+      updatedAt
+    }
   }
 }
     `;
@@ -959,8 +1039,8 @@ export type TotalBankAccountsQueryHookResult = ReturnType<typeof useTotalBankAcc
 export type TotalBankAccountsLazyQueryHookResult = ReturnType<typeof useTotalBankAccountsLazyQuery>;
 export type TotalBankAccountsQueryResult = Apollo.QueryResult<TotalBankAccountsQuery, TotalBankAccountsQueryVariables>;
 export const TotalTransactionsDocument = gql`
-    query TotalTransactions($bankAccountId: Int!) {
-  totalTransactions(bankAccountId: $bankAccountId)
+    query TotalTransactions($bankAccountId: Int!, $filter: String) {
+  totalTransactions(bankAccountId: $bankAccountId, filter: $filter)
 }
     `;
 
@@ -977,6 +1057,7 @@ export const TotalTransactionsDocument = gql`
  * const { data, loading, error } = useTotalTransactionsQuery({
  *   variables: {
  *      bankAccountId: // value for 'bankAccountId'
+ *      filter: // value for 'filter'
  *   },
  * });
  */
@@ -1036,14 +1117,24 @@ export type TransactionQueryHookResult = ReturnType<typeof useTransactionQuery>;
 export type TransactionLazyQueryHookResult = ReturnType<typeof useTransactionLazyQuery>;
 export type TransactionQueryResult = Apollo.QueryResult<TransactionQuery, TransactionQueryVariables>;
 export const TransactionsDocument = gql`
-    query Transactions($bankAccountId: Int!, $limit: Int!, $offset: Int) {
-  transactions(bankAccountId: $bankAccountId, limit: $limit, offset: $offset) {
+    query Transactions($bankAccountId: Int!, $limit: Int!, $offset: Int!, $filter: String) {
+  transactions(
+    bankAccountId: $bankAccountId
+    limit: $limit
+    offset: $offset
+    filter: $filter
+  ) {
     hasMore
     transactions {
       id
       amount
       type
       memo
+      categoryId
+      category {
+        id
+        name
+      }
       bankAccount {
         id
         name
@@ -1075,6 +1166,7 @@ export const TransactionsDocument = gql`
  *      bankAccountId: // value for 'bankAccountId'
  *      limit: // value for 'limit'
  *      offset: // value for 'offset'
+ *      filter: // value for 'filter'
  *   },
  * });
  */

@@ -4,6 +4,11 @@ mutation NewTransaction($input: TransactionInput!, $bankAccountId: Int!) {
     amount
     type
     memo
+    categoryId
+    category {
+      id
+      name
+    }
     creator {
       id
       username

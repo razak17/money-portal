@@ -1,11 +1,26 @@
-query Transactions($bankAccountId: Int!, $limit: Int!, $offset: Int) {
-  transactions(bankAccountId: $bankAccountId, limit: $limit, offset: $offset) {
+query Transactions(
+  $bankAccountId: Int!
+  $limit: Int!
+  $offset: Int!
+  $filter: String
+) {
+  transactions(
+    bankAccountId: $bankAccountId
+    limit: $limit
+    offset: $offset
+    filter: $filter
+  ) {
     hasMore
     transactions {
       id
       amount
       type
       memo
+      categoryId
+      category {
+        id
+        name
+      }
       bankAccount {
         id
         name

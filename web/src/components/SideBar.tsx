@@ -1,51 +1,63 @@
 import { Link as ChakraLink, List, ListItem, Text } from "@chakra-ui/react";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { BankAccounts, Header, Wrapper, Logo } from "./sideBar";
+import { BankAccounts, Header, SideBarWrapper, Logo } from "./sideBar";
+import { AuthRoutes } from "../api/routes";
 
-interface SideBarProps {
-  showModal: () => void;
-}
+interface SideBarProps {}
 
-export const SideBar: React.FC<SideBarProps> = ({ showModal }) => {
-  // const [open, setOpen] = React.useState(false);
-  // const toggle = () => setOpen(!open);
+export const SideBar: React.FC<SideBarProps> = () => {
+  const personal = (
+    <List maxHeight="none" mt={0} mb="2em">
+      <ListItem fontSize={12} position="relative">
+        <ChakraLink
+          as={Link}
+          to={AuthRoutes.DASHBOARD}
+          display="block"
+          position="relative"
+          padding="1.5rem 2rem"
+        >
+          <Text>Home</Text>
+        </ChakraLink>
+      </ListItem>
+      <BankAccounts />
+    </List>
+  );
 
-  const home = (
-    <ListItem fontSize={12} position="relative">
-      <ChakraLink
-        as={Link}
-        to="/dashboard/lobby"
-        display="block"
-        position="relative"
-        padding="1.5rem 2rem"
-      >
-        <Text>Home</Text>
-      </ChakraLink>
-    </ListItem>
+  const manage = (
+    <List maxHeight="none" mt={0} mb="1rem">
+      <ListItem fontSize={12} position="relative">
+        <ChakraLink
+          as={Link}
+          to={AuthRoutes.PROFILE}
+          display="block"
+          position="relative"
+          padding="1.5rem 2rem"
+        >
+          <Text>Account</Text>
+        </ChakraLink>
+      </ListItem>
+      <ListItem fontSize={12} position="relative">
+        <ChakraLink
+          as={Link}
+          to={AuthRoutes.SETTINGS}
+          display="block"
+          position="relative"
+          padding="1.5rem 2rem"
+        >
+          <Text>Settings</Text>
+        </ChakraLink>
+      </ListItem>
+    </List>
   );
 
   return (
-    <Wrapper>
+    <SideBarWrapper>
       <Logo />
-      <Header text="Personal" />
-      <List maxHeight="none" mt={0} mb="2em">
-        {home}
-        <BankAccounts />
-      </List>
-      <Header text="Account" />
-      <List maxHeight="none" mt={0} mb="1rem">
-        <ListItem fontSize={12} position="relative">
-          <ChakraLink
-            onClick={showModal}
-            display="block"
-            position="relative"
-            padding="1.5rem 2rem"
-          >
-            <Text>Create Account</Text>
-          </ChakraLink>
-        </ListItem>
-      </List>
-    </Wrapper>
+      <Header text="Personal Account" />
+      {personal}
+      <Header text="My Account" />
+      {manage}
+    </SideBarWrapper>
   );
 };

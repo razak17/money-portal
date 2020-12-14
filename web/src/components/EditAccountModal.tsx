@@ -9,13 +9,15 @@ import {
 } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import * as React from "react";
-import { FormikInputField, FormikSelectField } from "./";
+import { FormikInputField, FormikSelectField } from "./partials";
 import { accountOptions } from "../types";
 import { useGetIntId } from "../utils/useGetIntId";
 import {
   useBankAccountQuery,
   useUpdateBankAccountMutation,
 } from "../generated/graphql";
+import { toErrorMap } from "../utils/toErrorMap";
+import { updateBankAccountSchema } from "../utils/validate";
 
 interface EditAccountModalProps {
   isOpen: boolean;
@@ -57,19 +59,23 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
           type: data?.bankAccount.type,
           lowBalanceAlert: data?.bankAccount.lowBalanceAlert,
         }}
-        onSubmit={async (values) => {
-          console.log(values);
-          const { errors } = await updateBankAccount({
+        validationSchema={updateBankAccountSchema}
+        onSubmit={async (values, { setErrors }) => {
+          /* console.log(values); */
+          const response = await updateBankAccount({
             variables: {
               id: intId,
               ...values,
             },
             update: (cache) => {
               cache.evict({ fieldName: "bankAccount" });
-              // cache.gc();
+              cache.gc();
             },
           });
-          if (!errors) {
+          /* console.log(response); */
+          if (response.data?.updateBankAccount.errors) {
+            setErrors(toErrorMap(response.data.updateBankAccount.errors));
+          } else {
             onClose();
           }
         }}

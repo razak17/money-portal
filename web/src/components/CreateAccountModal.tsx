@@ -8,11 +8,13 @@ import {
   ModalContent,
 } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
-import { FormikInputField, FormikSelectField } from "./";
+import { FormikInputField, FormikSelectField } from "./partials";
 import { useNewBankAccountMutation } from "../generated/graphql";
 import { accountOptions } from "../types";
 import { NewBankAccountSchema } from "../utils/validate";
 import { useHistory } from "react-router-dom";
+import { AuthRoutes } from "../api/routes";
+import { toErrorMap } from "../utils/toErrorMap";
 
 interface Props {
   isOpen: boolean;
@@ -38,13 +40,14 @@ export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
       validationSchema={NewBankAccountSchema}
       validateOnBlur={false}
       validateOnChange={false}
-      onSubmit={async (values, actions) => {
-        const { errors, data } = await newBankAccount({
+      onSubmit={async (values, { setErrors }) => {
+        console.log(values);
+        const response = await newBankAccount({
           variables: {
             input: {
               ...values,
-              startingBalance: parseInt(values.startingBalance),
-              lowBalanceAlert: parseInt(values.lowBalanceAlert),
+              startingBalance: parseFloat(values.startingBalance),
+              lowBalanceAlert: parseFloat(values.lowBalanceAlert),
             },
           },
           update: (cache) => {
@@ -53,10 +56,12 @@ export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
             cache.gc();
           },
         });
-        if (!errors && data?.newBankAccount) {
+        if (response.data?.newBankAccount.errors) {
+          setErrors(toErrorMap(response.data.newBankAccount.errors));
+        } else if (response.data?.newBankAccount.bankAccount) {
           onClose();
           history.push(
-            `/dashboard/accounts/accounts-details/${data.newBankAccount.id}`
+            `${AuthRoutes.TRANSACTIONS}/${response.data.newBankAccount.bankAccount.id}`
           );
         }
       }}
@@ -98,7 +103,7 @@ export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
               colorScheme="blue"
               mr={3}
             >
-              Save
+              Create
             </Button>
             <Button colorScheme="red" onClick={onClose}>
               Cancel
