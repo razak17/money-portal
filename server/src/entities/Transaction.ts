@@ -10,7 +10,8 @@ import {
 } from "typeorm";
 import { User } from "./User";
 import { BankAccount } from "./BankAccount";
-import { transactionType } from "../types";
+import { TransactionCategory } from "./TransactionCategory";
+import { TransactionOptions } from "../types";
 
 @ObjectType()
 @Entity()
@@ -20,33 +21,43 @@ export class Transaction extends BaseEntity {
   id!: number;
 
   @Field()
-  @Column()
+  @Column({ type: "float", default: 0 })
   amount!: number;
 
   @Field()
-  @Column()
-  type!: transactionType;
+  @Column({
+    type: "enum",
+    enum: TransactionOptions,
+    default: TransactionOptions.CASH_WITHDRAWAL,
+  })
+  type!: TransactionOptions;
 
   @Field()
-  @Column()
+  @Column({ length: 20 })
   memo!: string;
 
   @Field()
   @Column()
-  creatorId: number;
-
-  @Field()
-  @ManyToOne(() => User, (user) => user.transactions)
-  creator: User;
+  creatorId!: number;
 
   @Field()
   @Column()
-  bankAccountId: number;
+  bankAccountId!: number;
+
+  @Field()
+  @Column()
+  categoryId!: number;
+
+  @ManyToOne(() => User, (user) => user.transactions)
+  creator: User;
 
   @ManyToOne(() => BankAccount, (bankAccount) => bankAccount.transactions, {
     onDelete: "CASCADE",
   })
   bankAccount: BankAccount;
+
+  @ManyToOne(() => TransactionCategory, (category) => category.transactions)
+  category: TransactionCategory;
 
   @Field(() => String)
   @CreateDateColumn()

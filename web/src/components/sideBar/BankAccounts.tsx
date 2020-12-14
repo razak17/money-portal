@@ -19,6 +19,7 @@ import {
 } from "../../generated/graphql";
 import { Link } from "react-router-dom";
 import { LIMIT } from "../../constants";
+import { AuthRoutes } from "../../api/routes";
 
 interface BankAccountsProps {}
 
@@ -35,14 +36,6 @@ export const BankAccounts: React.FC<BankAccountsProps> = () => {
     data: TotalCount,
     loading: TotalLoading,
   } = useTotalBankAccountsQuery();
-
-  // if (loading) {
-  // return (
-  // <Box textAlign="center" p="1.5rem">
-  // <Spinner />
-  // </Box>
-  // );
-  // }
 
   const FetchMore = (
     <>
@@ -77,7 +70,7 @@ export const BankAccounts: React.FC<BankAccountsProps> = () => {
             Bank Accounts
             {TotalLoading ? (
               <chakra.sub m="0.25em 0 0 0.rem">(...)</chakra.sub>
-            ) : TotalCount ? (
+            ) : TotalCount && TotalCount?.totalBankAccounts > 0 ? (
               <chakra.sub m="0.25em 0 0 0.4em">
                 ({TotalCount?.totalBankAccounts})
               </chakra.sub>
@@ -91,7 +84,7 @@ export const BankAccounts: React.FC<BankAccountsProps> = () => {
                 <ListItem fontSize={12} key={b.id} position="relative">
                   <ChakraLink
                     as={Link}
-                    to={`/dashboard/accounts/accounts-details/${b.id}`}
+                    to={`${AuthRoutes.TRANSACTIONS}/${b.id}`}
                     display="block"
                     position="relative"
                     padding="1.5em 0 1.5em 4em"

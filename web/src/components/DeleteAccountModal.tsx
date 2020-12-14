@@ -10,7 +10,7 @@ import {
   ModalOverlay,
   Text,
 } from "@chakra-ui/react";
-import { FormikInputField } from "./";
+import { FormikInputField } from "./partials";
 import * as React from "react";
 import { Form, Formik } from "formik";
 import { useGetIntId } from "../utils/useGetIntId";

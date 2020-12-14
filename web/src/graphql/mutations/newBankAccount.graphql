@@ -1,10 +1,25 @@
 mutation NewBankAccount($input: BankAccountInput!) {
   newBankAccount(input: $input) {
-    id
-    name
-    type
-    startingBalance
-    lowBalanceAlert
-    createdAt
+    errors {
+      field
+      message
+    }
+    bankAccount {
+      id
+      name
+      type
+      startingBalance
+      currentBalance
+      lowBalanceAlert
+      monthlySpending
+      monthlyTransactions
+      monthlyDeposits
+      creator {
+        id
+        username
+        email
+      }
+      createdAt
+    }
   }
 }

@@ -17,16 +17,16 @@ const App = () => {
   return (
     <ChakraProvider theme={overrides}>
       <Switch>
-        <PublicRoute exact path={NonAuthRoutes.HOME} component={Home} />
+        <PublicRoute exact path={NonAuthRoutes.HOME} Component={Home} />
         <Route exact path="/admin" component={Admin} />
-        <PublicRoute exact path={NonAuthRoutes.LOGIN} component={Login} />
+        <PublicRoute exact path={NonAuthRoutes.LOGIN} Component={Login} />
         <Route exact path={NonAuthRoutes.REGISTER} component={Register} />
-        <PrivateRoute exact path={AuthRoutes.DASHBOARD}>
-          <Lobby />
-        </PrivateRoute>
-        <PrivateRoute exact path={AuthRoutes.TRANSACTIONS}>
-          <Transactions />
-        </PrivateRoute>
+        <PrivateRoute exact path={AuthRoutes.DASHBOARD} Component={Lobby} />
+        <PrivateRoute
+          exact
+          path={`${AuthRoutes.TRANSACTIONS}/:id`}
+          Component={Transactions}
+        />
         <Route exact path="/404" component={NotFoundPage} />
         <Route component={NotFoundPage} />
       </Switch>

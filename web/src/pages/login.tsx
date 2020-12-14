@@ -1,12 +1,11 @@
 import * as React from "react";
 import { Formik, Form } from "formik";
-import { Wrapper } from "../components/Wrapper";
-import { FormikInputField } from "../components";
+import { Wrapper, FormikInputField } from "../components/partials";
 import { Box, Button, Link as ChakraLink, Flex } from "@chakra-ui/react";
 import { useLoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 import { Link, useHistory, useLocation } from "react-router-dom";
-import { AuthRoutes } from "../api/routes";
+import { AuthRoutes, NonAuthRoutes } from "../api/routes";
 
 interface loginProps {}
 
@@ -23,7 +22,7 @@ export const Login: React.FC<loginProps> = () => {
       <Formik
         initialValues={{ usernameOrEmail: "zak", password: "zak" }}
         onSubmit={async (values, { setErrors }) => {
-          console.log(values);
+          /* console.log(values); */
           const response = await login({
             variables: values,
           });
@@ -50,20 +49,26 @@ export const Login: React.FC<loginProps> = () => {
               />
             </Box>
             <Flex mt={2}>
-              <ChakraLink as={Link} to="/forgot-password" ml="auto">
+              <ChakraLink mr="auto" as={Link} to={NonAuthRoutes.REGISTER}>
+                new user?
+              </ChakraLink>
+              <ChakraLink
+                as={Link}
+                to={NonAuthRoutes.FORGOT_PASSWORD}
+                ml="auto"
+              >
                 forgot password?
               </ChakraLink>
             </Flex>
-            <Box mt={4}>
-              <Button type="submit" colorScheme="teal" isLoading={isSubmitting}>
+            <Flex mt={4}>
+              <Button
+                ml="auto"
+                type="submit"
+                colorScheme="teal"
+                isLoading={isSubmitting}
+              >
                 Login
               </Button>
-            </Box>
-            <br />
-            <Flex mt={2}>
-              <ChakraLink as={Link} to="/register" mr="auto">
-                new user?
-              </ChakraLink>
             </Flex>
           </Form>
         )}

@@ -1,26 +1,25 @@
 import * as React from "react";
 import { Box, Flex, Text, Select, Input } from "@chakra-ui/react";
+import { FILTER_OPTIONS } from "../../constants";
 
 interface TransactionsTableProps {
   limit: number;
   setLimit: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const OPTIONS = [10, 25, 50, 100];
-
 export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
   limit,
   setLimit,
 }) => {
-  const options = OPTIONS.map((option, index) => (
+  const options = FILTER_OPTIONS.map((option, index) => (
     <option key={index} value={option}>
       {option}
     </option>
   ));
 
-  return (
-    <Flex mb="0.5em" flexWrap="wrap" p="0.5em">
-      <Flex mr="4.5em" flexWrap="wrap" flex="0 0 auto">
+  const entries = (
+    <Box w={{ base: "100%", md: "70%", xl: "70%" }} flex="0 auto">
+      <Flex flexWrap="wrap" flex="0 0 auto">
         <Box paddingTop={2}>
           <Text>Show</Text>
         </Box>
@@ -39,11 +38,16 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
           <Text>Entries</Text>
         </Box>
       </Flex>
+    </Box>
+  );
+
+  const search = (
+    <Box w={{ base: "100%", sm: "50%", md: "30%", xl: "30%" }} flex="0 auto">
       <Flex
         p={{ base: "1em 0", md: "0" }}
-        ml={{ base: "auto", sm: "0", md: "auto" }}
+        ml={{ base: "0", md: "auto" }}
         flexWrap="wrap"
-        flex="0 0 auto"
+        flex="0 auto"
       >
         <Box pt={2}>
           <Text>Search:</Text>
@@ -52,6 +56,13 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
           <Input variant="outline" />
         </Box>
       </Flex>
+    </Box>
+  );
+
+  return (
+    <Flex mb="0.5em" flexWrap="wrap" p="0.5em">
+      {entries}
+      {search}
     </Flex>
   );
 };

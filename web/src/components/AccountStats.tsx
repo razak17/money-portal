@@ -1,12 +1,13 @@
 import React from "react";
 import { Flex } from "@chakra-ui/react";
-import { StatStack } from "./";
+import { StatStack } from "./partials";
+import { getRound } from "../utils/getRound";
 
 interface AccountStatsProps {
-  balance: number | undefined;
-  spending: number | undefined;
-  deposits: number | undefined;
-  transactions: number | undefined;
+  balance: number;
+  spending: number;
+  deposits: number;
+  transactions: number;
   loading: boolean;
 }
 
@@ -20,26 +21,26 @@ export const AccountStats: React.FC<AccountStatsProps> = ({
   return (
     <Flex flexWrap="wrap" padding="0 1em" mb="1em">
       <StatStack
-        withSign={balance ? true : false}
+        withSign
         title="Current Balalnce"
-        value={balance}
+        value={getRound(balance)}
         loading={loading}
       />
       <StatStack
-        withSign={spending ? true : false}
+        withSign
         title="Monthly Spending"
-        value={spending}
+        value={getRound(spending)}
         loading={loading}
       />
       <StatStack
-        withSign={deposits ? true : false}
+        withSign
         title="Monthly Deposits"
-        value={deposits}
+        value={getRound(deposits)}
         loading={loading}
       />
       <StatStack
         title="Monthly Transactions"
-        value={transactions}
+        value={transactions ? transactions.toString() : "0"}
         loading={loading}
       />
     </Flex>

@@ -1,16 +1,17 @@
-import { UsernamePasswordInput } from "src/resolvers/UsernamePasswordInput.ts";
+import { UsernamePasswordInput } from "src/resolvers/UsernamePasswordInput";
+import { validateEmail } from "./validateEmail";
 
 export const validateRegister = (options: UsernamePasswordInput) => {
   if (options.username.trim().length <= 2) {
     return [
       {
         field: "username",
-        message: "length must be greater than 2",
+        message: "must be 2 chars or more",
       },
     ];
   }
 
-  if (!options.email.includes("@")) {
+  if (!validateEmail(options.email)) {
     return [
       {
         field: "email",
@@ -23,7 +24,7 @@ export const validateRegister = (options: UsernamePasswordInput) => {
     return [
       {
         field: "username",
-        message: "cannot include an @",
+        message: "cannot include an @ symbol",
       },
     ];
   }
@@ -32,7 +33,7 @@ export const validateRegister = (options: UsernamePasswordInput) => {
     return [
       {
         field: "password",
-        message: "length must be greater than 2",
+        message: "must be 2 chars or more",
       },
     ];
   }

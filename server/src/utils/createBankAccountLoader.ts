@@ -6,13 +6,13 @@ import { BankAccount } from "../entities/BankAccount";
 export const createBankAccountLoader = () =>
   new DataLoader<number, BankAccount>(async (bankAccountIds) => {
     const accounts = await BankAccount.findByIds(bankAccountIds as number[]);
-    const bankAccountIdToUser: Record<number, BankAccount> = {};
+    const bankAccountIdToTransaction: Record<number, BankAccount> = {};
     accounts.forEach((acc) => {
-      bankAccountIdToUser[acc.id] = acc;
+      bankAccountIdToTransaction[acc.id] = acc;
     });
 
     const sortedBankAccounts = bankAccountIds.map(
-      (accId) => bankAccountIdToUser[accId]
+      (accId) => bankAccountIdToTransaction[accId]
     );
     // console.log("userIds", userIds);
     // console.log("map", userIdToUser);

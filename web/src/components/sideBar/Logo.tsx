@@ -15,7 +15,9 @@ export const Logo: React.FC<Props> = () => {
           textTransform="uppercase"
         >
           <Heading size="lg">Money|</Heading>
-          <Heading size="lg">Portal</Heading>
+          <Heading color="teal.700" size="lg">
+            Portal
+          </Heading>
         </Flex>
       </ChakraLink>
     </Box>

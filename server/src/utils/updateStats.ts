@@ -1,4 +1,8 @@
-import { TransactionOptions, transactionType } from "../types";
+import {
+  TransactionOptions,
+  withdrawalOptions,
+  transactionType,
+} from "../types";
 import { getConnection } from "typeorm";
 
 export const updateDeposit = async (
@@ -22,10 +26,11 @@ export const updateDeposit = async (
       );
     });
   } else if (
-    newType === TransactionOptions.CASH_WITHDRAWAL ||
-    newType === TransactionOptions.CARD_NUMBER_ENTERED ||
-    newType === TransactionOptions.CHECK ||
-    newType === TransactionOptions.POINT_OF_SALE
+    withdrawalOptions.includes(newType)
+    // newType === TransactionOptions.CASH_WITHDRAWAL ||
+    // newType === TransactionOptions.CARD_NUMBER_ENTERED ||
+    // newType === TransactionOptions.CHECK ||
+    // newType === TransactionOptions.POINT_OF_SALE
   ) {
     await getConnection().transaction(async (tm) => {
       await tm.query(
@@ -83,7 +88,7 @@ export const updateTransfer = async (
   }
 };
 
-export const updateOther = async (
+export const updateWithdrawal = async (
   oldAmount: number,
   newAmount: number,
   newType: transactionType,

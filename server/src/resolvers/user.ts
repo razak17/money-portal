@@ -13,7 +13,7 @@ import { User } from "../entities/User";
 import { getConnection } from "typeorm";
 import { MyContext } from "../types";
 import argon2 from "argon2";
-import { UsernamePasswordInput } from "./UsernamePasswordInput.ts";
+import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { validateEmail } from "../utils/validateEmail";
 import { COOKIE_NAME } from "../constants";
@@ -64,6 +64,7 @@ export class UserResolver {
     return User.findOne(req.session.userId);
   }
 
+  // Register
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UsernamePasswordInput,
@@ -73,10 +74,10 @@ export class UserResolver {
     if (errors) {
       return { errors };
     }
+
     const passwordHash = await argon2.hash(options.password);
     let user;
     try {
-      // user.create({}).save();
       const res = await getConnection()
         .createQueryBuilder()
         .insert()
@@ -121,6 +122,16 @@ export class UserResolver {
         : { where: { username: usernameOrEmail } }
     );
     if (!user) {
+      if (validateEmail(usernameOrEmail)) {
+        return {
+          errors: [
+            {
+              field: "usernameOrEmail",
+              message: "that email does not exist.",
+            },
+          ],
+        };
+      }
       return {
         errors: [
           {
@@ -144,9 +155,7 @@ export class UserResolver {
 
     req.session.userId = user.id;
 
-    return {
-      user,
-    };
+    return { user };
   }
 
   // Logout

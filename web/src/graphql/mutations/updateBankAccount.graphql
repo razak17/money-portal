@@ -2,7 +2,7 @@ mutation UpdateBankAccount(
   $id: Int!
   $name: String!
   $type: String!
-  $lowBalanceAlert: Int!
+  $lowBalanceAlert: Float!
 ) {
   updateBankAccount(
     id: $id
@@ -10,10 +10,15 @@ mutation UpdateBankAccount(
     type: $type
     lowBalanceAlert: $lowBalanceAlert
   ) {
-    id
-    type
-    lowBalanceAlert
-    createdAt
-    updatedAt
+    errors {
+      field
+      message
+    }
+    bankAccount {
+      id
+      lowBalanceAlert
+      createdAt
+      updatedAt
+    }
   }
 }

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Box, Flex, Button } from "@chakra-ui/react";
 import { useFormik } from "formik";
-import { InputField, SelectField } from "../";
+import { InputField, SelectField } from "../partials";
 import { transactionOptions } from "../../types";
 import { AddTransactionSchema } from "../../utils/validate";
 import { useNewTransactionMutation } from "../../generated/graphql";
@@ -31,7 +31,7 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = () => {
         variables: {
           input: {
             ...values,
-            amount: parseInt(values.amount),
+            amount: parseFloat(values.amount),
           },
           bankAccountId: intId,
         },
@@ -55,7 +55,7 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = () => {
     <Flex mr={0} ml={0} flexWrap="wrap">
       <Box
         p={2}
-        flex={{ base: "0 0 auto", xl: "0 0 20%" }}
+        flex={{ base: "0 0 auto", xl: "0 0 25%" }}
         w={{ base: "100%", sm: "100%", md: "50%", xl: "25%" }}
       >
         <Flex position="relative">
@@ -73,7 +73,7 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = () => {
       </Box>
 
       <Box
-        flex={{ base: "0 0 auto", xl: "0 0 20%" }}
+        flex={{ base: "0 0 auto", xl: "0 0 25%" }}
         p={2}
         w={{ base: "100%", sm: "100%", md: "50%", xl: "25%" }}
       >
@@ -115,6 +115,7 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = () => {
       >
         <Box flex="1 1 auto" p="0.5em 0">
           <Button
+            colorScheme="teal"
             onClick={() => handleSubmit()}
             type="submit"
             isLoading={isSubmitting}
