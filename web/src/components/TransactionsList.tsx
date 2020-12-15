@@ -1,9 +1,9 @@
-import { Box, Text } from "@chakra-ui/react";
-import React from "react";
+import { Box, Text } from '@chakra-ui/react';
+import React from 'react';
 import {
   useTotalTransactionsQuery,
   useTransactionsQuery,
-} from "../generated/graphql";
+} from '../generated/graphql';
 import {
   TransactionsTableEntries,
   TransactionsTable,
@@ -11,10 +11,10 @@ import {
   TransactionItem,
   TransactionsWrapper,
   TransactionsTableFilters,
-} from "./transactions";
-import { LoadingSpinner } from "./partials";
-import { LIMIT, PAGE, ALL } from "../constants";
-import { useGetIntId } from "../utils/useGetIntId";
+} from './transactions';
+import { LoadingSpinner } from './partials';
+import { LIMIT, PAGE, ALL } from '../constants';
+import { useGetIntId } from '../utils/useGetIntId';
 
 interface TransactionsListProps {}
 
@@ -25,14 +25,14 @@ export const TransactionsList: React.FC<TransactionsListProps> = () => {
 
   const intId = useGetIntId();
 
-  const { data, loading } = useTransactionsQuery({
+  const { data, loading, refetch } = useTransactionsQuery({
     variables: {
       bankAccountId: intId,
       limit,
       offset: page,
-      filter,
+      filter: null,
     },
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: 'cache-and-network',
   });
   /* console.log(data); */
 
@@ -42,7 +42,7 @@ export const TransactionsList: React.FC<TransactionsListProps> = () => {
         bankAccountId: intId,
         filter,
       },
-    }
+    },
   );
 
   if (
@@ -60,23 +60,32 @@ export const TransactionsList: React.FC<TransactionsListProps> = () => {
     );
   }
 
+  const filterRefetch = (customFilter: string) => {
+    const res = refetch({
+      bankAccountId: intId,
+      limit,
+      offset: PAGE,
+      filter: customFilter,
+    });
+    console.log("RES", res);
+    return res;
+  };
+
+
   return (
     <TransactionsWrapper>
-      {TotalCount?.totalTransactions && TotalCount?.totalTransactions > 0 ? (
-        <>
           <TransactionsTableFilters
             filter={filter}
             loading={TotalLoading}
             count={TotalCount?.totalTransactions}
             setFilter={setFilter}
-            setPage={setPage}
+            filterRefetch={filterRefetch}
           />
           <TransactionsTableEntries limit={limit} setLimit={setLimit} />
-        </>
-      ) : null}
       {loading ? (
         <LoadingSpinner variant="small" />
       ) : data?.transactions.transactions ? (
+        <>
         <TransactionsTable>
           {data?.transactions &&
             data?.transactions.transactions.map((t, index) =>
@@ -90,17 +99,16 @@ export const TransactionsList: React.FC<TransactionsListProps> = () => {
                   memo={t.memo}
                   updatedAt={t.updatedAt}
                 />
-              )
+              ),
             )}
         </TransactionsTable>
-      ) : null}
-      {TotalCount?.totalTransactions && TotalCount?.totalTransactions > 0 ? (
-        <TransactionsPagination
-          limit={limit}
-          page={page}
-          setPage={setPage}
-          count={TotalCount?.totalTransactions}
-        />
+          <TransactionsPagination
+            limit={limit}
+            page={page}
+            setPage={setPage}
+            count={TotalCount?.totalTransactions}
+          />
+          </>
       ) : null}
     </TransactionsWrapper>
   );

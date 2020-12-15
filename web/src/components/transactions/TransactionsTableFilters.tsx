@@ -15,7 +15,7 @@ interface TransactionsTableFiltersProps {
   setFilter: React.Dispatch<any>;
   loading: boolean;
   count: number | undefined;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
+  filterRefetch: any;
 }
 
 export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> = ({
@@ -23,7 +23,7 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
   setFilter,
   count,
   loading,
-  setPage,
+  filterRefetch
 }) => {
   const heading = (
     <Box w={{ base: "100%", sm: "100%", md: "30%", xl: "25%" }} flex="0 auto">
@@ -45,8 +45,8 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
           {filterOptions.map((option, index) => (
             <Button
               onClick={() => {
-                setPage(1);
                 setFilter(option);
+                filterRefetch(option);
               }}
               key={index}
               variant="link"
