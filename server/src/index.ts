@@ -29,7 +29,7 @@ const main = async () => {
     password: "",
     logging: true,
     synchronize: true,
-    migrations: [path.join(__dirname, "./migrations/*")],
+    migrations: [path.join(__dirname, "./migration/*")],
     entities: [Transaction, BankAccount, User, TransactionCategory],
   });
 

@@ -34,6 +34,7 @@ export const updateBankAccountSchema: Yup.ObjectSchema<UpdateBankAccountType> = 
     lowBalanceAlert: Yup.number().required("please enter low balance alert."),
   }
 );
+
 export const AddTransactionSchema: Yup.ObjectSchema<TransactionType> = Yup.object(
   {
     amount: Yup.number()
@@ -59,3 +60,13 @@ export const EditTransactionSchema: Yup.ObjectSchema<TransactionType> = Yup.obje
       .required("Please enter memo."),
   }
 );
+
+export const SearchSchema: Yup.ObjectSchema<{ searchQuery: string } | undefined> = Yup.object(
+  {
+    searchQuery: Yup.string()
+      .min(2, "must be 2 to 20 characters.")
+      .max(20, "must be 2 to 20 characters.")
+      .required("Please enter search query."),
+  }
+);
+

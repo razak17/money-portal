@@ -1,11 +1,14 @@
 import * as React from "react";
 import { Box, Flex, Text, Button, ButtonGroup } from "@chakra-ui/react";
+import { ApolloQueryResult } from '@apollo/client';
+import { TransactionsQuery } from '../../generated/graphql';
 
 interface TransactionsPaginationProps {
   limit: number;
   page: number;
   count: number | undefined;
   setPage: React.Dispatch<React.SetStateAction<number>>;
+  moreData: (n: number) => Promise<ApolloQueryResult<TransactionsQuery>>
 }
 
 export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
@@ -13,6 +16,7 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
   count,
   setPage,
   page,
+  moreData
 }) => {
   let total = 1;
   if (count) {
@@ -31,6 +35,7 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
           disabled={page === i}
           onClick={() => {
             setPage(i);
+            moreData(i)
           }}
         >
           {i}
@@ -46,6 +51,7 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
       disabled={page <= 1}
       onClick={() => {
         setPage(page - 1);
+        moreData(page - 1);
       }}
       p="0.5em 1em"
     >
@@ -59,6 +65,7 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
       disabled={page >= total}
       onClick={() => {
         setPage(page + 1);
+        moreData(page + 1);
       }}
       p="0.5em 1em"
     >
@@ -67,25 +74,29 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
   );
 
   const pagination = (
-    <Flex flexWrap="wrap" overflowX="auto">
-      <Box w="100%" flex="1">
-        <Flex flexWrap="wrap">
-          <Box p={{ base: "0.5em 0", md: "0" }} ml={{ base: "0", md: "auto" }}>
-            {prev}
-            <ButtonGroup p="0 1em" variant="solid" spacing="4">
+    <Box w={{ base: "100%", md: "55%", xl: "75%" }} flex="0 auto">
+      <Flex flexWrap="nowrap" overflowX="auto">
+        <Box p={{ base: "0.5em 0", md: "0" }} ml={{ base: "0", md: "auto" }}>
+          <Flex p="1em" flexWrap="nowrap" overflowX="auto">
+            {page > 1 ? (
+              prev
+            ) : null}
+            <ButtonGroup p={{base: "0 1em", md: "0.5 1em"}} variant="solid" spacing="4">
               {count ? paginate(total) : null}
             </ButtonGroup>
-            {next}
-          </Box>
-        </Flex>
-      </Box>
-    </Flex>
+            {page < total ? (
+              next
+            ) : null}
+          </Flex>
+        </Box>
+      </Flex>
+    </Box>
   );
 
   return (
-    <Box p="0.5em">
+    <Flex p="1em 0" flexWrap="wrap">
       {count ? (
-        <Box p="0.5em 0">
+        <Box p={{base: "1em", md: "0.5 1em"}} w={{ base: "100%", md: "45%", xl: "25%" }} flex="0 auto">
           <Text>
             Showing{" "}
             {`${page * limit - (limit - 1)} - ${Math.min(page * limit, count)}`}{" "}
@@ -94,6 +105,7 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
         </Box>
       ) : null}
       {pagination}
-    </Box>
+    </Flex>
   );
 };
+

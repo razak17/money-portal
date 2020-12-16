@@ -21,13 +21,16 @@ export const NotFoundPage: React.FC<Props> = () => {
         <Text fontSize="3xl">404 | That page does not exist!</Text>
       </Box>
       <Box mt={4}>
+        <Button mr={4} size="lg" onClick={() => history.goBack()}>
+          Go Back
+        </Button>
         {data?.me ? (
           <Button size="lg" onClick={() => history.push(AuthRoutes.DASHBOARD)}>
-            Back to dashboard
+            Go to dashboard
           </Button>
         ) : (
           <Button size="lg" onClick={() => history.push(NonAuthRoutes.LOGIN)}>
-            Back to login page
+            Go to login page
           </Button>
         )}
       </Box>

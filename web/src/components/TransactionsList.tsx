@@ -1,9 +1,9 @@
-import { Box, Text } from "@chakra-ui/react";
-import React from "react";
+import { Box, Text } from '@chakra-ui/react';
+import React from 'react';
 import {
   useTotalTransactionsQuery,
   useTransactionsQuery,
-} from "../generated/graphql";
+} from '../generated/graphql';
 import {
   TransactionsTableEntries,
   TransactionsTable,
@@ -11,10 +11,10 @@ import {
   TransactionItem,
   TransactionsWrapper,
   TransactionsTableFilters,
-} from "./transactions";
-import { LoadingSpinner } from "./partials";
-import { LIMIT, PAGE, ALL } from "../constants";
-import { useGetIntId } from "../utils/useGetIntId";
+} from './transactions';
+import { LoadingSpinner } from './partials';
+import { LIMIT, PAGE, ALL } from '../constants';
+import { useGetIntId } from '../utils/useGetIntId';
 
 interface TransactionsListProps {}
 
@@ -22,19 +22,21 @@ export const TransactionsList: React.FC<TransactionsListProps> = () => {
   const [page, setPage] = React.useState(PAGE);
   const [limit, setLimit] = React.useState(LIMIT);
   const [filter, setFilter] = React.useState(ALL);
+  const [searchQuery, setSearchQuery] = React.useState('');
 
   const intId = useGetIntId();
+  console.log(searchQuery);
 
-  const { data, loading } = useTransactionsQuery({
+  const { data, loading, refetch, fetchMore } = useTransactionsQuery({
     variables: {
       bankAccountId: intId,
       limit,
       offset: page,
-      filter,
+      search: searchQuery
     },
-    fetchPolicy: "cache-and-network",
+    // fetchPolicy: "network-only",
+    notifyOnNetworkStatusChange: true,
   });
-  /* console.log(data); */
 
   const { data: TotalCount, loading: TotalLoading } = useTotalTransactionsQuery(
     {
@@ -42,7 +44,7 @@ export const TransactionsList: React.FC<TransactionsListProps> = () => {
         bankAccountId: intId,
         filter,
       },
-    }
+    },
   );
 
   if (
@@ -60,48 +62,19 @@ export const TransactionsList: React.FC<TransactionsListProps> = () => {
     );
   }
 
+  const moreData = (n: number) => {
+    const res = fetchMore({
+      variables: {
+      limit,
+      offset: n,
+      },
+    });
+    return res;
+  };
+
+
   return (
     <TransactionsWrapper>
-      {TotalCount?.totalTransactions && TotalCount?.totalTransactions > 0 ? (
-        <>
-          <TransactionsTableFilters
-            filter={filter}
-            loading={TotalLoading}
-            count={TotalCount?.totalTransactions}
-            setFilter={setFilter}
-            setPage={setPage}
-          />
-          <TransactionsTableEntries limit={limit} setLimit={setLimit} />
-        </>
-      ) : null}
-      {loading ? (
-        <LoadingSpinner variant="small" />
-      ) : data?.transactions.transactions ? (
-        <TransactionsTable>
-          {data?.transactions &&
-            data?.transactions.transactions.map((t, index) =>
-              !t ? null : (
-                <TransactionItem
-                  key={t.id}
-                  id={t.id}
-                  index={index}
-                  amount={t.amount}
-                  type={t.type}
-                  memo={t.memo}
-                  updatedAt={t.updatedAt}
-                />
-              )
-            )}
-        </TransactionsTable>
-      ) : null}
-      {TotalCount?.totalTransactions && TotalCount?.totalTransactions > 0 ? (
-        <TransactionsPagination
-          limit={limit}
-          page={page}
-          setPage={setPage}
-          count={TotalCount?.totalTransactions}
-        />
-      ) : null}
     </TransactionsWrapper>
   );
 };

@@ -1,15 +1,25 @@
 import * as React from "react";
-import { Box, Flex, Text, Select, Input } from "@chakra-ui/react";
+import { Box, FormControl, Flex, Text, Select, Input } from "@chakra-ui/react";
 import { FILTER_OPTIONS } from "../../constants";
+import { ApolloQueryResult } from '@apollo/client';
+import { TransactionsQuery } from '../../generated/graphql';
 
 interface TransactionsTableProps {
   limit: number;
   setLimit: React.Dispatch<React.SetStateAction<number>>;
+  limitRefetch: (customLimit: number) => Promise<ApolloQueryResult<TransactionsQuery>>
+  searchQuery: string;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>
+  searchRefetch: any;
 }
 
 export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
   limit,
   setLimit,
+  limitRefetch,
+  searchQuery,
+  setSearchQuery,
+  searchRefetch
 }) => {
   const options = FILTER_OPTIONS.map((option, index) => (
     <option key={index} value={option}>
@@ -18,7 +28,7 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
   ));
 
   const entries = (
-    <Box w={{ base: "100%", md: "70%", xl: "70%" }} flex="0 auto">
+    <Box w={{ base: "100%", md: "55%", lg: "70%", xl: "70%" }} flex="0 auto">
       <Flex flexWrap="wrap" flex="0 0 auto">
         <Box paddingTop={2}>
           <Text>Show</Text>
@@ -27,8 +37,8 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
           <Select
             value={limit}
             onChange={(e) => {
-              console.log("selected", e.target.value);
               setLimit(parseInt(e.target.value));
+              limitRefetch(parseInt(e.target.value))
             }}
           >
             {[...options]}
@@ -42,7 +52,7 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
   );
 
   const search = (
-    <Box w={{ base: "100%", sm: "50%", md: "30%", xl: "30%" }} flex="0 auto">
+    <Box w={{ base: "100%", sm: "70%", md: "45%", lg: "30%", xl: "30%" }} flex="0 auto">
       <Flex
         p={{ base: "1em 0", md: "0" }}
         ml={{ base: "0", md: "auto" }}
@@ -53,7 +63,13 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
           <Text>Search:</Text>
         </Box>
         <Box p="0 0 0 1em" flex="1">
-          <Input variant="outline" />
+          <FormControl >
+            <Input
+              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchQuery}
+              variant="outline"
+            />
+          </FormControl>
         </Box>
       </Flex>
     </Box>
