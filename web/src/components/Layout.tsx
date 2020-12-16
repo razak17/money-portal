@@ -19,7 +19,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           right={0}
           overflow="visible"
           display="block"
-          width="100%"
+          width={{ base: "100%", xl: "75%" }}
           paddingBottom="70px"
         >
           {children}

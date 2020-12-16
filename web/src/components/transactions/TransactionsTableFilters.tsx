@@ -9,13 +9,15 @@ import {
 } from "@chakra-ui/react";
 import { filterOptions } from "../../types";
 import { toTitleCase } from "../../utils/toTitleCase";
+import { ApolloQueryResult } from '@apollo/client';
+import { TransactionsQuery } from '../../generated/graphql';
 
 interface TransactionsTableFiltersProps {
   filter: string;
   setFilter: React.Dispatch<any>;
   loading: boolean;
   count: number | undefined;
-  filterRefetch: any;
+  filterRefetch: (customFilter: string) => Promise<ApolloQueryResult<TransactionsQuery>>
 }
 
 export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> = ({
@@ -50,7 +52,7 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
               }}
               key={index}
               variant="link"
-              colorScheme={option === filter ? "teal" : ""}
+              colorScheme={option === filter ? "yellow" : ""}
             >
               {toTitleCase(option)}
             </Button>
@@ -63,7 +65,7 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
   return (
     <Flex flexWrap="wrap" mb="0.5em" p="0 0.5em">
       {heading}
-      {count && count > 0 ? filters : null}
+      {filters}
     </Flex>
   );
 };

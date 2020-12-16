@@ -3,12 +3,14 @@ query Transactions(
   $limit: Int!
   $offset: Int!
   $filter: String
+  $search: String
 ) {
   transactions(
     bankAccountId: $bankAccountId
     limit: $limit
     offset: $offset
     filter: $filter
+    search: $search
   ) {
     hasMore
     transactions {

@@ -32,6 +32,7 @@ export type QueryTotalTransactionsArgs = {
 
 export type QueryTransactionsArgs = {
   offset: Scalars['Int'];
+  search?: Maybe<Scalars['String']>;
   filter?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
   bankAccountId: Scalars['Int'];
@@ -477,6 +478,7 @@ export type TransactionsQueryVariables = Exact<{
   limit: Scalars['Int'];
   offset: Scalars['Int'];
   filter?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -1117,12 +1119,13 @@ export type TransactionQueryHookResult = ReturnType<typeof useTransactionQuery>;
 export type TransactionLazyQueryHookResult = ReturnType<typeof useTransactionLazyQuery>;
 export type TransactionQueryResult = Apollo.QueryResult<TransactionQuery, TransactionQueryVariables>;
 export const TransactionsDocument = gql`
-    query Transactions($bankAccountId: Int!, $limit: Int!, $offset: Int!, $filter: String) {
+    query Transactions($bankAccountId: Int!, $limit: Int!, $offset: Int!, $filter: String, $search: String) {
   transactions(
     bankAccountId: $bankAccountId
     limit: $limit
     offset: $offset
     filter: $filter
+    search: $search
   ) {
     hasMore
     transactions {
@@ -1167,6 +1170,7 @@ export const TransactionsDocument = gql`
  *      limit: // value for 'limit'
  *      offset: // value for 'offset'
  *      filter: // value for 'filter'
+ *      search: // value for 'search'
  *   },
  * });
  */

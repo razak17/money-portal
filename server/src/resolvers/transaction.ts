@@ -106,13 +106,13 @@ export class TransactionResolver {
     const transactions = await getConnection().query(
       `
     select t.*
-    from transaction t 
+    from transaction t
     ${
       filter && filter != "all"
         ? `where t."creatorId" = $1 and t."bankAccountId" = $2 and t."categoryId" = $3`
         : `where t."creatorId" = $1 and t."bankAccountId" = $2`
     }
-    order by t."createdAt" 
+    order by t."createdAt"
     `,
       replacements
     );
@@ -127,6 +127,8 @@ export class TransactionResolver {
     @Arg("limit", () => Int) limit: number,
     @Arg("filter", () => String, { nullable: true })
     filter: string | null,
+    @Arg("search", () => String, { nullable: true })
+    search: string | null,
     @Arg("offset", () => Int) offset: number,
     @Ctx() { req }: MyContext
   ): Promise<PaginatedTransactions> {
@@ -137,7 +139,8 @@ export class TransactionResolver {
     const page = (offset - 1) * limit;
     const replacements: any[] = [reaLimitPlusOne, userId, bankAccountId, page];
 
-    if (filter && filter != "all") {
+    if ((filter && filter != "all") && (search && search.trim().length)) {
+      replacements.push(`%${search}%`)
       if (filter === FilterOptions.TRANSFERS) {
         replacements.push(3);
       } else if (filter === FilterOptions.DEPOSITS) {
@@ -146,17 +149,34 @@ export class TransactionResolver {
         replacements.push(1);
       }
     }
+    else if (filter && filter != "all") {
+      if (filter === FilterOptions.TRANSFERS) {
+        replacements.push(3);
+      } else if (filter === FilterOptions.DEPOSITS) {
+        replacements.push(2);
+      } else if (filter === FilterOptions.WITHDRAWALS) {
+        replacements.push(1);
+      }
+    }
+    else if (search && search.trim().length) {
+      replacements.push(`%${search}%`)
+      console.log('SEARCH', replacements[4]);
+    }
 
     const transactions = await getConnection().query(
       `
     select t.*
-    from transaction t 
+    from transaction t
     ${
+      (search && search.trim().length) && (filter && filter != "all") ?
+        `where t."creatorId" = $2 and t."bankAccountId" = $3 and t."memo" like $5 and t."categoryId" = $6` :
+      search && search.trim().length ?
+        `where t."creatorId" = $2 and t."bankAccountId" = $3 and t."memo" like $5` :
       filter && filter != "all"
         ? `where t."creatorId" = $2 and t."bankAccountId" = $3 and t."categoryId" = $5`
         : `where t."creatorId" = $2 and t."bankAccountId" = $3`
     }
-    order by t."createdAt" 
+    order by t."createdAt" DESC
     limit $1
     offset $4
     `,

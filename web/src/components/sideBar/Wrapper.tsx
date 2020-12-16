@@ -1,10 +1,11 @@
 import React from "react";
-import { Box } from "@chakra-ui/react";
+import { Flex,} from "@chakra-ui/react";
 
 export const SideBarWrapper: React.FC = ({ children }) => {
   return (
-    <Box
+    <Flex
       position="sticky"
+      flexDir="column"
       borderRight="1px solid black"
       top={0}
       bottom={0}
@@ -13,11 +14,10 @@ export const SideBarWrapper: React.FC = ({ children }) => {
       height="100vh"
       maxH="100%"
       overflowY="auto"
-      width={{ base: "0", sm: "0", md: "0", xl: "260px" }}
+      width={{ base: "0", sm: "0", md: "0", xl: "25%" }}
       overflowWrap="break-word"
-      flexShrink={0}
     >
       {children}
-    </Box>
+    </Flex>
   );
 };
