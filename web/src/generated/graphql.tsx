@@ -2,6 +2,8 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -119,7 +121,7 @@ export type PaginatedBankAccounts = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  newTransaction: Transaction;
+  newTransaction: TransactionResponse;
   updateTransaction?: Maybe<Transaction>;
   deleteTransaction: Scalars['Boolean'];
   newBankAccount: BankAccountResponse;
@@ -184,6 +186,18 @@ export type MutationRegisterArgs = {
 export type MutationLoginArgs = {
   password: Scalars['String'];
   usernameOrEmail: Scalars['String'];
+};
+
+export type TransactionResponse = {
+  __typename?: 'TransactionResponse';
+  transaction?: Maybe<Transaction>;
+  errors?: Maybe<Array<TransactionError>>;
+};
+
+export type TransactionError = {
+  __typename?: 'TransactionError';
+  field: Scalars['String'];
+  message: Scalars['String'];
 };
 
 export type TransactionInput = {
@@ -310,18 +324,24 @@ export type NewTransactionMutationVariables = Exact<{
 export type NewTransactionMutation = (
   { __typename?: 'Mutation' }
   & { newTransaction: (
-    { __typename?: 'Transaction' }
-    & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo' | 'categoryId' | 'createdAt'>
-    & { category: (
-      { __typename?: 'TransactionCategory' }
-      & Pick<TransactionCategory, 'id' | 'name'>
-    ), creator: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'email'>
-    ), bankAccount: (
-      { __typename?: 'BankAccount' }
-      & Pick<BankAccount, 'id' | 'name' | 'type'>
-    ) }
+    { __typename?: 'TransactionResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'TransactionError' }
+      & Pick<TransactionError, 'field' | 'message'>
+    )>>, transaction?: Maybe<(
+      { __typename?: 'Transaction' }
+      & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo' | 'categoryId' | 'createdAt'>
+      & { category: (
+        { __typename?: 'TransactionCategory' }
+        & Pick<TransactionCategory, 'id' | 'name'>
+      ), creator: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'email'>
+      ), bankAccount: (
+        { __typename?: 'BankAccount' }
+        & Pick<BankAccount, 'id' | 'name' | 'type'>
+      ) }
+    )> }
   ) }
 );
 
@@ -692,26 +712,32 @@ export type NewBankAccountMutationOptions = Apollo.BaseMutationOptions<NewBankAc
 export const NewTransactionDocument = gql`
     mutation NewTransaction($input: TransactionInput!, $bankAccountId: Int!) {
   newTransaction(input: $input, bankAccountId: $bankAccountId) {
-    id
-    amount
-    type
-    memo
-    categoryId
-    category {
-      id
-      name
+    errors {
+      field
+      message
     }
-    creator {
+    transaction {
       id
-      username
-      email
-    }
-    bankAccount {
-      id
-      name
+      amount
       type
+      memo
+      categoryId
+      category {
+        id
+        name
+      }
+      creator {
+        id
+        username
+        email
+      }
+      bankAccount {
+        id
+        name
+        type
+      }
+      createdAt
     }
-    createdAt
   }
 }
     `;

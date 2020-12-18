@@ -1,14 +1,14 @@
 import * as React from "react";
-import { Nav } from "./partials";
+import { NavBar } from "./partials";
 import { Box, Flex } from "@chakra-ui/react";
-import { SideBar } from "./";
+import { SideBar, Footer } from "./";
 
 interface LayoutProps {}
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <>
-      <Nav />
+      <NavBar />
       <Flex>
         <SideBar />
         <Box
@@ -23,8 +23,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           paddingBottom="70px"
         >
           {children}
+          <Footer />
         </Box>
       </Flex>
     </>
   );
 };
+

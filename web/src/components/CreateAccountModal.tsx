@@ -12,7 +12,7 @@ import { FormikInputField, FormikSelectField } from "./partials";
 import { useNewBankAccountMutation } from "../generated/graphql";
 import { accountOptions } from "../types";
 import { NewBankAccountSchema } from "../utils/validate";
-import { useHistory } from "react-router-dom";
+import { useRouter } from "next/router";
 import { AuthRoutes } from "../api/routes";
 import { toErrorMap } from "../utils/toErrorMap";
 
@@ -23,7 +23,7 @@ interface Props {
 
 export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const initialRef = React.useRef<HTMLInputElement>(null);
-  const history = useHistory();
+  const router = useRouter();
 
   const [newBankAccount] = useNewBankAccountMutation();
 
@@ -38,7 +38,7 @@ export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
         lowBalanceAlert: "",
       }}
       validationSchema={NewBankAccountSchema}
-      validateOnBlur={false}
+      validateOnBlur={true}
       validateOnChange={false}
       onSubmit={async (values, { setErrors }) => {
         console.log(values);
@@ -60,7 +60,7 @@ export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
           setErrors(toErrorMap(response.data.newBankAccount.errors));
         } else if (response.data?.newBankAccount.bankAccount) {
           onClose();
-          history.push(
+          router.push(
             `${AuthRoutes.TRANSACTIONS}/${response.data.newBankAccount.bankAccount.id}`
           );
         }

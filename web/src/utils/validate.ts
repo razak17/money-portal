@@ -14,6 +14,7 @@ export const NewBankAccountSchema: Yup.ObjectSchema<BankAccountType> = Yup.objec
     type: Yup.string().required("please select account type."),
     startingBalance: Yup.number()
       .min(1, "must be greater than 0.")
+      .max(999999999, "must not be greater than 999999999.")
       .required("please enter starting balance."),
     lowBalanceAlert: Yup.number()
       .max(
@@ -31,7 +32,9 @@ export const updateBankAccountSchema: Yup.ObjectSchema<UpdateBankAccountType> = 
       .max(20, "must be 2 to 20 characters.")
       .required("please enter account name."),
     type: Yup.string().required("please select account type."),
-    lowBalanceAlert: Yup.number().required("please enter low balance alert."),
+    lowBalanceAlert: Yup.number()
+      .max(999999999, "must not be greater than 999999999.")
+      .required("please enter low balance alert."),
   }
 );
 
@@ -39,6 +42,7 @@ export const AddTransactionSchema: Yup.ObjectSchema<TransactionType> = Yup.objec
   {
     amount: Yup.number()
       .min(1, "must be greater than 0.")
+      .max(999999999, "must not be greater than 999999999.")
       .required("please enter an amount."),
     type: Yup.string().required("please select transaction type."),
     memo: Yup.string()
@@ -52,6 +56,7 @@ export const EditTransactionSchema: Yup.ObjectSchema<TransactionType> = Yup.obje
   {
     amount: Yup.number()
       .min(1, "must be greater than 0.")
+      .max(999999999, "must not be greater than 999999999.")
       .required("Please enter an amount."),
     type: Yup.string().required("please select transaction type."),
     memo: Yup.string()

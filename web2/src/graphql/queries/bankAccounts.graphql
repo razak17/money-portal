@@ -1,0 +1,23 @@
+query BankAccounts($limit: Int!, $cursor: String) {
+  bankAccounts(limit: $limit, cursor: $cursor) {
+    hasMore
+    bankAccounts {
+      id
+      name
+      type
+      startingBalance
+      lowBalanceAlert
+      currentBalance
+      monthlySpending
+      monthlyTransactions
+      monthlyDeposits
+      creator {
+        id
+        username
+        email
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}

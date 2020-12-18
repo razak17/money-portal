@@ -5,9 +5,12 @@
 /.vscode
 /.vscode/
 /web/public/
+/web2/public/
 /node_modules
 /public/
 /web/node_modules
+/web/.next
+/web2/node_modules
 /server/node_modules
 /server/dist
 /.pnp

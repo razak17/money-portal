@@ -7,3 +7,4 @@ export const toTitleCase = (str: string) => {
     })
     .join(" ");
 };
+

@@ -1,0 +1,17 @@
+query Transaction($bankAccountId: Int!, $id: Int!) {
+  transaction(bankAccountId: $bankAccountId, id: $id) {
+    id
+    amount
+    type
+    memo
+    creator {
+      id
+      username
+    }
+    bankAccount {
+      id
+      name
+      type
+    }
+  }
+}

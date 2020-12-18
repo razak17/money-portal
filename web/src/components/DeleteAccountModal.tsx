@@ -15,7 +15,8 @@ import * as React from "react";
 import { Form, Formik } from "formik";
 import { useGetIntId } from "../utils/useGetIntId";
 import { useDeleteBankAccountMutation } from "../generated/graphql";
-import { useHistory } from "react-router-dom";
+import { useRouter } from "next/router";
+import { AuthRoutes } from "../api/routes";
 
 interface DeleteAccountModalProps {
   isOpen: boolean;
@@ -31,7 +32,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
 
   const [deleteBankAccount] = useDeleteBankAccountMutation();
 
-  let history = useHistory();
+  let router = useRouter();
 
   let body = null;
   body = (
@@ -51,7 +52,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
             },
           });
           if (!errors) {
-            history.push("/dashboard/lobby");
+            router.push(AuthRoutes.DASHBOARD);
           }
         }
       }}

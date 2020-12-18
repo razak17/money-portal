@@ -1,8 +1,9 @@
 export enum AuthRoutes {
   DASHBOARD = "/dashboard/lobby",
-  TRANSACTIONS = "/dashboard/accounts/transactions",
-  SETTINGS = "/dashboard/accounts/settings",
-  PROFILE = "/dashboard/accounts/profile",
+  TRANSACTIONS = "/dashboard/account/transactions",
+  SETTINGS = "/dashboard/account/settings",
+  PROFILE = "/dashboard/account/profile",
+  ACCOUNT_DETAILS = "/dashboard/account/details",
 }
 
 export enum NonAuthRoutes {
@@ -13,3 +14,4 @@ export enum NonAuthRoutes {
   NOT_FOUND = "/404",
   FAQS = "/helu/faqs",
 }
+

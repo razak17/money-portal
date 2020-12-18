@@ -5,6 +5,7 @@ import { DeleteTransactionModal } from "./";
 import { useGetIntId } from "../../utils/useGetIntId";
 import { getRound } from "../../utils/getRound";
 import { TransactionOptions } from "../../types";
+import dayjs from 'dayjs'
 
 interface TransactionViewProps {
   id: number;
@@ -90,9 +91,9 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
       </TableData>
       <TableData>
         <Heading size="xs">
-          {new Date(parseInt(updatedAt)).toISOString()}
+          {dayjs(new Date(parseInt(updatedAt))).format("dddd, MMMM D YYYY")}
         </Heading>
-        <Text fontSize="sm">{updatedAt}</Text>
+        <Text fontSize="sm">{dayjs(new Date(parseInt(updatedAt))).format("h:mm:ss A")}</Text>
       </TableData>
     </chakra.tr>
   );

@@ -47,11 +47,28 @@ export class TransactionInput {
 }
 
 @ObjectType()
+class TransactionError {
+  @Field()
+  field: string;
+  @Field()
+  message: string;
+}
+
+@ObjectType()
 class PaginatedTransactions {
   @Field(() => [Transaction])
   transactions: Transaction[];
   @Field()
   hasMore: boolean;
+}
+
+@ObjectType()
+class TransactionResponse {
+  @Field(() => Transaction, { nullable: true })
+  transaction?: Transaction | null;
+
+  @Field(() => [TransactionError], { nullable: true })
+  errors?: TransactionError[];
 }
 
 @Resolver(Transaction)
@@ -205,13 +222,13 @@ export class TransactionResolver {
   }
 
   // Create New Transaction
-  @Mutation(() => Transaction)
+  @Mutation(() => TransactionResponse)
   @UseMiddleware(isAuth)
   async newTransaction(
     @Arg("input") input: TransactionInput,
     @Arg("bankAccountId", () => Int) bankAccountId: number,
     @Ctx() { req }: MyContext
-  ): Promise<Transaction> {
+  ): Promise<TransactionResponse> {
     const { userId } = req.session;
 
     let categoryId;
@@ -219,13 +236,46 @@ export class TransactionResolver {
     if (input.type === TransactionOptions.TRANSFER) {
       categoryId = 3;
     }
-
-    if (input.type === TransactionOptions.DEPOSIT) {
+    else if (input.type === TransactionOptions.DEPOSIT) {
       categoryId = 2;
     }
-
-    if (input.type && withdrawalOptions.includes(input.type)) {
+    else if (input.type && withdrawalOptions.includes(input.type)) {
       categoryId = 1;
+    }
+
+    const res = await getConnection().query(
+      `
+      select "currentBalance"
+      from bank_account
+      where bank_account.id = $1
+      and bank_account."creatorId" = $2
+      `,
+      [bankAccountId, userId]
+    )
+
+    console.log(res);
+    const  currentBalance = Object.values(res[0])[0] as number;
+
+    if(input.amount > currentBalance && withdrawalOptions.includes(input.type)) {
+      return {
+        errors: [
+          {
+            field: 'amount',
+            message: 'not enough funds.'
+          }
+        ]
+      }
+    }
+
+    if(input.memo.trim().length === 0) {
+      return {
+        errors: [
+          {
+            field: 'memo',
+            message: 'must not be empty.'
+          }
+        ]
+      }
     }
 
     const transaction = await Transaction.create({
@@ -235,21 +285,15 @@ export class TransactionResolver {
       categoryId,
     }).save();
 
-    const allTransactions = await Transaction.find({
-      bankAccountId,
-      creatorId: userId,
-    });
-    const monthlyTransactions = allTransactions.length;
-
     if (input.type === TransactionOptions.DEPOSIT) {
-      newDeposit(input.amount, bankAccountId, userId, monthlyTransactions);
+      newDeposit(input.amount, bankAccountId, userId);
     } else if (input.type === TransactionOptions.TRANSFER) {
-      newTransfer(input.amount, bankAccountId, userId, monthlyTransactions);
+      newTransfer(input.amount, bankAccountId, userId);
     } else if (input.type && withdrawalOptions.includes(input.type)) {
-      newWithdrawal(input.amount, bankAccountId, userId, monthlyTransactions);
+      newWithdrawal(input.amount, bankAccountId, userId);
     }
 
-    return transaction;
+    return { transaction };
   }
 
   // Update Transaction

@@ -3,9 +3,10 @@ export * from "./FormikInputField";
 export * from "./InputField";
 export * from "./PageHeader";
 export * from "./LoadingSpinner";
-export * from "./MainContent";
-export * from "./Nav";
+// export * from "./MainContent";
+export * from "./NavBar";
 export * from "./SelectField";
-export * from "./FormikSelectField";
 export * from "./StatStack";
+export * from "./FormikSelectField";
 export * from "./Wrapper";
+

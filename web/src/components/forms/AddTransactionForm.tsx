@@ -3,9 +3,10 @@ import { Box, Flex, Button } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { InputField, SelectField } from "../partials";
 import { transactionOptions } from "../../types";
-import { AddTransactionSchema } from "../../utils/validate";
-import { useNewTransactionMutation } from "../../generated/graphql";
-import { useGetIntId } from "../../utils/useGetIntId";
+import {
+  useNewTransactionMutation,
+} from "../../generated/graphql";
+import { useGetIntId, toErrorMap, AddTransactionSchema } from "../../utils";
 
 interface AddTransactionFormProps {}
 
@@ -26,8 +27,7 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = () => {
     validateOnChange: false,
     validationSchema: AddTransactionSchema,
     onSubmit: async (values, actions) => {
-      console.log(values);
-      const { errors } = await newTransaction({
+      const res = await newTransaction({
         variables: {
           input: {
             ...values,
@@ -40,9 +40,13 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = () => {
           cache.evict({ fieldName: "transactions" });
           cache.evict({ fieldName: "bankAccount" });
           cache.gc();
-        },
+        }
       });
-      if (!errors && inputFieldRef.current) {
+      if (res.data?.newTransaction.errors) {
+        console.log(res.data?.newTransaction.errors);
+        actions.setErrors(toErrorMap(res.data.newTransaction.errors));
+      }
+      else if (res.data?.newTransaction.transaction && inputFieldRef.current) {
         actions.resetForm();
         inputFieldRef.current.focus();
       }
