@@ -1,0 +1,24 @@
+mutation UpdateBankAccount(
+  $id: Int!
+  $name: String!
+  $type: String!
+  $lowBalanceAlert: Float!
+) {
+  updateBankAccount(
+    id: $id
+    name: $name
+    type: $type
+    lowBalanceAlert: $lowBalanceAlert
+  ) {
+    errors {
+      field
+      message
+    }
+    bankAccount {
+      id
+      lowBalanceAlert
+      createdAt
+      updatedAt
+    }
+  }
+}

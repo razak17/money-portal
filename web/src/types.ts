@@ -13,13 +13,20 @@ export enum TransactionOptions {
   TRANSFER = "transfer",
 }
 
+export enum statOptions {
+  CURRENT_BALANCE = "Current Balalnce",
+  MONTHLY_SPENDING = "Monthly Spending",
+  MONTHLY_DEPOSITS  = "Monthly Deposits",
+  MONTHLY_TRANSACTIONS = "Monthly Transactions",
+}
+
 export type WrapperVariant = "small" | "regular";
 
 export type BankAccountType =
   | {
       name: string;
-      type: string;
-      startingBalance: BankAccountOptions | number;
+      type: BankAccountOptions | string;
+      startingBalance: number;
       lowBalanceAlert: number;
     }
   | undefined;
@@ -73,3 +80,4 @@ export const withdrawalOptions = [
 ];
 
 export const filterOptions = ["all", "withdrawals", "deposits", "transfers"];
+

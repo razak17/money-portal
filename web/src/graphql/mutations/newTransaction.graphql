@@ -1,24 +1,31 @@
 mutation NewTransaction($input: TransactionInput!, $bankAccountId: Int!) {
   newTransaction(input: $input, bankAccountId: $bankAccountId) {
-    id
-    amount
-    type
-    memo
-    categoryId
-    category {
-      id
-      name
+    errors {
+      field
+      message
     }
-    creator {
+    transaction {
       id
-      username
-      email
-    }
-    bankAccount {
-      id
-      name
+      amount
       type
+      memo
+      categoryId
+      category {
+        id
+        name
+      }
+      creator {
+        id
+        username
+        email
+      }
+      bankAccount {
+        id
+        name
+        type
+      }
+      createdAt
     }
-    createdAt
   }
 }
+

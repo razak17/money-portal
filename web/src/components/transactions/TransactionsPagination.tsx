@@ -100,7 +100,7 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
           <Text>
             Showing{" "}
             {`${page * limit - (limit - 1)} - ${Math.min(page * limit, count)}`}{" "}
-            of {count} entries
+            of {count} {count > 1 ? "entries" : "entry"}
           </Text>
         </Box>
       ) : null}

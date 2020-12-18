@@ -17,7 +17,7 @@ export const updateDeposit = async (
       await tm.query(
         `
           update bank_account
-          set 
+          set
           "monthlyDeposits" = "monthlyDeposits" - $3 + $4,
           "currentBalance" = "currentBalance" -$3 + $4
           where "id" = $1 and "creatorId" = $2
@@ -27,16 +27,12 @@ export const updateDeposit = async (
     });
   } else if (
     withdrawalOptions.includes(newType)
-    // newType === TransactionOptions.CASH_WITHDRAWAL ||
-    // newType === TransactionOptions.CARD_NUMBER_ENTERED ||
-    // newType === TransactionOptions.CHECK ||
-    // newType === TransactionOptions.POINT_OF_SALE
   ) {
     await getConnection().transaction(async (tm) => {
       await tm.query(
         `
           update bank_account
-          set 
+          set
           "monthlyDeposits" = "monthlyDeposits" - $3,
           "monthlySpending" = "monthlySpending" + $4,
           "currentBalance" = "currentBalance" - $3 - $4
@@ -59,7 +55,7 @@ export const updateTransfer = async (
       await tm.query(
         `
           update bank_account
-          set 
+          set
           "monthlyDeposits" = "monthlyDeposits" + $3,
           "currentBalance" = "currentBalance" + $3
           where "id" = $1 and "creatorId" = $2
@@ -68,16 +64,13 @@ export const updateTransfer = async (
       );
     });
   } else if (
-    newType === TransactionOptions.CASH_WITHDRAWAL ||
-    newType === TransactionOptions.CARD_NUMBER_ENTERED ||
-    newType === TransactionOptions.CHECK ||
-    newType === TransactionOptions.POINT_OF_SALE
+    withdrawalOptions.includes(newType)
   ) {
     await getConnection().transaction(async (tm) => {
       await tm.query(
         `
           update bank_account
-          set 
+          set
           "monthlySpending" = "monthlySpending" + $3,
           "currentBalance" = "currentBalance" - $3
           where "id" = $1 and "creatorId" = $2
@@ -100,7 +93,7 @@ export const updateWithdrawal = async (
       await tm.query(
         `
           update bank_account
-          set 
+          set
           "monthlyDeposits" = "monthlyDeposits" + $4,
           "monthlySpending" = "monthlySpending" - $3,
           "currentBalance" = "currentBalance" + $3 + $4
@@ -110,16 +103,13 @@ export const updateWithdrawal = async (
       );
     });
   } else if (
-    newType === TransactionOptions.CASH_WITHDRAWAL ||
-    newType === TransactionOptions.CARD_NUMBER_ENTERED ||
-    newType === TransactionOptions.CHECK ||
-    newType === TransactionOptions.POINT_OF_SALE
+    withdrawalOptions.includes(newType)
   ) {
     await getConnection().transaction(async (tm) => {
       await tm.query(
         `
           update bank_account
-          set 
+          set
           "monthlySpending" = "monthlySpending" - $3 + $4,
           "currentBalance" = "currentBalance" + $3 - $4
           where "id" = $1 and "creatorId" = $2

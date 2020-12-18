@@ -1,12 +1,15 @@
+// import { withApollo as createWithApollo } from "next-apollo";
+import { createWithApollo } from './createWithApollo';
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import {
   PaginatedBankAccounts,
   PaginatedTransactions,
 } from "../generated/graphql";
+import { NextPageContext } from 'next';
 
-export const createClient = (ctx: any) => {
+const createClient = (ctx: NextPageContext) =>
   new ApolloClient({
-    uri: "http://localhost:4000/graphql",
+    uri: 'http://localhost:4000/graphql',
     credentials: "include",
     headers: {
       cookie:
@@ -14,14 +17,42 @@ export const createClient = (ctx: any) => {
           ? ctx?.req?.headers.cookie
           : undefined) || "",
     },
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+       typePolicies: {
+          Query: {
+            fields: {
+              bankAccounts: {
+                keyArgs: [],
+                merge(
+                  existing: PaginatedBankAccounts | undefined,
+                  incoming: PaginatedBankAccounts
+                ): PaginatedBankAccounts {
+                  return {
+                    ...incoming,
+                    bankAccounts: [
+                      ...(existing?.bankAccounts || []),
+                      ...incoming.bankAccounts,
+                    ],
+                  };
+                },
+              },
+              // transactions: {
+                // keyArgs: [],
+                // merge(
+                  // _: PaginatedTransactions | undefined,
+                  // incoming: PaginatedTransactions
+                // ): PaginatedTransactions {
+                  // const merged = {
+                    // ...incoming,
+                    // transactions: [...incoming.transactions],
+                  // };
+                  // return merged;
+                // },
+              // },
+            },
+          },
+        },
+    }),
   });
-};
 
-export const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql",
-  credentials: "include",
-  cache: new InMemoryCache({
-
-  }),
-});
+export const withApollo = createWithApollo(createClient);

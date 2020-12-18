@@ -1,8 +1,9 @@
-import { useParams } from "react-router-dom";
+import { useRouter } from "next/router";
 
 export const useGetIntId = () => {
-  const { id } = useParams<{ id: string }>();
-  const intId = parseInt(id);
+  const router = useRouter();
+  const intId =
+    typeof router.query.id === "string" ? parseInt(router.query.id) : -1;
 
   return intId;
 };

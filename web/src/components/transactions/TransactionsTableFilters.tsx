@@ -8,16 +8,15 @@ import {
   ButtonGroup,
 } from "@chakra-ui/react";
 import { filterOptions } from "../../types";
+import { PAGE } from '../../constants';
 import { toTitleCase } from "../../utils/toTitleCase";
-import { ApolloQueryResult } from '@apollo/client';
-import { TransactionsQuery } from '../../generated/graphql';
 
 interface TransactionsTableFiltersProps {
   filter: string;
   setFilter: React.Dispatch<any>;
   loading: boolean;
   count: number | undefined;
-  filterRefetch: (customFilter: string) => Promise<ApolloQueryResult<TransactionsQuery>>
+  setPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> = ({
@@ -25,7 +24,7 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
   setFilter,
   count,
   loading,
-  filterRefetch
+  setPage,
 }) => {
   const heading = (
     <Box w={{ base: "100%", sm: "100%", md: "30%", xl: "25%" }} flex="0 auto">
@@ -47,8 +46,8 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
           {filterOptions.map((option, index) => (
             <Button
               onClick={() => {
+                setPage(PAGE);
                 setFilter(option);
-                filterRefetch(option);
               }}
               key={index}
               variant="link"
@@ -65,7 +64,9 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
   return (
     <Flex flexWrap="wrap" mb="0.5em" p="0 0.5em">
       {heading}
-      {filters}
+      {count && count > 0 ?
+        filters
+      : null}
     </Flex>
   );
 };

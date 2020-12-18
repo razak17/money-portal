@@ -1,80 +1,65 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import React from 'react';
 import {
-  useTotalTransactionsQuery,
-  useTransactionsQuery,
-} from '../generated/graphql';
-import {
-  TransactionsTableEntries,
   TransactionsTable,
   TransactionsPagination,
   TransactionItem,
-  TransactionsWrapper,
-  TransactionsTableFilters,
 } from './transactions';
 import { LoadingSpinner } from './partials';
-import { LIMIT, PAGE, ALL } from '../constants';
-import { useGetIntId } from '../utils/useGetIntId';
+import { ApolloQueryResult } from '@apollo/client';
+import { TransactionsQuery } from '../generated/graphql';
 
-interface TransactionsListProps {}
+interface TransactionsListProps {
+  count: number | undefined;
+  limit: number;
+  loadingTransactions: boolean;
+  TransactionData: TransactionsQuery | undefined;
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  moreData: (n: number) => Promise<ApolloQueryResult<TransactionsQuery>>
+}
 
-export const TransactionsList: React.FC<TransactionsListProps> = () => {
-  const [page, setPage] = React.useState(PAGE);
-  const [limit, setLimit] = React.useState(LIMIT);
-  const [filter, setFilter] = React.useState(ALL);
-  const [searchQuery, setSearchQuery] = React.useState('');
-
-  const intId = useGetIntId();
-  console.log(searchQuery);
-
-  const { data, loading, refetch, fetchMore } = useTransactionsQuery({
-    variables: {
-      bankAccountId: intId,
-      limit,
-      offset: page,
-      search: searchQuery
-    },
-    // fetchPolicy: "network-only",
-    notifyOnNetworkStatusChange: true,
-  });
-
-  const { data: TotalCount, loading: TotalLoading } = useTotalTransactionsQuery(
-    {
-      variables: {
-        bankAccountId: intId,
-        filter,
-      },
-    },
-  );
-
-  if (
-    !loading &&
-    !TotalLoading &&
-    data?.transactions &&
-    data?.transactions.transactions.length <= 0
-  ) {
-    return (
-      <TransactionsWrapper>
-        <Box textAlign="center" p="1.5rem">
-          <Text fontSize="lg">No transactions yet.</Text>
-        </Box>
-      </TransactionsWrapper>
-    );
-  }
-
-  const moreData = (n: number) => {
-    const res = fetchMore({
-      variables: {
-      limit,
-      offset: n,
-      },
-    });
-    return res;
-  };
-
-
+export const TransactionsList: React.FC<TransactionsListProps> = ({
+  count,
+  limit,
+  TransactionData,
+  page,
+  setPage,
+  moreData,
+  loadingTransactions
+}) => {
   return (
-    <TransactionsWrapper>
-    </TransactionsWrapper>
+    loadingTransactions ? (
+        <LoadingSpinner variant="small" />
+    ) : TransactionData && count && count > 0 ? (
+        <>
+        <TransactionsTable>
+          {TransactionData.transactions.transactions.map((t, index) =>
+              !t ? null : (
+                <TransactionItem
+                  key={t.id}
+                  id={t.id}
+                  index={index}
+                  amount={t.amount}
+                  type={t.type}
+                  memo={t.memo}
+                  updatedAt={t.updatedAt}
+                />
+              ),
+            )}
+        </TransactionsTable>
+          <TransactionsPagination
+            limit={limit}
+            page={page}
+            setPage={setPage}
+            count={count}
+            moreData={moreData}
+          />
+      </>
+    ) : !loadingTransactions || !TransactionData ? (
+      <Box p={4} textAlign='center'>No transactions yet.</Box>
+    ) : (
+      <Box p={4} textAlign='center'>We could not find your transactions for some reason.</Box>
+    )
   );
 };

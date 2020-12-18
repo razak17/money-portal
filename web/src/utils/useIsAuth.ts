@@ -1,22 +1,15 @@
 import { useMeQuery } from "../generated/graphql";
-import { useHistory, useLocation } from "react-router-dom";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export const useIsAuth = () => {
   const { data, loading } = useMeQuery();
-  const history = useHistory();
-  const location = useLocation();
-
-  const location2 = {
-    pathname: "/somewhere",
-    state: { from: location },
-  };
-
-  console.log("Auth - loc2", location2);
+  // console.log('DATA', data);
+  const router = useRouter();
 
   useEffect(() => {
     if (!loading && !data?.me) {
-      history.push("/login?next=" + location.pathname);
+      router.replace("/login?next=" + router.pathname);
     }
-  }, [loading, data, history, location]);
+  }, [loading, data, router]);
 };

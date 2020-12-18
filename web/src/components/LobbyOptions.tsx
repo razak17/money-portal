@@ -14,7 +14,7 @@ export const LobbyOptions: React.FC<LobbyOptionsProps> = ({ onOpen }) => {
           onClick={onOpen}
           p={4}
           maxWidth="33%"
-          shadow="xs"
+          shadow="md"
           borderWidth="1px"
           flex="1"
           borderRadius="md"

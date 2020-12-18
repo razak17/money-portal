@@ -1,35 +1,45 @@
 import * as React from "react";
 import { Formik, Form } from "formik";
-import { Wrapper, FormikInputField } from "../components/partials";
 import { Box, Button, Link as ChakraLink, Flex } from "@chakra-ui/react";
-import { useLoginMutation } from "../generated/graphql";
+import { useRouter } from "next/router";
+import NextLink from "next/link";
+import { Wrapper, FormikInputField } from "../components/partials";
+import { useLoginMutation, MeQuery, MeDocument } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
-import { Link, useHistory, useLocation } from "react-router-dom";
 import { AuthRoutes, NonAuthRoutes } from "../api/routes";
+import { withApollo } from '../utils/withApollo';
 
 interface loginProps {}
 
-export const Login: React.FC<loginProps> = () => {
+const Login: React.FC<loginProps> = () => {
   const [login] = useLoginMutation();
-
-  let history = useHistory();
-  let location: any = useLocation();
-
-  let { from } = location.state || { from: { pathname: AuthRoutes.DASHBOARD } };
+  const router = useRouter();
 
   return (
     <Wrapper variant="small">
       <Formik
         initialValues={{ usernameOrEmail: "zak", password: "zak" }}
-        onSubmit={async (values, { setErrors }) => {
-          /* console.log(values); */
+        onSubmit={async (values, actions) => {
           const response = await login({
             variables: values,
+            update: (cache, { data }) => {
+              cache.writeQuery<MeQuery>({
+                query: MeDocument,
+                data: {
+                  __typename: "Query",
+                  me: data?.login.user,
+                },
+              });
+            },
           });
           if (response.data?.login.errors) {
-            setErrors(toErrorMap(response.data.login.errors));
+            actions.setErrors(toErrorMap(response.data.login.errors));
           } else if (response.data?.login.user) {
-            history.replace(from);
+             if (typeof router.query.next === "string") {
+               router.push(router.query.next);
+             } else {
+               router.push(AuthRoutes.DASHBOARD);
+             }
           }
         }}
       >
@@ -49,16 +59,16 @@ export const Login: React.FC<loginProps> = () => {
               />
             </Box>
             <Flex mt={2}>
-              <ChakraLink mr="auto" as={Link} to={NonAuthRoutes.REGISTER}>
-                new user?
-              </ChakraLink>
-              <ChakraLink
-                as={Link}
-                to={NonAuthRoutes.FORGOT_PASSWORD}
-                ml="auto"
-              >
-                forgot password?
-              </ChakraLink>
+              <NextLink href={NonAuthRoutes.REGISTER}>
+                <ChakraLink mr="auto">
+                  new user?
+                </ChakraLink>
+              </NextLink>
+              <NextLink href={NonAuthRoutes.FORGOT_PASSWORD}>
+                <ChakraLink ml="auto">
+                  forgot password?
+                </ChakraLink>
+              </NextLink>
             </Flex>
             <Flex mt={4}>
               <Button
@@ -76,3 +86,5 @@ export const Login: React.FC<loginProps> = () => {
     </Wrapper>
   );
 };
+
+export default withApollo({ ssr: false })(Login);

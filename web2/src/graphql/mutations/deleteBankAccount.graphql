@@ -1,0 +1,3 @@
+mutation DeleteBankAccount($id: Int!) {
+  deleteBankAccount(id: $id)
+}

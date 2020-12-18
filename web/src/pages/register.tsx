@@ -2,16 +2,18 @@ import * as React from "react";
 import { Formik, Form } from "formik";
 import { Wrapper, FormikInputField } from "../components/partials";
 import { Box, Button, Link as ChakraLink, Flex } from "@chakra-ui/react";
-import { useRegisterMutation } from "../generated/graphql";
+import { useRouter } from "next/router";
+import NextLink from "next/link";
+import { useRegisterMutation, MeQuery, MeDocument } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
-import { Link, useHistory } from "react-router-dom";
 import { AuthRoutes, NonAuthRoutes } from "../api/routes";
+import { withApollo } from '../utils/withApollo';
 
 interface registerProps {}
 
-export const Register: React.FC<registerProps> = () => {
-  let history = useHistory();
+const Register: React.FC<registerProps> = () => {
   const [register] = useRegisterMutation();
+  const router = useRouter();
 
   return (
     <Wrapper variant="small">
@@ -22,17 +24,25 @@ export const Register: React.FC<registerProps> = () => {
           password: "",
         }}
         onSubmit={async (values, { setErrors }) => {
-          /* console.log(values); */
           const response = await register({
             variables: {
               options: values,
             },
+            update: (cache, { data }) => {
+              cache.writeQuery<MeQuery>({
+                query: MeDocument,
+                data: {
+                  __typename: "Query",
+                  me: data?.register.user,
+                },
+              });
+            }
           });
           console.log(response.data);
           if (response.data?.register.errors) {
             setErrors(toErrorMap(response.data.register.errors));
           } else if (response.data?.register.user) {
-            history.push(AuthRoutes.DASHBOARD);
+            router.push(AuthRoutes.DASHBOARD);
           }
         }}
       >
@@ -53,16 +63,16 @@ export const Register: React.FC<registerProps> = () => {
               />
             </Box>
             <Flex mt={2}>
-              <ChakraLink
-                as={Link}
-                to={NonAuthRoutes.FORGOT_PASSWORD}
-                mr="auto"
-              >
-                forgot password?
-              </ChakraLink>
-              <ChakraLink as={Link} to={NonAuthRoutes.LOGIN} ml="auto">
-                already registered?
-              </ChakraLink>
+              <NextLink href={NonAuthRoutes.FORGOT_PASSWORD}>
+                <ChakraLink mr="auto">
+                  forgot password?
+                </ChakraLink>
+              </NextLink>
+              <NextLink href={NonAuthRoutes.LOGIN}>
+                <ChakraLink ml="auto">
+                  already registered?
+                </ChakraLink>
+              </NextLink>
             </Flex>
             <Flex mt={4}>
               <Button
@@ -80,3 +90,5 @@ export const Register: React.FC<registerProps> = () => {
     </Wrapper>
   );
 };
+
+export default withApollo({ ssr: false })(Register);

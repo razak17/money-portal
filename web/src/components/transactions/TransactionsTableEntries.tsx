@@ -6,20 +6,20 @@ import { TransactionsQuery } from '../../generated/graphql';
 
 interface TransactionsTableProps {
   limit: number;
+  count: number | undefined;
   setLimit: React.Dispatch<React.SetStateAction<number>>;
   limitRefetch: (customLimit: number) => Promise<ApolloQueryResult<TransactionsQuery>>
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>
-  searchRefetch: any;
 }
 
 export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
+  count,
   limit,
   setLimit,
   limitRefetch,
   searchQuery,
   setSearchQuery,
-  searchRefetch
 }) => {
   const options = FILTER_OPTIONS.map((option, index) => (
     <option key={index} value={option}>
@@ -76,9 +76,11 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
   );
 
   return (
-    <Flex mb="0.5em" flexWrap="wrap" p="0.5em">
-      {entries}
-      {search}
-    </Flex>
+    count && count > 0 ? (
+      <Flex mb="0.5em" flexWrap="wrap" p="0.5em">
+        {entries}
+        {search}
+      </Flex>
+    ) : null
   );
 };

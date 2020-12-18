@@ -42,7 +42,7 @@ export const EditAccountModal: React.FC<EditAccountModalProps> = ({
   if (loading) {
     body = (
       <Box textAlign="center" p={4}>
-        loading...
+        ...
       </Box>
     );
   } else if (!data?.bankAccount) {

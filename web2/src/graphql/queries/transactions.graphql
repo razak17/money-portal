@@ -1,0 +1,39 @@
+query Transactions(
+  $bankAccountId: Int!
+  $limit: Int!
+  $offset: Int!
+  $filter: String
+  $search: String
+) {
+  transactions(
+    bankAccountId: $bankAccountId
+    limit: $limit
+    offset: $offset
+    filter: $filter
+    search: $search
+  ) {
+    hasMore
+    transactions {
+      id
+      amount
+      type
+      memo
+      categoryId
+      category {
+        id
+        name
+      }
+      bankAccount {
+        id
+        name
+        type
+      }
+      creator {
+        id
+        username
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}

@@ -10,3 +10,4 @@ generates:
   ./graphql.schema.json:
     plugins:
       - "introspection"
+

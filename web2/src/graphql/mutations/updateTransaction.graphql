@@ -1,0 +1,21 @@
+mutation UpdateTransaction(
+  $id: Int!
+  $bankAccountId: Int!
+  $amount: Float!
+  $memo: String!
+  $type: String!
+) {
+  updateTransaction(
+    id: $id
+    bankAccountId: $bankAccountId
+    amount: $amount
+    type: $type
+    memo: $memo
+  ) {
+    id
+    type
+    memo
+    createdAt
+    updatedAt
+  }
+}

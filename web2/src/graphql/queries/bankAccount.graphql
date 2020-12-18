@@ -1,0 +1,19 @@
+query BankAccount($id: Int!) {
+  bankAccount(id: $id) {
+    id
+    name
+    type
+    startingBalance
+    lowBalanceAlert
+    currentBalance
+    monthlySpending
+    monthlyTransactions
+    monthlyDeposits
+    creator {
+      id
+      username
+      email
+    }
+    createdAt
+  }
+}
