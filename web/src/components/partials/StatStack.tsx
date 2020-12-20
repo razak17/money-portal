@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Heading, Flex, Text, Icon } from "@chakra-ui/react";
+import { useColorModeValue, Box, Heading, Flex, Text, Icon } from "@chakra-ui/react";
 import { LoadingSpinner } from "./";
 import { statOptions } from '../../types';
 import { FaMoneyBillAlt, FaReceipt, FaHandHolding, FaExchangeAlt } from 'react-icons/fa';
@@ -17,13 +17,15 @@ export const StatStack: React.FC<StatStackProps> = ({
   loading,
   withSign = false,
 }) => {
+  const bg = useColorModeValue("whiteAlpha.800", "brandDark.400")
   return (
     <Box
       flex="0 0 auto"
       p="1em"
-      w={{ base: "100%", sm: "100%", md: "50%", xl: "25%" }}
+      w={{ base: "100%", sm: "100%", md: "50%", lg: "25%" }}
     >
       <Flex
+        bg={bg}
         position="relative"
         borderWidth="1px"
         borderRadius="md"
@@ -36,15 +38,16 @@ export const StatStack: React.FC<StatStackProps> = ({
             mb={2}
             textTransform="uppercase"
           >
-            {title === statOptions.CURRENT_BALANCE ? (
-            <Icon mb={2} w='2em' h='1.5em' as={FaMoneyBillAlt} />
-            ) : title === statOptions.MONTHLY_SPENDING ? (
-            <Icon mb={2} w='2em' h='1.5em' as={FaReceipt} />
-            ) : title === statOptions.MONTHLY_DEPOSITS ? (
-            <Icon mb={2} w='2em' h='1.5em' as={FaHandHolding} />
-            ) : title === statOptions.MONTHLY_TRANSACTIONS ? (
-            <Icon mb={2} w='1.5em' h='1.5em' as={FaExchangeAlt} />
-            ) : null}
+            <Icon
+              mb={2}
+              fontSize='1.5em'
+              as={
+                title === statOptions.CURRENT_BALANCE ?  FaMoneyBillAlt :
+                title === statOptions.MONTHLY_SPENDING ? FaReceipt :
+                title === statOptions.MONTHLY_DEPOSITS ? FaHandHolding :
+                FaExchangeAlt
+              }
+            />
             <Box
               textAlign="left"
               flex="0 auto"

@@ -3,53 +3,48 @@ import {
   Link as ChakraLink,
   List,
   ListItem,
-  Text,
-  Icon
+  Flex,
+  Icon,
+  useColorModeValue
 } from '@chakra-ui/react'
-import { BankAccounts, Header, SideBarWrapper, Logo } from './sidebar'
+import { AccountSettings, Logo, ManageAccount, BankAccounts, Header, SideBarWrapper } from './sidebar'
 import { AuthRoutes } from '../api/routes'
 import NextLink from 'next/link'
-import { useGetIntId } from '../utils'
 import { FaHome } from 'react-icons/fa'
+import { useGetIntId } from '../utils';
 
 interface SideBarProps {}
 
 export const SideBar: React.FC<SideBarProps> = () => {
-  const intId = useGetIntId()
+  const color = useColorModeValue("brandBlue.500", "green.500")
+  const hBg = useColorModeValue("brandBlue.50", "brandDark.100")
+  const intId = useGetIntId();
 
   const personal = (
     <List maxHeight="none" mt={0} mb="2em">
-      <ListItem fontSize={12} position="relative">
-        <Icon as={FaHome} />
+      <ListItem
+        fontSize={12}
+        position="relative"
+      >
         <NextLink href={AuthRoutes.DASHBOARD}>
-          <ChakraLink display="block" position="relative" padding="1.5rem 2rem">
-            <Text>Home</Text>
-          </ChakraLink>
+            <ChakraLink
+              textDecoration='none'
+              display="block"
+              position="relative"
+              padding="1.5rem 2rem"
+            >
+              <Flex flexWrap='wrap' alignItems='center'>
+                <Icon
+                  color={color}
+                  textStyle="iconWrap"
+                  as={FaHome}
+                />
+                Lobby
+              </Flex>
+            </ChakraLink>
         </NextLink>
       </ListItem>
       <BankAccounts />
-    </List>
-  )
-
-  const manage = (
-    <List maxHeight="none" mt={0} mb="1rem">
-      <ListItem fontSize={12} position="relative">
-        <NextLink
-          href={`${AuthRoutes.ACCOUNT_DETAILS}/[id]`}
-          as={`${AuthRoutes.ACCOUNT_DETAILS}/${intId}`}
-        >
-          <ChakraLink display="block" position="relative" padding="1.5rem 2rem">
-            <Text>Account</Text>
-          </ChakraLink>
-        </NextLink>
-      </ListItem>
-      <ListItem fontSize={12} position="relative">
-        <NextLink href={AuthRoutes.SETTINGS}>
-          <ChakraLink display="block" position="relative" padding="1.5rem 2rem">
-            <Text>Settings</Text>
-          </ChakraLink>
-        </NextLink>
-      </ListItem>
     </List>
   )
 
@@ -58,8 +53,15 @@ export const SideBar: React.FC<SideBarProps> = () => {
       <Logo />
       <Header text="Personal Account" />
       {personal}
-      <Header text="My Account" />
-      {manage}
+      {intId !== -1 ? (
+        <>
+          <Header text="My Account" />
+          <List maxHeight="none" mt={0} mb="1rem">
+            <ManageAccount hBg={hBg} color={color} />
+            <AccountSettings color={color} />
+          </List>
+        </>
+      ) : null}
     </SideBarWrapper>
   )
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useGetAccountFromUrl, useIsAuth, useGetIntId, withApollo } from "../../../../utils/";
-import {useTotalTransactionsQuery, useTransactionsQuery } from '../../../../generated/graphql';
+import { useTotalTransactionsQuery, useTransactionsQuery } from '../../../../generated/graphql';
 import { LIMIT, PAGE, ALL } from '../../../../constants';
 import { Layout, AccountStats,   TransactionsList, AddAccountButton } from "../../../../components";
 import {

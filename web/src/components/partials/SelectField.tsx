@@ -31,8 +31,8 @@ export const SelectField: React.FC<SelectFieldProps> = ({
 
   return (
     <FormControl isInvalid={error ? !!error : false}>
-      {label ? <FormLabel htmlFor={field.name}>{label}</FormLabel> : null}
-      <Select {...field} {...props}>
+      {label ? <FormLabel fontSize="1em" htmlFor={field.name}>{label}</FormLabel> : null}
+      <Select fontSize="1em" {...field} {...props}>
         {[...options]}
       </Select>
       {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}

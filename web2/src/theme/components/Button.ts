@@ -1,8 +1,12 @@
-export const Button = {
+import { mode } from "@chakra-ui/theme-tools";
+
+export const Button = (props: any) =>  ({
   // The styles all button have in common
   baseStyle: {
     fontWeight: "bold",
     textTransform: "uppercase",
+    bg: mode("brandDark.200", "gray.900")(props),
+    color: mode("brandDark.200", "gray.900")(props),
     _hover: {
       bg: "green.400",
     },
@@ -21,8 +25,8 @@ export const Button = {
   // Two variants: outline and solid
   variants: {
     outline: {
+      borderColor: mode("red.800", "gray.600")(props),
       border: "2px solid",
-      borderColor: "green.500",
     },
     solid: {
       bg: "green.500",
@@ -34,4 +38,4 @@ export const Button = {
     size: "sm",
     variant: "solid",
   },
-};
+});

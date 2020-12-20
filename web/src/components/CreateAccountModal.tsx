@@ -38,7 +38,7 @@ export const CreateAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
         lowBalanceAlert: "",
       }}
       validationSchema={NewBankAccountSchema}
-      validateOnBlur={true}
+      validateOnBlur={false}
       validateOnChange={false}
       onSubmit={async (values, { setErrors }) => {
         console.log(values);

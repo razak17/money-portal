@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Flex, Button } from "@chakra-ui/react";
+import { useColorModeValue, Box, Flex, Button } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { InputField, SelectField } from "../partials";
 import { transactionOptions } from "../../types";
@@ -11,6 +11,7 @@ import { useGetIntId, toErrorMap, AddTransactionSchema } from "../../utils";
 interface AddTransactionFormProps {}
 
 export const AddTransactionForm: React.FC<AddTransactionFormProps> = () => {
+  const color = useColorModeValue("brandBlue.700", "green.500")
   const intId = useGetIntId();
 
   const inputFieldRef = React.useRef<HTMLInputElement>(null);
@@ -56,14 +57,21 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = () => {
   const { getFieldProps, handleSubmit, isSubmitting, errors } = formik;
 
   return (
-    <Flex mr={0} ml={0} flexWrap="wrap">
+    <Flex
+      mr={0}
+      ml={0}
+      flexWrap="wrap"
+    >
       <Box
         p={2}
         flex={{ base: "0 0 auto", xl: "0 0 25%" }}
         w={{ base: "100%", sm: "100%", md: "50%", xl: "25%" }}
       >
         <Flex position="relative">
-          <Box flex="1 1 auto" p="0.5em 0">
+          <Box
+            flex="1 1 auto"
+            p="0.5em 0"
+          >
             <InputField
               amount
               label="Amount"
@@ -119,11 +127,11 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = () => {
       >
         <Box flex="1 1 auto" p="0.5em 0">
           <Button
-            colorScheme="teal"
+            size="xs"
+            color={color}
             onClick={() => handleSubmit()}
             type="submit"
             isLoading={isSubmitting}
-            shadow="md"
           >
             Add
           </Button>

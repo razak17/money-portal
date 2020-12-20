@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IconButton, Heading, Text, chakra } from "@chakra-ui/react";
+import { IconButton, Text, chakra } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
 import { transactionOptions } from "../../types";
@@ -8,6 +8,7 @@ import { InputField, SelectField } from "../partials";
 import { useUpdateTransactionMutation } from "../../generated/graphql";
 import { useGetIntId } from "../../utils/useGetIntId";
 import { getRound } from "../../utils/getRound";
+import dayjs from 'dayjs'
 
 interface Props {
   id: number;
@@ -75,8 +76,7 @@ export const EditTransactionView: React.FC<Props> = ({
     <chakra.tr borderWidth="1px" borderRadius="md">
       <chakra.td textAlign="center" p="0.5em">
         <IconButton
-          height="2em"
-          minW="2em"
+          fontSize="sm"
           mr={2}
           isLoading={isSubmitting}
           onClick={() => handleSubmit()}
@@ -86,8 +86,7 @@ export const EditTransactionView: React.FC<Props> = ({
           aria-label="Confirm Edit Transaction"
         />
         <IconButton
-          height="2em"
-          minW="2em"
+          fontSize="sm"
           colorScheme="red"
           onClick={() => setEditing(false)}
           type="submit"
@@ -120,10 +119,10 @@ export const EditTransactionView: React.FC<Props> = ({
         />
       </TableData>
       <TableData>
-        <Heading size="xs">
-          {new Date(parseInt(updatedAt)).toISOString()}
-        </Heading>
-        <Text fontSize="sm">{updatedAt}</Text>
+        <Text size="sm">
+          {dayjs(new Date(parseInt(updatedAt))).format("dddd, MMMM D YYYY")}
+        </Text>
+        <Text fontSize="sm">{dayjs(new Date(parseInt(updatedAt))).format("h:mm:ss A")}</Text>
       </TableData>
     </chakra.tr>
   );
