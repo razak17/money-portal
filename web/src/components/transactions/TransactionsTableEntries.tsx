@@ -28,7 +28,7 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
   ));
 
   const entries = (
-    <Box w={{ base: "100%", md: "55%", lg: "70%", xl: "70%" }} flex="0 auto">
+    <Box w={{ base: "100%", md: "60%", lg: "75%", xl: "75%" }} flex="0 auto">
       <Flex flexWrap="wrap" flex="0 0 auto">
         <Box paddingTop={2}>
           <Text>Show</Text>
@@ -36,6 +36,7 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
         <Box p="0 1em 0 1em" flex="0 0 auto">
           <Select
             value={limit}
+            fontSize="1em"
             onChange={(e) => {
               setLimit(parseInt(e.target.value));
               limitRefetch(parseInt(e.target.value))
@@ -52,7 +53,7 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
   );
 
   const search = (
-    <Box w={{ base: "100%", sm: "70%", md: "45%", lg: "30%", xl: "30%" }} flex="0 auto">
+    <Box w={{ base: "100%", sm: "70%", md: "40%", lg: "25%", xl: "25%" }} flex="0 auto">
       <Flex
         p={{ base: "1em 0", md: "0" }}
         ml={{ base: "0", md: "auto" }}

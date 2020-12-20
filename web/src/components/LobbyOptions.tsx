@@ -1,32 +1,53 @@
-import { Box, HStack, Flex, Heading } from "@chakra-ui/react";
-import React from "react";
+import { Flex, Icon, useColorModeValue } from "@chakra-ui/react";
+import * as React from "react";
+import { LobbyStack } from './partials';
+import { FaHome, FaDoorOpen, FaUniversity } from 'react-icons/fa'
 
 interface LobbyOptionsProps {
   onOpen: any;
 }
 
 export const LobbyOptions: React.FC<LobbyOptionsProps> = ({ onOpen }) => {
+  const color = useColorModeValue("brandBlue.600", "green.500")
+
   return (
-    <Box padding="0 2rem" marginBottom="2rem">
-      <HStack spacing={8}>
-        <Box
-          cursor="pointer"
-          onClick={onOpen}
-          p={4}
-          maxWidth="33%"
-          shadow="md"
-          borderWidth="1px"
-          flex="1"
-          borderRadius="md"
-        >
-          <Flex justifyContent="center" mb={2}>
-            <Heading size="md">Add Account</Heading>
-          </Flex>
-          <Flex justifyContent="center">
-            <Heading size="md">Icon Here</Heading>
-          </Flex>
-        </Box>
-      </HStack>
-    </Box>
+    <Flex flexWrap="wrap" alignItems="center"  padding="0 0.5em" mb="1em">
+      <LobbyStack
+        title="Create Household"
+        onOpen={onOpen}
+      >
+        <Flex justifyContent="center">
+          <Icon
+            color={color}
+            textStyle="iconWrapLarge"
+            as={FaHome}
+          />
+        </Flex>
+      </LobbyStack>
+      <LobbyStack
+        title="Join Household"
+        onOpen={onOpen}
+      >
+        <Flex justifyContent="center">
+          <Icon
+            color={color}
+            textStyle="iconWrapLarge"
+            as={FaDoorOpen}
+          />
+        </Flex>
+      </LobbyStack>
+      <LobbyStack
+        title="Add Bank Account"
+        onOpen={onOpen}
+      >
+        <Flex justifyContent="center">
+          <Icon
+            color={color}
+            textStyle="iconWrapLarge"
+            as={FaUniversity}
+          />
+        </Flex>
+    </LobbyStack>
+  </Flex>
   );
 };

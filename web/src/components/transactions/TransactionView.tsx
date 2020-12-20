@@ -28,7 +28,6 @@ const TableData: React.FC = ({ children }) => {
 
 export const TransactionView: React.FC<TransactionViewProps> = ({
   id,
-  index,
   amount,
   type,
   memo,
@@ -52,8 +51,7 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
           onClose={handleClose}
         />
         <IconButton
-          height="2em"
-          minW="2em"
+          fontSize="sm"
           mr={2}
           ref={editButtonRef}
           onClick={() => setEditing(true)}
@@ -62,8 +60,7 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
           aria-label="Edit Transaction"
         />
         <IconButton
-          height="2em"
-          minW="2em"
+          fontSize="sm"
           onClick={handleShow}
           colorScheme="red"
           icon={<DeleteIcon />}
@@ -84,15 +81,15 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
         >{`$${getRound(amount)}`}</Heading>
       </TableData>
       <TableData>
-        <Text fontSize="md">{type}</Text>
+        <Text fontSize="sm">{type}</Text>
       </TableData>
       <TableData>
-        <Text fontSize="md">{memo}</Text>
+        <Text fontSize="sm">{memo}</Text>
       </TableData>
       <TableData>
-        <Heading size="xs">
+        <Text size="sm">
           {dayjs(new Date(parseInt(updatedAt))).format("dddd, MMMM D YYYY")}
-        </Heading>
+        </Text>
         <Text fontSize="sm">{dayjs(new Date(parseInt(updatedAt))).format("h:mm:ss A")}</Text>
       </TableData>
     </chakra.tr>

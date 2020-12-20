@@ -85,14 +85,16 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   );
 
   return (
-    <Flex mb="1rem" padding="0.5rem 1.5rem" borderBottom="1px solid black">
+    <Flex mb="1rem" padding="0.5em 1.5em" borderBottom="1px solid black">
       <Box mr="auto">
-        {loading ? null : type && name ? (
+        {loading ? (
+          <Heading size="md">...</Heading>
+        ) : type && name ? (
           <Heading size="md">{`${toTitleCase(name)} - ${toTitleCase(
             type
           )}`}</Heading>
         ) : (
-          <Heading size="md">{heading}</Heading>
+          <Heading size="md">{heading}lklklk</Heading>
         )}
       </Box>
       <ColorModeSwitcher justifySelf="flex-end" />

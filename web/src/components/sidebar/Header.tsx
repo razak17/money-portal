@@ -8,7 +8,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ text }) => {
   return (
     <Box mb="1em" mt="1em" ml="2em">
-      <Heading size="md">{text}</Heading>
+      <Heading size="sm">{text}</Heading>
     </Box>
   );
 };

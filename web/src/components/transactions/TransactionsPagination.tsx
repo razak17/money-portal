@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Flex, Text, Button, ButtonGroup } from "@chakra-ui/react";
+import { useColorModeValue, Box, Flex, Text, Button, ButtonGroup } from "@chakra-ui/react";
 import { ApolloQueryResult } from '@apollo/client';
 import { TransactionsQuery } from '../../generated/graphql';
 
@@ -18,6 +18,7 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
   page,
   moreData
 }) => {
+  const color = useColorModeValue("brandBlue.700", "gray.400")
   let total = 1;
   if (count) {
     total = Math.ceil(count / limit);
@@ -30,8 +31,9 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
       btns.push(
         <Button
           key={i * 2}
-          colorScheme="blue"
+          size='xs'
           borderRadius="10px"
+          color={color}
           disabled={page === i}
           onClick={() => {
             setPage(i);
@@ -47,13 +49,13 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
 
   const prev = (
     <Button
-      colorScheme="teal"
+      borderRadius="10px"
+      size='xs'
       disabled={page <= 1}
       onClick={() => {
         setPage(page - 1);
         moreData(page - 1);
       }}
-      p="0.5em 1em"
     >
       Previous
     </Button>
@@ -61,13 +63,13 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
 
   const next = (
     <Button
-      colorScheme="teal"
+      borderRadius="10px"
+      size='xs'
       disabled={page >= total}
       onClick={() => {
         setPage(page + 1);
         moreData(page + 1);
       }}
-      p="0.5em 1em"
     >
       Next
     </Button>
@@ -81,7 +83,11 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
             {page > 1 ? (
               prev
             ) : null}
-            <ButtonGroup p={{base: "0 1em", md: "0.5 1em"}} variant="solid" spacing="4">
+            <ButtonGroup
+              p={{base: "0 1em", md: "0.5 1em"}}
+              size="xs"
+              variant="solid"
+              spacing="4">
               {count ? paginate(total) : null}
             </ButtonGroup>
             {page < total ? (

@@ -5,6 +5,7 @@ import {
   Heading,
   VisuallyHidden,
   Box,
+  useColorModeValue
 } from "@chakra-ui/react";
 import React from "react";
 import { useLogoutMutation, useMeQuery } from "../../generated/graphql";
@@ -21,6 +22,7 @@ export const NavBar: React.FC<NavProps> = ({ hidden = true }) => {
   const [logout, { loading: logoutFetching }] = useLogoutMutation();
   const { data, loading } = useMeQuery();
   const router = useRouter();
+  const bg = useColorModeValue("whiteAlpha.800", "brandDark.400")
 
   const apolloClient = useApolloClient();
 
@@ -73,14 +75,12 @@ export const NavBar: React.FC<NavProps> = ({ hidden = true }) => {
 
   return (
     <Flex
-      display={{ base: "block", lg: hidden ? "none" : "block" }}
-      zIndex={1}
-      position="sticky"
-      top={0}
-      bg="tan"
-      p={4}
+      display={{ base: "block", lg: "none" }}
+      bg={bg}
+      borderBottom="1px solid #454649"
+      p="1.5em 2em"
     >
-      <Flex flex={1} m="auto" align="center" maxW="80%">
+      <Flex flex={1} m="auto" align="center">
         <NextLink href='/'>
           <ChakraLink>
             <Flex flexWrap="wrap" letterSpacing="0.1em" textTransform="uppercase">

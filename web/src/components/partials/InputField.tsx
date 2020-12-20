@@ -34,18 +34,18 @@ export const InputField: React.FC<InputFieldProps> = ({
         <InputLeftElement
           pointerEvents="none"
           color="white.200"
-          fontSize="1.2em"
+          fontSize="1em"
           children="$"
         />
-        <Input ref={ref} {...props} type="number" id={field.name} />
+        <Input fontSize="1em" ref={ref} {...props} type="number" id={field.name} />
       </InputGroup>
     );
   } else {
-    body = <Input ref={ref} {...props} type="text" id={field.name} />;
+    body = <Input fontSize="1em" ref={ref} {...props} type="text" id={field.name} />;
   }
   return (
     <FormControl isInvalid={error ? !!error : false}>
-      {label ? <FormLabel htmlFor={field.name}>{label}</FormLabel> : null}
+      {label ? <FormLabel fontSize="1em" htmlFor={field.name}>{label}</FormLabel> : null}
       {body}
       {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
     </FormControl>
