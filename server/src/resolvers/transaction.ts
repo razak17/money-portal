@@ -12,29 +12,23 @@ import {
   Root,
   ObjectType,
 } from "type-graphql";
-import { getConnection } from "typeorm";
 import { Transaction } from "../entities/Transaction";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
 import { User } from "../entities/User";
 import { BankAccount } from "../entities/BankAccount";
 import { TransactionCategory } from "../entities/TransactionCategory";
-import { TransactionOptions, withdrawalOptions, FilterOptions } from "../types";
-import {
-  newDeposit,
-  newTransfer,
-  newWithdrawal,
-} from "../utils/calculateStats";
-import {
-  updateDeposit,
-  updateTransfer,
-  updateWithdrawal,
-} from "../utils/updateStats";
+import { TransactionOptions, withdrawalOptions } from "../types";
 import {
   deleteDeposit,
   deleteTransfer,
   deleteWithdrawal,
 } from "../utils/deleteStats";
+import { searchTransactions } from "../controllers/searchTransactionsController"
+import { getTransactions } from "../controllers/getTransactionsController"
+import { createTransaction } from "../controllers/createTransactionController"
+import { updateTransactionController  } from "../controllers/updateTransactionController"
+import { totalTransactionsController  } from "../controllers/totalTransactionsController"
 
 @InputType()
 export class TransactionInput {
@@ -44,6 +38,20 @@ export class TransactionInput {
   type: TransactionOptions;
   @Field()
   memo: string;
+}
+
+@InputType()
+export class getTransactionInput {
+  @Field()
+  bankAccountId: number;
+  @Field()
+  limit: number;
+  @Field()
+  offset: string;
+  @Field(() => String, {nullable: true})
+  filter?: string;
+  @Field()
+  query?: string;
 }
 
 @ObjectType()
@@ -63,9 +71,27 @@ class PaginatedTransactions {
 }
 
 @ObjectType()
-class TransactionResponse {
+export class TransactionResponse {
   @Field(() => Transaction, { nullable: true })
   transaction?: Transaction | null;
+
+  @Field(() => [TransactionError], { nullable: true })
+  errors?: TransactionError[];
+}
+
+@ObjectType()
+export class PaginatedTransactionsResponse {
+  @Field(() => PaginatedTransactions, { nullable: true })
+  paginatedTransactions?: PaginatedTransactions | null;
+
+  @Field(() => [TransactionError], { nullable: true })
+  errors?: TransactionError[];
+}
+
+@ObjectType()
+export class TotalTransactionsResponse {
+  @Field(() => Number, { nullable: true })
+  count?: number | null;
 
   @Field(() => [TransactionError], { nullable: true })
   errors?: TransactionError[];
@@ -98,112 +124,53 @@ export class TransactionResolver {
   }
 
   // Total Transactions
-  @Query(() => Number)
+  @Query(() => TotalTransactionsResponse)
   @UseMiddleware(isAuth)
   async totalTransactions(
     @Ctx() { req }: MyContext,
     @Arg("filter", () => String, { nullable: true })
     filter: string | null,
     @Arg("bankAccountId", () => Int) bankAccountId: number
-  ): Promise<number> {
+  ): Promise<TotalTransactionsResponse> {
     const { userId } = req.session;
-    let replacements: any[] = [userId, bankAccountId];
 
-    if (filter && filter != "all") {
-      console.log("FILTER", filter);
-      if (filter === FilterOptions.TRANSFERS) {
-        replacements.push(3);
-      } else if (filter === FilterOptions.DEPOSITS) {
-        replacements.push(2);
-      } else if (filter === FilterOptions.WITHDRAWALS) {
-        replacements.push(1);
-      }
-    }
+    const res = totalTransactionsController(userId, bankAccountId, filter);
+    return res;
+  }
 
-    const transactions = await getConnection().query(
-      `
-    select t.*
-    from transaction t
-    ${
-      filter && filter != "all"
-        ? `where t."creatorId" = $1 and t."bankAccountId" = $2 and t."categoryId" = $3`
-        : `where t."creatorId" = $1 and t."bankAccountId" = $2`
-    }
-    order by t."createdAt"
-    `,
-      replacements
-    );
-    return transactions.length;
+  // Search Transaction
+  @Query(() => PaginatedTransactionsResponse)
+  @UseMiddleware(isAuth)
+  async searchTransaction(
+    @Arg("bankAccountId", () => Int) bankAccountId: number,
+    @Arg("limit", () => Int) limit: number,
+    @Arg("offset", () => Int) offset: number,
+    @Arg("query", () => String) query: string,
+    @Arg("filter", () => String, { nullable: true })
+    filter: string | null,
+    @Ctx() { req }: MyContext
+  ): Promise<PaginatedTransactionsResponse> {
+    const { userId } = req.session;
+
+    const res = searchTransactions(bankAccountId, userId, limit, filter, query, offset);
+    return res;
   }
 
   // Get All Transactions
-  @Query(() => PaginatedTransactions)
+  @Query(() => PaginatedTransactionsResponse)
   @UseMiddleware(isAuth)
   async transactions(
     @Arg("bankAccountId", () => Int) bankAccountId: number,
     @Arg("limit", () => Int) limit: number,
     @Arg("filter", () => String, { nullable: true })
     filter: string | null,
-    @Arg("search", () => String, { nullable: true })
-    search: string | null,
     @Arg("offset", () => Int) offset: number,
     @Ctx() { req }: MyContext
-  ): Promise<PaginatedTransactions> {
+  ): Promise<PaginatedTransactionsResponse> {
     const { userId } = req.session;
 
-    const realLimit = Math.min(50, limit);
-    const reaLimitPlusOne = realLimit + 1;
-    const page = (offset - 1) * limit;
-    const replacements: any[] = [reaLimitPlusOne, userId, bankAccountId, page];
-
-    if ((filter && filter != "all") && (search && search.trim().length)) {
-      replacements.push(`%${search}%`)
-      if (filter === FilterOptions.TRANSFERS) {
-        replacements.push(3);
-      } else if (filter === FilterOptions.DEPOSITS) {
-        replacements.push(2);
-      } else if (filter === FilterOptions.WITHDRAWALS) {
-        replacements.push(1);
-      }
-    }
-    else if (filter && filter != "all") {
-      if (filter === FilterOptions.TRANSFERS) {
-        replacements.push(3);
-      } else if (filter === FilterOptions.DEPOSITS) {
-        replacements.push(2);
-      } else if (filter === FilterOptions.WITHDRAWALS) {
-        replacements.push(1);
-      }
-    }
-    else if (search && search.trim().length) {
-      replacements.push(`%${search}%`)
-      console.log('SEARCH', replacements[4]);
-    }
-
-    const transactions = await getConnection().query(
-      `
-    select t.*
-    from transaction t
-    ${
-      (search && search.trim().length) && (filter && filter != "all") ?
-        `where t."creatorId" = $2 and t."bankAccountId" = $3 and t."memo" like $5 and t."categoryId" = $6` :
-      search && search.trim().length ?
-        `where t."creatorId" = $2 and t."bankAccountId" = $3 and t."memo" like $5` :
-      filter && filter != "all"
-        ? `where t."creatorId" = $2 and t."bankAccountId" = $3 and t."categoryId" = $5`
-        : `where t."creatorId" = $2 and t."bankAccountId" = $3`
-    }
-    order by t."createdAt" DESC
-    limit $1
-    offset $4
-    `,
-      replacements
-    );
-
-    return {
-      transactions: transactions.slice(0, realLimit),
-      hasMore: transactions.length === reaLimitPlusOne,
-    };
+    const res = getTransactions(bankAccountId, userId, limit, filter, offset)
+    return res;
   }
 
   // Get Single Transaction
@@ -231,121 +198,30 @@ export class TransactionResolver {
   ): Promise<TransactionResponse> {
     const { userId } = req.session;
 
-    let categoryId;
+    const res = createTransaction(input, bankAccountId, userId);
+    return res;
 
-    if (input.type === TransactionOptions.TRANSFER) {
-      categoryId = 3;
-    }
-    else if (input.type === TransactionOptions.DEPOSIT) {
-      categoryId = 2;
-    }
-    else if (input.type && withdrawalOptions.includes(input.type)) {
-      categoryId = 1;
-    }
-
-    const res = await getConnection().query(
-      `
-      select "currentBalance"
-      from bank_account
-      where bank_account.id = $1
-      and bank_account."creatorId" = $2
-      `,
-      [bankAccountId, userId]
-    )
-
-    console.log(res);
-    const  currentBalance = Object.values(res[0])[0] as number;
-
-    if(input.amount > currentBalance && withdrawalOptions.includes(input.type)) {
-      return {
-        errors: [
-          {
-            field: 'amount',
-            message: 'not enough funds.'
-          }
-        ]
-      }
-    }
-
-    if(input.memo.trim().length === 0) {
-      return {
-        errors: [
-          {
-            field: 'memo',
-            message: 'must not be empty.'
-          }
-        ]
-      }
-    }
-
-    const transaction = await Transaction.create({
-      ...input,
-      creatorId: userId,
-      bankAccountId,
-      categoryId,
-    }).save();
-
-    if (input.type === TransactionOptions.DEPOSIT) {
-      newDeposit(input.amount, bankAccountId, userId);
-    } else if (input.type === TransactionOptions.TRANSFER) {
-      newTransfer(input.amount, bankAccountId, userId);
-    } else if (input.type && withdrawalOptions.includes(input.type)) {
-      newWithdrawal(input.amount, bankAccountId, userId);
-    }
-
-    return { transaction };
   }
 
   // Update Transaction
-  @Mutation(() => Transaction, { nullable: true })
+  @Mutation(() => TransactionResponse)
   @UseMiddleware(isAuth)
   async updateTransaction(
-    @Arg("id", () => Int) id: number,
+    @Arg("input") input: TransactionInput,
     @Arg("bankAccountId", () => Int) bankAccountId: number,
-    @Arg("amount") amount: number,
-    @Arg("type") type: TransactionOptions,
-    @Arg("memo") memo: string,
+    @Arg("id", () => Int) id: number,
     @Ctx() { req }: MyContext
-  ): Promise<Transaction | null> {
+  ): Promise<TransactionResponse> {
     const { userId } = req.session;
 
-    const oldTransaction = await Transaction.findOne({
-      where: { id, creatorId: userId, bankAccountId },
-    });
+    const res = updateTransactionController(
+      input,
+      bankAccountId,
+      userId,
+      id,
+    );
 
-    const result = await getConnection()
-      .createQueryBuilder()
-      .update(Transaction)
-      .set({ amount, type, memo })
-      .where(
-        "id = :id and bankAccountId = :bankAccountId and creatorId = :creatorId",
-        {
-          id,
-          creatorId: userId,
-          bankAccountId,
-        }
-      )
-      .returning("*")
-      .execute();
-
-    if (oldTransaction?.type === TransactionOptions.DEPOSIT) {
-      updateDeposit(oldTransaction.amount, amount, type, bankAccountId, userId);
-    } else if (oldTransaction?.type === TransactionOptions.TRANSFER) {
-      updateTransfer(amount, type, bankAccountId, userId);
-    } else if (
-      oldTransaction &&
-      withdrawalOptions.includes(oldTransaction?.type)
-    ) {
-      updateWithdrawal(
-        oldTransaction.amount,
-        amount,
-        type,
-        bankAccountId,
-        userId
-      );
-    }
-
-    return result.raw[0];
+    return res;
   }
 
   // Delete Transaction

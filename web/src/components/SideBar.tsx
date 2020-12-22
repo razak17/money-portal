@@ -25,6 +25,7 @@ export const SideBar: React.FC<SideBarProps> = () => {
       <ListItem
         fontSize={12}
         position="relative"
+        bg={intId === -1 ? hBg: ""}
       >
         <NextLink href={AuthRoutes.DASHBOARD}>
             <ChakraLink

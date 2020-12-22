@@ -27,7 +27,7 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
   loading,
   setPage,
 }) => {
-  const bg = useColorModeValue("gray.600", "green.500")
+  const bg = useColorModeValue("gray.400", "green.500")
 
   const heading = (
     <Box w={{ base: "100%", sm: "100%", md: "30%", xl: "25%" }} flex="0 auto">
@@ -50,7 +50,7 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
             <Button
               _hover={{
                 bg: "none",
-                color: "gray.500"
+                color: bg
               }}
               onClick={() => {
                 setPage(PAGE);

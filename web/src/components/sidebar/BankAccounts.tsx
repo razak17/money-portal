@@ -15,7 +15,7 @@ import {
   useColorModeValue
 } from "@chakra-ui/react";
 import { FaPiggyBank, FaMoneyCheckAlt, FaCreditCard, FaUniversity } from 'react-icons/fa'
-import { toTitleCase } from "../../utils/toTitleCase";
+import { toTitleCase, useGetIntId } from "../../utils";
 import {
   useBankAccountsQuery,
   useTotalBankAccountsQuery,
@@ -28,9 +28,12 @@ import { BankAccountOptions } from '../../types';
 interface BankAccountsProps {}
 
 export const BankAccounts: React.FC<BankAccountsProps> = () => {
-  const color = useColorModeValue("brandBlue.500", "green.500")
-  const loadMoreColor = useColorModeValue("brandBlue.600", "green.500")
+  const color = useColorModeValue("brandBlue.500", "green.600")
+  const colorActive = useColorModeValue("brandBlue.200", "green.400")
+  const btnHover = useColorModeValue("brandBlue.400", "green.700")
+  const btnColor = useColorModeValue("gray.50", "gray.300")
   const hBg = useColorModeValue("brandBlue.50", "brandDark.100")
+  const intId = useGetIntId();
 
   const { data, loading, variables, fetchMore } = useBankAccountsQuery({
     variables: {
@@ -50,8 +53,12 @@ export const BankAccounts: React.FC<BankAccountsProps> = () => {
       {data?.bankAccounts && data.bankAccounts.hasMore ? (
         <Box textAlign="left" padding="1.5em 0 1.5em 5.5em">
           <Button
-            color={loadMoreColor}
             size="xs"
+            bg={color}
+            color={btnColor}
+            _hover={{
+              bg: btnHover
+            }}
             isLoading={loading}
             onClick={() => {
               fetchMore({
@@ -65,7 +72,7 @@ export const BankAccounts: React.FC<BankAccountsProps> = () => {
               });
             }}
           >
-            Load More
+            Show More
           </Button>
         </Box>
       ) : null}
@@ -77,7 +84,12 @@ export const BankAccounts: React.FC<BankAccountsProps> = () => {
       <List mt={0} maxHeight="none">
         {data?.bankAccounts &&
           data?.bankAccounts.bankAccounts.map((b) => (
-            <ListItem fontSize={12} key={b.id} position="relative">
+            <ListItem
+              bg={b.id === intId ? hBg: ""}
+              fontSize="sm"
+              key={b.id}
+              position="relative"
+            >
               <NextLink
                 href={`${AuthRoutes.TRANSACTIONS}/[id]`}
                 as={`${AuthRoutes.TRANSACTIONS}/${b.id}`}
@@ -88,7 +100,7 @@ export const BankAccounts: React.FC<BankAccountsProps> = () => {
                   padding="1.5em 0 1.5em 5.5em"
                 >
                   <Icon
-                    color={color}
+                    color={b.id === intId ? colorActive : color}
                     textStyle="iconWrapAlt"
                     as={
                     b.type === BankAccountOptions.CHECKING ? FaMoneyCheckAlt :

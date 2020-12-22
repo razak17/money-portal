@@ -49,7 +49,6 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
 
   const prev = (
     <Button
-      borderRadius="10px"
       size='xs'
       disabled={page <= 1}
       onClick={() => {
@@ -63,7 +62,6 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
 
   const next = (
     <Button
-      borderRadius="10px"
       size='xs'
       disabled={page >= total}
       onClick={() => {

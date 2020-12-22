@@ -46,6 +46,12 @@ export const withdrawalOptions = [
   "point of sale",
 ];
 
+export const filterOptions = [
+  "withdrawals",
+  "deposits",
+  "transfers",
+];
+
 export type accountType =
   | BankAccountOptions.CHECKING
   | BankAccountOptions.CREDIT

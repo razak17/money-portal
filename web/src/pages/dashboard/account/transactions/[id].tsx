@@ -24,7 +24,7 @@ const Transactions: React.FC<TransactionsProps> = () => {
   const [filter, setFilter] = React.useState(ALL);
   const [searchQuery, setSearchQuery] = React.useState('');
 
-  console.log(searchQuery);
+  // console.log(searchQuery);
 
   const {
     data: TransactionData,
@@ -51,7 +51,6 @@ const Transactions: React.FC<TransactionsProps> = () => {
     },
   );
 
-
   const moreData = (n: number) => {
     const res = fetchMore({
       variables: {
@@ -70,6 +69,18 @@ const Transactions: React.FC<TransactionsProps> = () => {
       filter,
     });
     console.log("RES", res);
+    return res;
+  };
+
+  const searchRefetch = (query: string) => {
+    const res = refetch({
+      bankAccountId: intId,
+      limit,
+      offset: PAGE,
+      filter,
+      search: query
+    });
+    console.log("SEARCH", res);
     return res;
   };
 
@@ -104,6 +115,7 @@ const Transactions: React.FC<TransactionsProps> = () => {
           count={TotalCount?.totalTransactions}
           limitRefetch={limitRefetch}
           searchQuery={searchQuery}
+          searchRefetch={searchRefetch}
           setSearchQuery={setSearchQuery}
         />
         <TransactionsList
