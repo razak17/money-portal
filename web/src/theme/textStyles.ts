@@ -8,12 +8,12 @@ export const textStyles = {
   iconWrap: {
     w: "42px",
     p: "0 1em 0 0",
-    fontSize: "1.5em",
+    fontSize: "1.4em",
   },
   iconWrapAlt: {
-    w: "36px",
+    w: "32px",
     p: "0 1em 0 0",
-    fontSize: "1.5em"
+    fontSize: "1.2em"
   },
   iconWrapLarge: {
     fontSize: "4.5em"

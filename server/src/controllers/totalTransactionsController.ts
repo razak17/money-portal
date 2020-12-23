@@ -4,6 +4,7 @@ import {
   validateFilter
 } from "../utils/validateTransaction"
 import { getConnection } from "typeorm";
+import { ALL } from '../constants';
 
 export const totalTransactionsController = async (
   userId: number | undefined,
@@ -19,7 +20,7 @@ export const totalTransactionsController = async (
   const replacements: any[] = [userId, bankAccountId];
 
   let vFilter = null;
-  if (filter) {
+  if (filter && filter != ALL) {
     vFilter = validateFilter(filter);
     replacements.push(vFilter);
   }

@@ -9,8 +9,8 @@ export const styles: Styles = {
       ...theme.styles.global,
       fontFamily: "body",
       fontWeight: "light",
-      color: mode("brandBlue.800", "gray.600")(props),
-      bg: mode("brandDark.200", "gray.900")(props),
+      color: mode("brandBlue.800", "brandDark.700")(props),
+      bg: mode("brandDark.200", "brandDark.700")(props),
       lineHeight: "base",
     },
     a: {

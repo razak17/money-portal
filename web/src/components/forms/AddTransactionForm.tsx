@@ -11,11 +11,10 @@ import { useGetIntId, toErrorMap, AddTransactionSchema } from "../../utils";
 interface AddTransactionFormProps {}
 
 export const AddTransactionForm: React.FC<AddTransactionFormProps> = () => {
-  // const color = useColorModeValue("brandBlue.700", "green.500")
   const intId = useGetIntId();
-  const color = useColorModeValue("brandBlue.500", "green.600")
-  const btnHover = useColorModeValue("brandBlue.400", "green.700")
-  const btnColor = useColorModeValue("gray.50", "gray.300")
+  const btnHover = useColorModeValue("brandBlue.400", "brandGreen.600")
+  const btnColor = useColorModeValue("gray.50", "gray.200")
+  const btnBg = useColorModeValue("brandBlue.500", "brandGreen.500")
 
   const inputFieldRef = React.useRef<HTMLInputElement>(null);
 
@@ -131,7 +130,7 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = () => {
         <Box flex="1 1 auto" p="0.5em 0">
           <Button
             size="xs"
-            bg={color}
+            bg={btnBg}
             color={btnColor}
             _hover={{
               bg: btnHover

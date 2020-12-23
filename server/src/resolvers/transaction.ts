@@ -18,17 +18,13 @@ import { MyContext } from "../types";
 import { User } from "../entities/User";
 import { BankAccount } from "../entities/BankAccount";
 import { TransactionCategory } from "../entities/TransactionCategory";
-import { TransactionOptions, withdrawalOptions } from "../types";
-import {
-  deleteDeposit,
-  deleteTransfer,
-  deleteWithdrawal,
-} from "../utils/deleteStats";
-import { searchTransactions } from "../controllers/searchTransactionsController"
-import { getTransactions } from "../controllers/getTransactionsController"
-import { createTransaction } from "../controllers/createTransactionController"
+import { TransactionOptions  } from "../types";
+import { getTransactionsController } from "../controllers/getTransactionsController"
+import { createTransactionController } from "../controllers/createTransactionController"
+import { searchTransactionsController } from "../controllers/searchTransactionsController"
 import { updateTransactionController  } from "../controllers/updateTransactionController"
 import { totalTransactionsController  } from "../controllers/totalTransactionsController"
+import { deleteTransactionController  } from "../controllers/deleteTransactionController"
 
 @InputType()
 export class TransactionInput {
@@ -152,7 +148,7 @@ export class TransactionResolver {
   ): Promise<PaginatedTransactionsResponse> {
     const { userId } = req.session;
 
-    const res = searchTransactions(bankAccountId, userId, limit, filter, query, offset);
+    const res = searchTransactionsController(bankAccountId, userId, limit, filter, query, offset);
     return res;
   }
 
@@ -169,7 +165,7 @@ export class TransactionResolver {
   ): Promise<PaginatedTransactionsResponse> {
     const { userId } = req.session;
 
-    const res = getTransactions(bankAccountId, userId, limit, filter, offset)
+    const res = getTransactionsController(bankAccountId, userId, limit, filter, offset)
     return res;
   }
 
@@ -198,7 +194,7 @@ export class TransactionResolver {
   ): Promise<TransactionResponse> {
     const { userId } = req.session;
 
-    const res = createTransaction(input, bankAccountId, userId);
+    const res = createTransactionController(input, bankAccountId, userId);
     return res;
 
   }
@@ -234,20 +230,6 @@ export class TransactionResolver {
   ): Promise<boolean> {
     const { userId } = req.session;
 
-    const transaction = await Transaction.findOne({
-      where: { id, creatorId: userId, bankAccountId },
-    });
-
-    await Transaction.delete({ id, creatorId: userId, bankAccountId });
-
-    if (transaction?.type === TransactionOptions.DEPOSIT) {
-      deleteDeposit(transaction.amount, bankAccountId, userId);
-    } else if (transaction?.type === TransactionOptions.TRANSFER) {
-      deleteTransfer(bankAccountId, userId);
-    } else if (transaction && withdrawalOptions.includes(transaction?.type)) {
-      deleteWithdrawal(transaction.amount, bankAccountId, userId);
-    }
-
-    return true;
+    return deleteTransactionController(id, bankAccountId, userId)
   }
 }

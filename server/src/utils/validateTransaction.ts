@@ -4,6 +4,7 @@ import {
   filterOptions,
   withdrawalOptions
 } from '../types';
+import { ALL } from '../constants';
 
 export const validateTransactionQuery = (filter: string | null, query: string = 'placeholder')  => {
   if(filter && filter.trim().length <= 0) {
@@ -22,7 +23,7 @@ export const validateTransactionQuery = (filter: string | null, query: string = 
       }
     ];
   }
-  if(filter && !filterOptions.includes(filter)) {
+  if(filter && !filterOptions.includes(filter) && filter != ALL) {
     return [
       {
         field: "filter",

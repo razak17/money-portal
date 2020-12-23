@@ -15,7 +15,7 @@ import {
 } from "../utils/calculateStats";
 import { TransactionOptions, withdrawalOptions } from '../types';
 
-export const createTransaction = async (
+export const createTransactionController = async (
   input: TransactionInput,
   bankAccountId: number,
   userId: number | undefined,

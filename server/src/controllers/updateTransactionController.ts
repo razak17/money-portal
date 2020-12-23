@@ -1,5 +1,5 @@
 import { TransactionInput, TransactionResponse } from '../resolvers/transaction';
-import { validateTransactionMutation } from "../utils/validateTransaction"
+import { validateCategory, validateTransactionMutation } from "../utils/validateTransaction"
 import { getConnection } from "typeorm";
 import { Transaction } from "../entities/Transaction"
 import {
@@ -37,20 +37,24 @@ export const updateTransactionController = async (
     where: { id, creatorId: userId, bankAccountId },
   });
 
+  const vFilter = validateCategory(input.type);
+  console.log("VFFFF", vFilter);
+
+
   const result = await getConnection()
-  .createQueryBuilder()
-  .update(Transaction)
-  .set({ amount, type, memo })
-  .where(
-    "id = :id and bankAccountId = :bankAccountId and creatorId = :creatorId",
-    {
-      id,
-      bankAccountId,
-      creatorId: userId,
-    }
-  )
-  .returning("*")
-  .execute();
+    .createQueryBuilder()
+    .update(Transaction)
+    .set({ amount, type, memo, categoryId: vFilter })
+    .where(
+      "id = :id and bankAccountId = :bankAccountId and creatorId = :creatorId",
+      {
+        id,
+        bankAccountId,
+        creatorId: userId,
+      }
+    )
+    .returning("*")
+    .execute();
 
   if (oldTransaction?.type === TransactionOptions.DEPOSIT) {
     updateDeposit(oldTransaction.amount, amount, type, bankAccountId, userId);
@@ -69,6 +73,6 @@ export const updateTransactionController = async (
     );
   }
 
-  return result.raw[0];
+  return result.raw;
 }
 

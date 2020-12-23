@@ -1,21 +1,23 @@
 mutation UpdateTransaction(
+  $input: TransactionInput!,
   $id: Int!
   $bankAccountId: Int!
-  $amount: Float!
-  $memo: String!
-  $type: String!
 ) {
   updateTransaction(
+    input: $input,
     id: $id
     bankAccountId: $bankAccountId
-    amount: $amount
-    type: $type
-    memo: $memo
   ) {
-    id
-    type
-    memo
-    createdAt
-    updatedAt
+    errors {
+      field
+      message
+    }
+    transaction {
+      id
+      type
+      memo
+      createdAt
+      updatedAt
+    }
   }
 }

@@ -6,7 +6,7 @@ import {
 } from "../utils/validateTransaction"
 import { getConnection } from "typeorm";
 
-export const searchTransactions = async (
+export const searchTransactionsController = async (
   bankAccountId: number,
   userId: number | undefined,
   limit: number,

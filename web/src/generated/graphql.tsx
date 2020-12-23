@@ -15,8 +15,9 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  totalTransactions: Scalars['Float'];
-  transactions: PaginatedTransactions;
+  totalTransactions: TotalTransactionsResponse;
+  searchTransaction: PaginatedTransactionsResponse;
+  transactions: PaginatedTransactionsResponse;
   transaction?: Maybe<Transaction>;
   totalBankAccounts: Scalars['Float'];
   bankAccounts: PaginatedBankAccounts;
@@ -32,9 +33,17 @@ export type QueryTotalTransactionsArgs = {
 };
 
 
+export type QuerySearchTransactionArgs = {
+  filter?: Maybe<Scalars['String']>;
+  query: Scalars['String'];
+  offset: Scalars['Int'];
+  limit: Scalars['Int'];
+  bankAccountId: Scalars['Int'];
+};
+
+
 export type QueryTransactionsArgs = {
   offset: Scalars['Int'];
-  search?: Maybe<Scalars['String']>;
   filter?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
   bankAccountId: Scalars['Int'];
@@ -55,6 +64,24 @@ export type QueryBankAccountsArgs = {
 
 export type QueryBankAccountArgs = {
   id: Scalars['Int'];
+};
+
+export type TotalTransactionsResponse = {
+  __typename?: 'TotalTransactionsResponse';
+  count?: Maybe<Scalars['Float']>;
+  errors?: Maybe<Array<TransactionError>>;
+};
+
+export type TransactionError = {
+  __typename?: 'TransactionError';
+  field: Scalars['String'];
+  message: Scalars['String'];
+};
+
+export type PaginatedTransactionsResponse = {
+  __typename?: 'PaginatedTransactionsResponse';
+  paginatedTransactions?: Maybe<PaginatedTransactions>;
+  errors?: Maybe<Array<TransactionError>>;
 };
 
 export type PaginatedTransactions = {
@@ -122,7 +149,7 @@ export type PaginatedBankAccounts = {
 export type Mutation = {
   __typename?: 'Mutation';
   newTransaction: TransactionResponse;
-  updateTransaction?: Maybe<Transaction>;
+  updateTransaction: TransactionResponse;
   deleteTransaction: Scalars['Boolean'];
   newBankAccount: BankAccountResponse;
   updateBankAccount: BankAccountResponse;
@@ -141,11 +168,9 @@ export type MutationNewTransactionArgs = {
 
 
 export type MutationUpdateTransactionArgs = {
-  memo: Scalars['String'];
-  type: Scalars['String'];
-  amount: Scalars['Float'];
-  bankAccountId: Scalars['Int'];
   id: Scalars['Int'];
+  bankAccountId: Scalars['Int'];
+  input: TransactionInput;
 };
 
 
@@ -192,12 +217,6 @@ export type TransactionResponse = {
   __typename?: 'TransactionResponse';
   transaction?: Maybe<Transaction>;
   errors?: Maybe<Array<TransactionError>>;
-};
-
-export type TransactionError = {
-  __typename?: 'TransactionError';
-  field: Scalars['String'];
-  message: Scalars['String'];
 };
 
 export type TransactionInput = {
@@ -387,20 +406,24 @@ export type UpdateBankAccountMutation = (
 );
 
 export type UpdateTransactionMutationVariables = Exact<{
+  input: TransactionInput;
   id: Scalars['Int'];
   bankAccountId: Scalars['Int'];
-  amount: Scalars['Float'];
-  memo: Scalars['String'];
-  type: Scalars['String'];
 }>;
 
 
 export type UpdateTransactionMutation = (
   { __typename?: 'Mutation' }
-  & { updateTransaction?: Maybe<(
-    { __typename?: 'Transaction' }
-    & Pick<Transaction, 'id' | 'type' | 'memo' | 'createdAt' | 'updatedAt'>
-  )> }
+  & { updateTransaction: (
+    { __typename?: 'TransactionResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'TransactionError' }
+      & Pick<TransactionError, 'field' | 'message'>
+    )>>, transaction?: Maybe<(
+      { __typename?: 'Transaction' }
+      & Pick<Transaction, 'id' | 'type' | 'memo' | 'createdAt' | 'updatedAt'>
+    )> }
+  ) }
 );
 
 export type BankAccountQueryVariables = Exact<{
@@ -453,6 +476,43 @@ export type MeQuery = (
   )> }
 );
 
+export type SearchTransactionsQueryVariables = Exact<{
+  bankAccountId: Scalars['Int'];
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+  filter?: Maybe<Scalars['String']>;
+  query: Scalars['String'];
+}>;
+
+
+export type SearchTransactionsQuery = (
+  { __typename?: 'Query' }
+  & { searchTransaction: (
+    { __typename?: 'PaginatedTransactionsResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'TransactionError' }
+      & Pick<TransactionError, 'field' | 'message'>
+    )>>, paginatedTransactions?: Maybe<(
+      { __typename?: 'PaginatedTransactions' }
+      & Pick<PaginatedTransactions, 'hasMore'>
+      & { transactions: Array<(
+        { __typename?: 'Transaction' }
+        & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo' | 'categoryId' | 'createdAt' | 'updatedAt'>
+        & { category: (
+          { __typename?: 'TransactionCategory' }
+          & Pick<TransactionCategory, 'id' | 'name'>
+        ), bankAccount: (
+          { __typename?: 'BankAccount' }
+          & Pick<BankAccount, 'id' | 'name' | 'type'>
+        ), creator: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'username'>
+        ) }
+      )> }
+    )> }
+  ) }
+);
+
 export type TotalBankAccountsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -469,7 +529,14 @@ export type TotalTransactionsQueryVariables = Exact<{
 
 export type TotalTransactionsQuery = (
   { __typename?: 'Query' }
-  & Pick<Query, 'totalTransactions'>
+  & { totalTransactions: (
+    { __typename?: 'TotalTransactionsResponse' }
+    & Pick<TotalTransactionsResponse, 'count'>
+    & { errors?: Maybe<Array<(
+      { __typename?: 'TransactionError' }
+      & Pick<TransactionError, 'field' | 'message'>
+    )>> }
+  ) }
 );
 
 export type TransactionQueryVariables = Exact<{
@@ -496,30 +563,35 @@ export type TransactionQuery = (
 export type TransactionsQueryVariables = Exact<{
   bankAccountId: Scalars['Int'];
   limit: Scalars['Int'];
-  offset: Scalars['Int'];
   filter?: Maybe<Scalars['String']>;
-  search?: Maybe<Scalars['String']>;
+  offset: Scalars['Int'];
 }>;
 
 
 export type TransactionsQuery = (
   { __typename?: 'Query' }
   & { transactions: (
-    { __typename?: 'PaginatedTransactions' }
-    & Pick<PaginatedTransactions, 'hasMore'>
-    & { transactions: Array<(
-      { __typename?: 'Transaction' }
-      & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo' | 'categoryId' | 'createdAt' | 'updatedAt'>
-      & { category: (
-        { __typename?: 'TransactionCategory' }
-        & Pick<TransactionCategory, 'id' | 'name'>
-      ), bankAccount: (
-        { __typename?: 'BankAccount' }
-        & Pick<BankAccount, 'id' | 'name' | 'type'>
-      ), creator: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'username'>
-      ) }
+    { __typename?: 'PaginatedTransactionsResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'TransactionError' }
+      & Pick<TransactionError, 'field' | 'message'>
+    )>>, paginatedTransactions?: Maybe<(
+      { __typename?: 'PaginatedTransactions' }
+      & Pick<PaginatedTransactions, 'hasMore'>
+      & { transactions: Array<(
+        { __typename?: 'Transaction' }
+        & Pick<Transaction, 'id' | 'amount' | 'type' | 'memo' | 'categoryId' | 'createdAt' | 'updatedAt'>
+        & { category: (
+          { __typename?: 'TransactionCategory' }
+          & Pick<TransactionCategory, 'id' | 'name'>
+        ), bankAccount: (
+          { __typename?: 'BankAccount' }
+          & Pick<BankAccount, 'id' | 'name' | 'type'>
+        ), creator: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'username'>
+        ) }
+      )> }
     )> }
   ) }
 );
@@ -858,19 +930,19 @@ export type UpdateBankAccountMutationHookResult = ReturnType<typeof useUpdateBan
 export type UpdateBankAccountMutationResult = Apollo.MutationResult<UpdateBankAccountMutation>;
 export type UpdateBankAccountMutationOptions = Apollo.BaseMutationOptions<UpdateBankAccountMutation, UpdateBankAccountMutationVariables>;
 export const UpdateTransactionDocument = gql`
-    mutation UpdateTransaction($id: Int!, $bankAccountId: Int!, $amount: Float!, $memo: String!, $type: String!) {
-  updateTransaction(
-    id: $id
-    bankAccountId: $bankAccountId
-    amount: $amount
-    type: $type
-    memo: $memo
-  ) {
-    id
-    type
-    memo
-    createdAt
-    updatedAt
+    mutation UpdateTransaction($input: TransactionInput!, $id: Int!, $bankAccountId: Int!) {
+  updateTransaction(input: $input, id: $id, bankAccountId: $bankAccountId) {
+    errors {
+      field
+      message
+    }
+    transaction {
+      id
+      type
+      memo
+      createdAt
+      updatedAt
+    }
   }
 }
     `;
@@ -889,11 +961,9 @@ export type UpdateTransactionMutationFn = Apollo.MutationFunction<UpdateTransact
  * @example
  * const [updateTransactionMutation, { data, loading, error }] = useUpdateTransactionMutation({
  *   variables: {
+ *      input: // value for 'input'
  *      id: // value for 'id'
  *      bankAccountId: // value for 'bankAccountId'
- *      amount: // value for 'amount'
- *      memo: // value for 'memo'
- *      type: // value for 'type'
  *   },
  * });
  */
@@ -1036,6 +1106,77 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const SearchTransactionsDocument = gql`
+    query SearchTransactions($bankAccountId: Int!, $limit: Int!, $offset: Int!, $filter: String, $query: String!) {
+  searchTransaction(
+    bankAccountId: $bankAccountId
+    limit: $limit
+    offset: $offset
+    filter: $filter
+    query: $query
+  ) {
+    errors {
+      field
+      message
+    }
+    paginatedTransactions {
+      hasMore
+      transactions {
+        id
+        amount
+        type
+        memo
+        categoryId
+        category {
+          id
+          name
+        }
+        bankAccount {
+          id
+          name
+          type
+        }
+        creator {
+          id
+          username
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSearchTransactionsQuery__
+ *
+ * To run a query within a React component, call `useSearchTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchTransactionsQuery({
+ *   variables: {
+ *      bankAccountId: // value for 'bankAccountId'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *      filter: // value for 'filter'
+ *      query: // value for 'query'
+ *   },
+ * });
+ */
+export function useSearchTransactionsQuery(baseOptions: Apollo.QueryHookOptions<SearchTransactionsQuery, SearchTransactionsQueryVariables>) {
+        return Apollo.useQuery<SearchTransactionsQuery, SearchTransactionsQueryVariables>(SearchTransactionsDocument, baseOptions);
+      }
+export function useSearchTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchTransactionsQuery, SearchTransactionsQueryVariables>) {
+          return Apollo.useLazyQuery<SearchTransactionsQuery, SearchTransactionsQueryVariables>(SearchTransactionsDocument, baseOptions);
+        }
+export type SearchTransactionsQueryHookResult = ReturnType<typeof useSearchTransactionsQuery>;
+export type SearchTransactionsLazyQueryHookResult = ReturnType<typeof useSearchTransactionsLazyQuery>;
+export type SearchTransactionsQueryResult = Apollo.QueryResult<SearchTransactionsQuery, SearchTransactionsQueryVariables>;
 export const TotalBankAccountsDocument = gql`
     query TotalBankAccounts {
   totalBankAccounts
@@ -1068,7 +1209,13 @@ export type TotalBankAccountsLazyQueryHookResult = ReturnType<typeof useTotalBan
 export type TotalBankAccountsQueryResult = Apollo.QueryResult<TotalBankAccountsQuery, TotalBankAccountsQueryVariables>;
 export const TotalTransactionsDocument = gql`
     query TotalTransactions($bankAccountId: Int!, $filter: String) {
-  totalTransactions(bankAccountId: $bankAccountId, filter: $filter)
+  totalTransactions(bankAccountId: $bankAccountId, filter: $filter) {
+    count
+    errors {
+      field
+      message
+    }
+  }
 }
     `;
 
@@ -1145,36 +1292,41 @@ export type TransactionQueryHookResult = ReturnType<typeof useTransactionQuery>;
 export type TransactionLazyQueryHookResult = ReturnType<typeof useTransactionLazyQuery>;
 export type TransactionQueryResult = Apollo.QueryResult<TransactionQuery, TransactionQueryVariables>;
 export const TransactionsDocument = gql`
-    query Transactions($bankAccountId: Int!, $limit: Int!, $offset: Int!, $filter: String, $search: String) {
+    query Transactions($bankAccountId: Int!, $limit: Int!, $filter: String, $offset: Int!) {
   transactions(
     bankAccountId: $bankAccountId
     limit: $limit
-    offset: $offset
     filter: $filter
-    search: $search
+    offset: $offset
   ) {
-    hasMore
-    transactions {
-      id
-      amount
-      type
-      memo
-      categoryId
-      category {
+    errors {
+      field
+      message
+    }
+    paginatedTransactions {
+      hasMore
+      transactions {
         id
-        name
-      }
-      bankAccount {
-        id
-        name
+        amount
         type
+        memo
+        categoryId
+        category {
+          id
+          name
+        }
+        bankAccount {
+          id
+          name
+          type
+        }
+        creator {
+          id
+          username
+        }
+        createdAt
+        updatedAt
       }
-      creator {
-        id
-        username
-      }
-      createdAt
-      updatedAt
     }
   }
 }
@@ -1194,9 +1346,8 @@ export const TransactionsDocument = gql`
  *   variables: {
  *      bankAccountId: // value for 'bankAccountId'
  *      limit: // value for 'limit'
- *      offset: // value for 'offset'
  *      filter: // value for 'filter'
- *      search: // value for 'search'
+ *      offset: // value for 'offset'
  *   },
  * });
  */

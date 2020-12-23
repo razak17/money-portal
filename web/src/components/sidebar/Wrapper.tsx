@@ -3,7 +3,7 @@ import { Flex, useColorModeValue} from "@chakra-ui/react";
 import { BORDER_BG_LIGHT, BORDER_BG_DARK } from '../../constants';
 
 export const SideBarWrapper: React.FC = ({ children }) => {
-  const bg = useColorModeValue("gray.50", "brandDark.400")
+  const bg = useColorModeValue("gray.50", "brandDark.700")
   const borderBg = useColorModeValue(BORDER_BG_LIGHT, BORDER_BG_DARK);
 
   return (

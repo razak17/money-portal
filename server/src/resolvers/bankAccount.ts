@@ -84,7 +84,7 @@ export class BankAccountResolver {
     const bankAccounts = await getConnection().query(
       `
     select b.*
-    from bank_account b 
+    from bank_account b
     ${
       cursor
         ? `where b."creatorId" = $2 and b."createdAt" < $3`

@@ -1,12 +1,14 @@
 import React from "react";
-import { useColorModeValue, Box, Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 
-interface TransactionsWrapperProps {}
+interface TransactionsWrapperProps {
+  bg: string
+}
 
 export const TransactionsWrapper: React.FC<TransactionsWrapperProps> = ({
   children,
+  bg
 }) => {
-  const bg = useColorModeValue("whiteAlpha.800", "brandDark.400")
   return (
     <Flex position="relative" flexDir="column" mb="0.5em">
       <Box padding="1rem 1.5rem">

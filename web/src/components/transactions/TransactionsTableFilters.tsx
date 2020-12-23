@@ -16,7 +16,7 @@ interface TransactionsTableFiltersProps {
   filter: string;
   setFilter: React.Dispatch<any>;
   loading: boolean;
-  count: number | undefined;
+  count: number | null | undefined;
   setPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -34,9 +34,9 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
       <Flex flexWrap="wrap" p="0.5em 0">
         <Heading size="sm">Transactions</Heading>
         {loading ? (
-          <chakra.sub m="1.5em 0 0 0.4em">(...)</chakra.sub>
+          <chakra.sub m="1.2em 0 0 0.4em">(...)</chakra.sub>
         ) : count && count > 0 ? (
-          <chakra.sub m="1.5em 0 0 0.4em">({count})</chakra.sub>
+          <chakra.sub m="1.2em 0 0 0.4em">({count})</chakra.sub>
         ) : null}
       </Flex>
     </Box>

@@ -14,12 +14,11 @@ import { SearchSchema } from '../../utils/validate';
 
 interface TransactionsTableProps {
   limit: number;
-  count: number | undefined;
+  count: number | null | undefined;
   setLimit: React.Dispatch<React.SetStateAction<number>>;
   limitRefetch: (customLimit: number) => Promise<ApolloQueryResult<TransactionsQuery>>
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>
-  searchRefetch: any;
 }
 
 export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
@@ -27,7 +26,6 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
   limit,
   setLimit,
   limitRefetch,
-  searchRefetch
 }) => {
   const [searchQuery, setSearchQuery] = React.useState('');
   // console.log(searchQuery);
@@ -83,7 +81,7 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
             validateOnChange={false}
             onSubmit={async (values) => {
               console.log(values);
-              searchRefetch(values.query)
+              // searchRefetch(values.query)
             }}
           >
             {({ isSubmitting }) => (

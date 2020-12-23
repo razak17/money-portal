@@ -3,7 +3,8 @@ import theme from "@chakra-ui/theme";
 export const Button = {
   ...theme.components.Button,
   baseStyle: {
-   textTransform: "uppercase",
+    fontWeight: "bold",
+    textTransform: "uppercase",
     _focus: {
       boxShadow: 'none',
     },

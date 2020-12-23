@@ -9,7 +9,6 @@ import {
   MenuItem,
   MenuGroup,
   MenuDivider,
-  useColorModeValue
 } from "@chakra-ui/react";
 import * as React from "react";
 import { useMeQuery, useLogoutMutation } from "../../generated/graphql";
@@ -18,13 +17,14 @@ import { ColorModeSwitcher } from "../";
 import { AuthRoutes, NonAuthRoutes } from "../../api/routes";
 import { toTitleCase } from "../../utils/toTitleCase";
 import { useRouter } from "next/router";
-import { BORDER_BG_LIGHT, BORDER_BG_DARK } from '../../constants';
 
 interface PageHeaderProps {
   heading: string;
   type?: string | undefined;
   name?: string | undefined;
   accountLoading?: boolean;
+  bg: string;
+  borderBg: string;
 }
 
 export const PageHeader: React.FC<PageHeaderProps> = ({
@@ -32,15 +32,14 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   name,
   heading,
   accountLoading = false,
+  bg,
+  borderBg
 }) => {
   const [logout] = useLogoutMutation();
   const { data, loading: MeLoading } = useMeQuery();
 
   const apolloClient = useApolloClient();
   const router = useRouter();
-
-  const bg = useColorModeValue("gray.50", "brandDark.400")
-  const borderBg = useColorModeValue(BORDER_BG_LIGHT, BORDER_BG_DARK);
 
   const menu = (
     <Menu closeOnSelect={false} isLazy>
