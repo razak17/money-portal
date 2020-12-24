@@ -10,7 +10,7 @@ import { ApolloQueryResult } from '@apollo/client';
 import { TransactionsQuery } from '../generated/graphql';
 
 interface TransactionsListProps {
-  count: number | undefined;
+  count: number | null | undefined;
   limit: number;
   loadingTransactions: boolean;
   TransactionData: TransactionsQuery | undefined;
@@ -34,7 +34,7 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
     ) : TransactionData && count && count > 0 ? (
         <>
         <TransactionsTable>
-          {TransactionData.transactions.transactions.map((t, index) =>
+          {TransactionData.transactions.paginatedTransactions?.transactions.map((t, index) =>
               !t ? null : (
                 <TransactionItem
                   key={t.id}
@@ -56,7 +56,7 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
             moreData={moreData}
           />
       </>
-    ) : !loadingTransactions || !TransactionData ? (
+    ) : !loadingTransactions || !TransactionData?.transactions.paginatedTransactions ?  (
       <Box p={4} textAlign='center'>No transactions yet.</Box>
     ) : (
       <Box p={4} textAlign='center'>We could not find your transactions for some reason.</Box>

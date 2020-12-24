@@ -1,5 +1,5 @@
 import { mode } from "@chakra-ui/theme-tools";
-import theme  from "@chakra-ui/theme";
+import theme, { Theme as _ }  from "@chakra-ui/theme";
 
 export const Link = {
   baseStyle: (props: any) => ({
@@ -8,25 +8,27 @@ export const Link = {
     textDecoration: "none",
     outline: "0",
     // color: mode("gray.800", "whiteAlpha.900")(props),
-    // bg: mode("gray.100", "gray.900")(props),
     _focus: {
       boxShadow: 'md',
     },
     _hover: {
-      color: mode("gray.800", "whiteAlpha.900")(props),
-      bg: mode("brandBlue.50", "brandDark.100")(props),
+      // color: mode("brandBlue.50", "brandGreen.50")(props),
+      // bg: mode("brandBlue.50", "brandDark.800")(props),
       textDecoration: "none"
     },
   }),
 };
 
-export const Accordion = {
+export const Accordion= {
   ...theme.components.Accordion,
-  // baseStyle: (props: any) => ({
-    // _hover: {
-      // color: mode("gray.800", "whiteAlpha.900")(props),
-      // bg: mode("gray.100", "brandDark.100")(props),
-    // },
-  // }),
+  baseStyle: (props: any) => ({
+    _focus: {
+      boxShadow: "none",
+    },
+    _hover: {
+      color: mode("gray.800", "whiteAlpha.900")(props),
+      bg: mode("gray.100", "brandDark.100")(props),
+    },
+  }),
 };
 

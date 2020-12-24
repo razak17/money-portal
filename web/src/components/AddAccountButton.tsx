@@ -1,13 +1,15 @@
 import * as React from "react";
 import { useColorModeValue, Flex, Box, Button, useDisclosure } from "@chakra-ui/react";
 import { CreateAccountModal } from "./";
-import { AddIcon } from '@chakra-ui/icons';
 
 interface AddAccountButtonProps {}
 
 export const AddAccountButton: React.FC<AddAccountButtonProps> = () => {
-  const color = useColorModeValue("brandBlue.700", "green.500")
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const btnHover = useColorModeValue("brandBlue.400", "brandGreen.600")
+  const btnColor = useColorModeValue("gray.50", "gray.200")
+  const btnBg = useColorModeValue("brandBlue.500", "brandGreen.500")
+
   return (
     <>
       <CreateAccountModal isOpen={isOpen} onClose={onClose} />
@@ -16,11 +18,14 @@ export const AddAccountButton: React.FC<AddAccountButtonProps> = () => {
           <Box ml="auto">
             <Button
               size="xs"
-              leftIcon={<AddIcon />}
-              color={color}
+              bg={btnBg}
+              color={btnColor}
+              _hover={{
+                bg: btnHover
+              }}
               onClick={onOpen}
             >
-              Add Account
+              New Account
             </Button>
           </Box>
         </Flex>

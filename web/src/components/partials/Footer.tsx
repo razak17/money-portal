@@ -1,13 +1,12 @@
-import { useColorModeValue, Flex, Text } from "@chakra-ui/react";
-import { BORDER_BG_LIGHT, BORDER_BG_DARK } from '../../constants';
+import { Flex, Text } from "@chakra-ui/react";
 import React from "react";
 
-interface FooterProps {}
+interface FooterProps {
+  bg: string;
+  borderBg: string;
+}
 
-export const Footer: React.FC<FooterProps> = () => {
-  const bg = useColorModeValue("gray.50", "brandDark.400")
-  const borderBg = useColorModeValue(BORDER_BG_LIGHT, BORDER_BG_DARK);
-
+export const Footer: React.FC<FooterProps> = ({ bg, borderBg }) => {
   return (
     <Flex
       bg={bg}

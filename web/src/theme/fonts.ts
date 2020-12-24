@@ -24,7 +24,7 @@ export const fontWeights = {
   ...theme.fontWeights,
   medium: 500,
   semiBold: 500,
-  bold: 700,
+  bold: 900,
 }
 
 

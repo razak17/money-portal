@@ -1,14 +1,16 @@
-query Transactions(
+query SearchTransactions(
   $bankAccountId: Int!
   $limit: Int!
-  $filter: String
   $offset: Int!
+  $filter: String
+  $query: String!
 ) {
-  transactions(
+  searchTransaction(
     bankAccountId: $bankAccountId
     limit: $limit
-    filter: $filter
     offset: $offset
+    filter: $filter
+    query: $query
   ) {
     errors {
       field

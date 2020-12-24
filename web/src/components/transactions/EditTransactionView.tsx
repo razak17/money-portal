@@ -6,8 +6,7 @@ import { transactionOptions } from "../../types";
 import { EditTransactionSchema } from "../../utils/validate";
 import { InputField, SelectField } from "../partials";
 import { useUpdateTransactionMutation } from "../../generated/graphql";
-import { useGetIntId } from "../../utils/useGetIntId";
-import { getRound } from "../../utils/getRound";
+import { useGetIntId, getRound, toErrorMap } from "../../utils";
 import dayjs from 'dayjs'
 
 interface Props {
@@ -50,13 +49,13 @@ export const EditTransactionView: React.FC<Props> = ({
     validateOnChange: false,
     validationSchema: EditTransactionSchema,
     onSubmit: async (values, actions) => {
-      console.log(values);
-      const { errors } = await updateTransaction({
+      const response = await updateTransaction({
         variables: {
+          input: {
+            ...values,
+            amount: parseFloat(values.amount),
+          },
           id,
-          amount: parseFloat(values.amount),
-          type,
-          memo,
           bankAccountId: intId,
         },
         update: (cache) => {
@@ -65,7 +64,10 @@ export const EditTransactionView: React.FC<Props> = ({
           cache.gc();
         },
       });
-      if (!errors) {
+      if (response.data?.updateTransaction.errors) {
+        actions.setErrors(toErrorMap(response.data.updateTransaction.errors));
+      } else {
+        setEditing(false);
       }
     },
   });

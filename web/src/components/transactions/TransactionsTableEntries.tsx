@@ -1,12 +1,20 @@
 import * as React from "react";
-import { Box, FormControl, Flex, Text, Select, Input } from "@chakra-ui/react";
 import { FILTER_OPTIONS } from "../../constants";
 import { ApolloQueryResult } from '@apollo/client';
 import { TransactionsQuery } from '../../generated/graphql';
+import { Formik, Form } from 'formik';
+import { FormikInputField } from '../partials';
+import {
+  Box,
+  Flex,
+  Text,
+  Select,
+} from "@chakra-ui/react";
+import { SearchSchema } from '../../utils/validate';
 
 interface TransactionsTableProps {
   limit: number;
-  count: number | undefined;
+  count: number | null | undefined;
   setLimit: React.Dispatch<React.SetStateAction<number>>;
   limitRefetch: (customLimit: number) => Promise<ApolloQueryResult<TransactionsQuery>>
   searchQuery: string;
@@ -18,9 +26,10 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
   limit,
   setLimit,
   limitRefetch,
-  searchQuery,
-  setSearchQuery,
 }) => {
+  const [searchQuery, setSearchQuery] = React.useState('');
+  // console.log(searchQuery);
+
   const options = FILTER_OPTIONS.map((option, index) => (
     <option key={index} value={option}>
       {option}
@@ -64,13 +73,23 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
           <Text>Search:</Text>
         </Box>
         <Box p="0 0 0 1em" flex="1">
-          <FormControl >
-            <Input
-              onChange={(e) => setSearchQuery(e.target.value)}
-              value={searchQuery}
-              variant="outline"
-            />
-          </FormControl>
+          <Formik
+            initialValues={{
+              query: ""
+            }}
+            validateOnBlur={false}
+            validateOnChange={false}
+            onSubmit={async (values) => {
+              console.log(values);
+              // searchRefetch(values.query)
+            }}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                <FormikInputField disabled={isSubmitting}  name="query" placeholder="Search here..." />
+              </Form>
+            )}
+          </Formik>
         </Box>
       </Flex>
     </Box>

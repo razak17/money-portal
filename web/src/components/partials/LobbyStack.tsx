@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const LobbyStack: React.FC<Props> = ({onOpen, title, children}) => {
-  const bg = useColorModeValue("gray.50", "brandDark.400")
+  const bg = useColorModeValue("gray.50", "brandDark.700")
   return(
     <Box
       cursor="pointer"

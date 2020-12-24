@@ -16,7 +16,7 @@ interface TransactionsTableFiltersProps {
   filter: string;
   setFilter: React.Dispatch<any>;
   loading: boolean;
-  count: number | undefined;
+  count: number | null | undefined;
   setPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -27,16 +27,16 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
   loading,
   setPage,
 }) => {
-  const bg = useColorModeValue("gray.600", "green.500")
+  const bg = useColorModeValue("gray.400", "green.500")
 
   const heading = (
     <Box w={{ base: "100%", sm: "100%", md: "30%", xl: "25%" }} flex="0 auto">
       <Flex flexWrap="wrap" p="0.5em 0">
         <Heading size="sm">Transactions</Heading>
         {loading ? (
-          <chakra.sub m="1.5em 0 0 0.4em">(...)</chakra.sub>
+          <chakra.sub m="1.2em 0 0 0.4em">(...)</chakra.sub>
         ) : count && count > 0 ? (
-          <chakra.sub m="1.5em 0 0 0.4em">({count})</chakra.sub>
+          <chakra.sub m="1.2em 0 0 0.4em">({count})</chakra.sub>
         ) : null}
       </Flex>
     </Box>
@@ -50,7 +50,7 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
             <Button
               _hover={{
                 bg: "none",
-                color: "gray.500"
+                color: bg
               }}
               onClick={() => {
                 setPage(PAGE);

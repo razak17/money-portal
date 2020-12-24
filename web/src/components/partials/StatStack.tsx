@@ -1,5 +1,5 @@
 import React from "react";
-import { useColorModeValue, Box, Heading, Flex, Text, Icon } from "@chakra-ui/react";
+import { Box, Heading, Flex, Text, Icon } from "@chakra-ui/react";
 import { LoadingSpinner } from "./";
 import { statOptions } from '../../types';
 import { FaMoneyBillAlt, FaReceipt, FaHandHolding, FaExchangeAlt } from 'react-icons/fa';
@@ -9,6 +9,7 @@ interface StatStackProps {
   value: string | undefined;
   loading: boolean;
   withSign?: boolean;
+  bg: string;
 }
 
 export const StatStack: React.FC<StatStackProps> = ({
@@ -16,8 +17,8 @@ export const StatStack: React.FC<StatStackProps> = ({
   value,
   loading,
   withSign = false,
+  bg
 }) => {
-  const bg = useColorModeValue("whiteAlpha.800", "brandDark.400")
   return (
     <Box
       flex="0 0 auto"

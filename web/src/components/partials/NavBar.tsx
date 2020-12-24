@@ -16,13 +16,13 @@ import NextLink from "next/link";
 
 interface NavProps {
   hidden?: boolean;
+  bg: string;
 }
 
-export const NavBar: React.FC<NavProps> = ({ hidden = true }) => {
+export const NavBar: React.FC<NavProps> = ({ hidden = true, bg }) => {
   const [logout, { loading: logoutFetching }] = useLogoutMutation();
   const { data, loading } = useMeQuery();
   const router = useRouter();
-  const bg = useColorModeValue("whiteAlpha.800", "brandDark.400")
 
   const apolloClient = useApolloClient();
 

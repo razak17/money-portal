@@ -1,3 +1,9 @@
 query TotalTransactions($bankAccountId: Int!, $filter: String) {
-  totalTransactions(bankAccountId: $bankAccountId, filter: $filter)
+  totalTransactions(bankAccountId: $bankAccountId, filter: $filter) {
+    count
+    errors {
+      field
+      message
+    }
+  }
 }

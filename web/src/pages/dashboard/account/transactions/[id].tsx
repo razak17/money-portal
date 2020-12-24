@@ -10,6 +10,8 @@ import {
   TransactionsTableEntries,
 } from "../../../../components/transactions";
 import { PageHeader} from "../../../../components/partials";
+import { BORDER_BG_LIGHT, BORDER_BG_DARK } from '../../../../constants';
+import { useColorModeValue } from "@chakra-ui/react";
 
 interface TransactionsProps {}
 
@@ -19,12 +21,13 @@ const Transactions: React.FC<TransactionsProps> = () => {
   const intId = useGetIntId();
   console.log("intId", intId);
 
+  const altBg = useColorModeValue("gray.50", "brandDark.700")
+  const borderBg = useColorModeValue(BORDER_BG_LIGHT, BORDER_BG_DARK);
+
   const [page, setPage] = React.useState(PAGE);
   const [limit, setLimit] = React.useState(LIMIT);
   const [filter, setFilter] = React.useState(ALL);
   const [searchQuery, setSearchQuery] = React.useState('');
-
-  console.log(searchQuery);
 
   const {
     data: TransactionData,
@@ -37,10 +40,11 @@ const Transactions: React.FC<TransactionsProps> = () => {
       limit,
       offset: page,
       filter,
-      search: null
     },
+    fetchPolicy: "cache-and-network",
     // notifyOnNetworkStatusChange: true,
   });
+  console.log("TR", TransactionData);
 
   const { data: TotalCount, loading: TotalLoading } = useTotalTransactionsQuery(
     {
@@ -50,7 +54,6 @@ const Transactions: React.FC<TransactionsProps> = () => {
       },
     },
   );
-
 
   const moreData = (n: number) => {
     const res = fetchMore({
@@ -73,9 +76,23 @@ const Transactions: React.FC<TransactionsProps> = () => {
     return res;
   };
 
+  // const searchRefetch = (query: string) => {
+    // const res = refetch({
+      // bankAccountId: intId,
+      // limit,
+      // offset: PAGE,
+      // filter,
+      // search: query
+    // });
+    // console.log("SEARCH", res);
+    // return res;
+  // };
+
   return (
     <Layout>
       <PageHeader
+        bg={altBg}
+        borderBg={borderBg}
         accountLoading={loading}
         type={data?.bankAccount?.type}
         name={data?.bankAccount?.name}
@@ -83,31 +100,32 @@ const Transactions: React.FC<TransactionsProps> = () => {
       />
       <AddAccountButton />
       <AccountStats
+        bg={altBg}
         balance={data?.bankAccount?.currentBalance}
         spending={data?.bankAccount?.monthlySpending}
         deposits={data?.bankAccount?.monthlyDeposits}
         transactions={data?.bankAccount?.monthlyTransactions}
         loading={loading}
       />
-      <AddTransaction />
-      <TransactionsWrapper>
+      <AddTransaction bg={altBg} />
+      <TransactionsWrapper bg={altBg}>
         <TransactionsTableFilters
           setPage={setPage}
           filter={filter}
           loading={TotalLoading}
-          count={TotalCount?.totalTransactions}
+          count={TotalCount?.totalTransactions.count}
           setFilter={setFilter}
         />
         <TransactionsTableEntries
           limit={limit}
           setLimit={setLimit}
-          count={TotalCount?.totalTransactions}
+          count={TotalCount?.totalTransactions.count}
           limitRefetch={limitRefetch}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
         />
         <TransactionsList
-          count={TotalCount?.totalTransactions}
+          count={TotalCount?.totalTransactions.count}
           limit={limit}
           loadingTransactions={TransactionLoading || TotalLoading || loading}
           TransactionData={TransactionData}

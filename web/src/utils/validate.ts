@@ -66,7 +66,7 @@ export const EditTransactionSchema: Yup.ObjectSchema<TransactionType> = Yup.obje
   }
 );
 
-export const SearchSchema: Yup.ObjectSchema<{ searchQuery: string } | undefined> = Yup.object(
+export const SearchSchema: Yup.ObjectSchema<any> = Yup.object(
   {
     searchQuery: Yup.string()
       .min(2, "must be 2 to 20 characters.")
