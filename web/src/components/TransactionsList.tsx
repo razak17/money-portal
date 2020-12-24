@@ -17,6 +17,7 @@ interface TransactionsListProps {
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   moreData: (n: number) => Promise<ApolloQueryResult<TransactionsQuery>>
+  monthlyTransactions: number | undefined;
 }
 
 export const TransactionsList: React.FC<TransactionsListProps> = ({
@@ -26,6 +27,7 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
   page,
   setPage,
   moreData,
+  monthlyTransactions,
   loadingTransactions
 }) => {
   return (
@@ -34,28 +36,30 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
     ) : TransactionData && count && count > 0 ? (
         <>
         <TransactionsTable>
-          {TransactionData.transactions.paginatedTransactions?.transactions.map((t, index) =>
-              !t ? null : (
-                <TransactionItem
-                  key={t.id}
-                  id={t.id}
-                  index={index}
-                  amount={t.amount}
-                  type={t.type}
-                  memo={t.memo}
-                  updatedAt={t.updatedAt}
-                />
-              ),
-            )}
+        {TransactionData.transactions.paginatedTransactions?.transactions.map((t, index) =>
+          !t ? null : (
+            <TransactionItem
+              key={t.id}
+              id={t.id}
+              index={index}
+              amount={t.amount}
+              type={t.type}
+              memo={t.memo}
+              updatedAt={t.updatedAt}
+            />
+          ),
+        )}
         </TransactionsTable>
-          <TransactionsPagination
-            limit={limit}
-            page={page}
-            setPage={setPage}
-            count={count}
-            moreData={moreData}
-          />
+        <TransactionsPagination
+          limit={limit}
+          page={page}
+          setPage={setPage}
+          count={count}
+          moreData={moreData}
+        />
       </>
+    ) : (monthlyTransactions && monthlyTransactions > 0) && count === 0 ? (
+      <Box p={4} textAlign='center'>No matching records found.</Box>
     ) : !loadingTransactions || !TransactionData?.transactions.paginatedTransactions ?  (
       <Box p={4} textAlign='center'>No transactions yet.</Box>
     ) : (

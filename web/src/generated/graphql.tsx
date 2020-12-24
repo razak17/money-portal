@@ -28,6 +28,7 @@ export type Query = {
 
 
 export type QueryTotalTransactionsArgs = {
+  query?: Maybe<Scalars['String']>;
   bankAccountId: Scalars['Int'];
   filter?: Maybe<Scalars['String']>;
 };
@@ -43,8 +44,9 @@ export type QuerySearchTransactionArgs = {
 
 
 export type QueryTransactionsArgs = {
-  offset: Scalars['Int'];
+  query?: Maybe<Scalars['String']>;
   filter?: Maybe<Scalars['String']>;
+  offset: Scalars['Int'];
   limit: Scalars['Int'];
   bankAccountId: Scalars['Int'];
 };
@@ -524,6 +526,7 @@ export type TotalBankAccountsQuery = (
 export type TotalTransactionsQueryVariables = Exact<{
   bankAccountId: Scalars['Int'];
   filter?: Maybe<Scalars['String']>;
+  query?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -563,8 +566,9 @@ export type TransactionQuery = (
 export type TransactionsQueryVariables = Exact<{
   bankAccountId: Scalars['Int'];
   limit: Scalars['Int'];
-  filter?: Maybe<Scalars['String']>;
   offset: Scalars['Int'];
+  filter?: Maybe<Scalars['String']>;
+  query?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -1208,8 +1212,8 @@ export type TotalBankAccountsQueryHookResult = ReturnType<typeof useTotalBankAcc
 export type TotalBankAccountsLazyQueryHookResult = ReturnType<typeof useTotalBankAccountsLazyQuery>;
 export type TotalBankAccountsQueryResult = Apollo.QueryResult<TotalBankAccountsQuery, TotalBankAccountsQueryVariables>;
 export const TotalTransactionsDocument = gql`
-    query TotalTransactions($bankAccountId: Int!, $filter: String) {
-  totalTransactions(bankAccountId: $bankAccountId, filter: $filter) {
+    query TotalTransactions($bankAccountId: Int!, $filter: String, $query: String) {
+  totalTransactions(bankAccountId: $bankAccountId, filter: $filter, query: $query) {
     count
     errors {
       field
@@ -1233,6 +1237,7 @@ export const TotalTransactionsDocument = gql`
  *   variables: {
  *      bankAccountId: // value for 'bankAccountId'
  *      filter: // value for 'filter'
+ *      query: // value for 'query'
  *   },
  * });
  */
@@ -1292,12 +1297,13 @@ export type TransactionQueryHookResult = ReturnType<typeof useTransactionQuery>;
 export type TransactionLazyQueryHookResult = ReturnType<typeof useTransactionLazyQuery>;
 export type TransactionQueryResult = Apollo.QueryResult<TransactionQuery, TransactionQueryVariables>;
 export const TransactionsDocument = gql`
-    query Transactions($bankAccountId: Int!, $limit: Int!, $filter: String, $offset: Int!) {
+    query Transactions($bankAccountId: Int!, $limit: Int!, $offset: Int!, $filter: String, $query: String) {
   transactions(
     bankAccountId: $bankAccountId
     limit: $limit
-    filter: $filter
     offset: $offset
+    filter: $filter
+    query: $query
   ) {
     errors {
       field
@@ -1346,8 +1352,9 @@ export const TransactionsDocument = gql`
  *   variables: {
  *      bankAccountId: // value for 'bankAccountId'
  *      limit: // value for 'limit'
- *      filter: // value for 'filter'
  *      offset: // value for 'offset'
+ *      filter: // value for 'filter'
+ *      query: // value for 'query'
  *   },
  * });
  */

@@ -8,7 +8,7 @@ interface AccountStatsProps {
   balance: number | undefined;
   spending: number | undefined;
   deposits: number | undefined;
-  transactions: number | undefined;
+  monthlyTransactions: number | undefined;
   loading: boolean;
   bg: string;
 }
@@ -17,12 +17,12 @@ export const AccountStats: React.FC<AccountStatsProps> = ({
   balance,
   spending,
   deposits,
-  transactions,
+  monthlyTransactions,
   loading,
   bg
 }) => {
   return (
-    <Flex flexWrap="wrap" alignItems="center" padding="0 0.5em" mb="1em">
+    <Flex flexWrap="wrap" alignItems="center" p="0 0.5em" mb="1em">
       <StatStack
         bg={bg}
         withSign
@@ -47,7 +47,7 @@ export const AccountStats: React.FC<AccountStatsProps> = ({
       <StatStack
         bg={bg}
         title={statOptions.MONTHLY_TRANSACTIONS}
-        value={transactions ? transactions.toString() : "0"}
+        value={monthlyTransactions ? monthlyTransactions.toString() : "0"}
         loading={loading}
       />
     </Flex>

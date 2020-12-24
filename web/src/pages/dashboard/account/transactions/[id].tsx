@@ -29,6 +29,8 @@ const Transactions: React.FC<TransactionsProps> = () => {
   const [filter, setFilter] = React.useState(ALL);
   const [searchQuery, setSearchQuery] = React.useState('');
 
+  console.log("SEARCH QUERY", searchQuery);
+
   const {
     data: TransactionData,
     loading: TransactionLoading,
@@ -40,17 +42,18 @@ const Transactions: React.FC<TransactionsProps> = () => {
       limit,
       offset: page,
       filter,
+      query: searchQuery
     },
-    fetchPolicy: "cache-and-network",
+    // fetchPolicy: "cache-and-network",
     // notifyOnNetworkStatusChange: true,
   });
-  console.log("TR", TransactionData);
 
   const { data: TotalCount, loading: TotalLoading } = useTotalTransactionsQuery(
     {
       variables: {
         bankAccountId: intId,
         filter,
+        query: searchQuery
       },
     },
   );
@@ -58,7 +61,6 @@ const Transactions: React.FC<TransactionsProps> = () => {
   const moreData = (n: number) => {
     const res = fetchMore({
       variables: {
-      limit,
       offset: n,
       },
     });
@@ -67,26 +69,23 @@ const Transactions: React.FC<TransactionsProps> = () => {
 
   const limitRefetch = (customLimit: number) => {
     const res = refetch({
-      bankAccountId: intId,
       limit: customLimit,
       offset: PAGE,
-      filter,
     });
-    console.log("RES", res);
     return res;
   };
 
-  // const searchRefetch = (query: string) => {
-    // const res = refetch({
-      // bankAccountId: intId,
-      // limit,
-      // offset: PAGE,
-      // filter,
-      // search: query
-    // });
-    // console.log("SEARCH", res);
-    // return res;
-  // };
+  const searchRefetch = (query: string) => {
+    if (query && query.trim().length < 2) {
+      return;
+    }
+    const res = refetch({
+      offset: PAGE,
+      query: query
+    });
+    console.log("SEARCH", res);
+    return res;
+  };
 
   return (
     <Layout>
@@ -104,7 +103,7 @@ const Transactions: React.FC<TransactionsProps> = () => {
         balance={data?.bankAccount?.currentBalance}
         spending={data?.bankAccount?.monthlySpending}
         deposits={data?.bankAccount?.monthlyDeposits}
-        transactions={data?.bankAccount?.monthlyTransactions}
+        monthlyTransactions={data?.bankAccount?.monthlyTransactions}
         loading={loading}
       />
       <AddTransaction bg={altBg} />
@@ -114,17 +113,21 @@ const Transactions: React.FC<TransactionsProps> = () => {
           filter={filter}
           loading={TotalLoading}
           count={TotalCount?.totalTransactions.count}
+          monthlyTransactions={data?.bankAccount?.monthlyTransactions}
           setFilter={setFilter}
         />
         <TransactionsTableEntries
+          monthlyTransactions={data?.bankAccount?.monthlyTransactions}
           limit={limit}
           setLimit={setLimit}
           count={TotalCount?.totalTransactions.count}
           limitRefetch={limitRefetch}
+          searchRefetch={searchRefetch}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
         />
         <TransactionsList
+          monthlyTransactions={data?.bankAccount?.monthlyTransactions}
           count={TotalCount?.totalTransactions.count}
           limit={limit}
           loadingTransactions={TransactionLoading || TotalLoading || loading}

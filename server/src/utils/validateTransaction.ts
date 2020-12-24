@@ -103,7 +103,7 @@ export const validateFilter = (filter: string) => {
 }
 
 export const validateQuery = (query: string) => {
-  if(query.trim().length < 2) {
+  if(query.trim().length <= 0) {
     return null;
   }
   let validatedQuery;

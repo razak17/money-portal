@@ -44,7 +44,7 @@ export const FormikInputField: React.FC<InputFieldProps> = ({
   }
 
   return (
-    <FormControl mt={4} isInvalid={!!error}>
+    <FormControl mt={label ? 4 : 0} isInvalid={!!error}>
       {label ? <FormLabel htmlFor={field.name}>{label}</FormLabel> : null}
       {body}
       {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}

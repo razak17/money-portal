@@ -25,7 +25,9 @@ export const searchTransactionsController = async (
     const page = (offset - 1) * limit;
     const realQuery = validateQuery(query);
 
-    const replacements: any[] = [reaLimitPlusOne, page, userId, bankAccountId, realQuery];
+    const replacements: any[] = [
+      reaLimitPlusOne, page, userId, bankAccountId, realQuery
+    ];
 
     let vFilter =  null;
     if (filter) {

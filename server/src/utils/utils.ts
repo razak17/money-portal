@@ -85,6 +85,25 @@
     // return res;
   // };
 
+          // <chakra.form onSubmit={(e) => {
+            // e.preventDefault();
+            // console.log("Helo")
+          // }}>
+            // <FormControl isInvalid={!!errors.query}>
+              // <Input
+                // onChange={(e) => {
+                  // console.log("DEMEMEME")
+                  // setSearchQuery(e.target.value)
+                // }}
+                // fontSize="1em"
+                // type="text"
+                // id="query"
+                // name="query"
+              // />
+            // </FormControl>
+          // </chakra.form>
+
+
 
 export const withdrawalOptions = [
   "cash withdrawal",

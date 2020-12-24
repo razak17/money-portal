@@ -10,7 +10,6 @@ import {
   Text,
   Select,
 } from "@chakra-ui/react";
-import { SearchSchema } from '../../utils/validate';
 
 interface TransactionsTableProps {
   limit: number;
@@ -19,6 +18,8 @@ interface TransactionsTableProps {
   limitRefetch: (customLimit: number) => Promise<ApolloQueryResult<TransactionsQuery>>
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>
+  searchRefetch: any;
+  monthlyTransactions: number | undefined;
 }
 
 export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
@@ -26,10 +27,10 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
   limit,
   setLimit,
   limitRefetch,
+  setSearchQuery,
+  monthlyTransactions
 }) => {
-  const [searchQuery, setSearchQuery] = React.useState('');
   // console.log(searchQuery);
-
   const options = FILTER_OPTIONS.map((option, index) => (
     <option key={index} value={option}>
       {option}
@@ -80,13 +81,16 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
             validateOnBlur={false}
             validateOnChange={false}
             onSubmit={async (values) => {
-              console.log(values);
-              // searchRefetch(values.query)
+              // console.log(values);
+              setSearchQuery(values.query)
             }}
           >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, values }) => (
               <Form>
-                <FormikInputField disabled={isSubmitting}  name="query" placeholder="Search here..." />
+                <FormikInputField onChange={() => {
+                  setSearchQuery(values.query)
+                }}
+                disabled={isSubmitting}  name="query" placeholder="Search here..." />
               </Form>
             )}
           </Formik>
@@ -96,7 +100,7 @@ export const TransactionsTableEntries: React.FC<TransactionsTableProps> = ({
   );
 
   return (
-    count && count > 0 ? (
+    (monthlyTransactions && monthlyTransactions > 0) || (count && count > 0) ? (
       <Flex mb="0.5em" flexWrap="wrap" p="0.5em">
         {entries}
         {search}

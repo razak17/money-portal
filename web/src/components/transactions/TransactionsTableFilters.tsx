@@ -18,6 +18,7 @@ interface TransactionsTableFiltersProps {
   loading: boolean;
   count: number | null | undefined;
   setPage: React.Dispatch<React.SetStateAction<number>>;
+  monthlyTransactions: number | undefined;
 }
 
 export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> = ({
@@ -26,6 +27,7 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
   count,
   loading,
   setPage,
+  monthlyTransactions
 }) => {
   const bg = useColorModeValue("gray.400", "green.500")
 
@@ -72,7 +74,7 @@ export const TransactionsTableFilters: React.FC<TransactionsTableFiltersProps> =
   return (
     <Flex flexWrap="wrap" mb="0.5em" p="0 0.5em">
       {heading}
-      {count && count > 0 ?
+      {(count && count > 0) || (monthlyTransactions && monthlyTransactions > 0) ?
         filters
       : null}
     </Flex>

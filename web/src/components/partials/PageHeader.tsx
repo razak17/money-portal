@@ -42,7 +42,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const router = useRouter();
 
   const menu = (
-    <Menu closeOnSelect={false} isLazy>
+    <Menu closeOnSelect={true} isLazy>
       <MenuButton
         width="2em"
         height="2em"
@@ -93,13 +93,13 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const header = (
     <Box mr="auto">
       {accountLoading ? (
-        <Heading padding="0.5rem" size="sm">...</Heading>
+        <Heading padding="0.5em 0" size="sm">...</Heading>
       ) : type && name ? (
           <Flex
             flexWrap="wrap"
           >
             <Heading
-              padding="0.5rem 0"
+              padding="0.5em 0"
               size="sm"
             >
               {toTitleCase(name)}
@@ -114,13 +114,13 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             <Heading
               size="sm"
               ml={2}
-              padding="0.5rem 0"
+              padding="0.5em 0"
             >
               {" " + toTitleCase(type)}
             </Heading>
           </Flex>
       ) : (
-        <Heading padding="0.5rem" size="sm">{heading}</Heading>
+        <Heading padding="0.5em 0" size="sm">{heading}</Heading>
       )}
     </Box>
   )
