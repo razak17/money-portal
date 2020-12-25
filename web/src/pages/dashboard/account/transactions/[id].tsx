@@ -10,7 +10,6 @@ import {
   TransactionsTableEntries,
 } from "../../../../components/transactions";
 import { PageHeader} from "../../../../components/partials";
-import { BORDER_BG_LIGHT, BORDER_BG_DARK } from '../../../../constants';
 import { useColorModeValue } from "@chakra-ui/react";
 
 interface TransactionsProps {}
@@ -22,14 +21,11 @@ const Transactions: React.FC<TransactionsProps> = () => {
   console.log("intId", intId);
 
   const altBg = useColorModeValue("gray.50", "brandDark.700")
-  const borderBg = useColorModeValue(BORDER_BG_LIGHT, BORDER_BG_DARK);
 
   const [page, setPage] = React.useState(PAGE);
   const [limit, setLimit] = React.useState(LIMIT);
   const [filter, setFilter] = React.useState(ALL);
   const [searchQuery, setSearchQuery] = React.useState('');
-
-  console.log("SEARCH QUERY", searchQuery);
 
   const {
     data: TransactionData,
@@ -83,15 +79,12 @@ const Transactions: React.FC<TransactionsProps> = () => {
       offset: PAGE,
       query: query
     });
-    console.log("SEARCH", res);
     return res;
   };
 
   return (
     <Layout>
       <PageHeader
-        bg={altBg}
-        borderBg={borderBg}
         accountLoading={loading}
         type={data?.bankAccount?.type}
         name={data?.bankAccount?.name}

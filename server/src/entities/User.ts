@@ -18,6 +18,38 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Field({nullable: true})
+  @Column({length: 120, nullable: true})
+  firstName: string;
+
+  @Field({nullable: true})
+  @Column({length: 120, nullable: true})
+  lastName: string;
+
+  @Field({nullable: true})
+  @Column({nullable: true})
+  dob: string;
+
+  @Field({nullable: true})
+  @Column({nullable: true})
+  gender: string;
+
+  @Field({nullable: true})
+  @Column({nullable: true})
+  phone: string;
+
+  @Field({nullable: true})
+  @Column({nullable: true})
+  address: string;
+
+  @Field({nullable: true})
+  @Column({nullable: true})
+  city: string;
+
+  @Field({nullable: true})
+  @Column({nullable: true})
+  zipCode: string;
+
   @Field()
   @Column({ unique: true })
   username!: string;

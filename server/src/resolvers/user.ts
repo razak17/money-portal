@@ -13,7 +13,7 @@ import { User } from "../entities/User";
 import { getConnection } from "typeorm";
 import { MyContext } from "../types";
 import argon2 from "argon2";
-import { UsernamePasswordInput } from "./UsernamePasswordInput";
+import { UsernamePasswordInput, UpdateProfileInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { validateEmail } from "../utils/validateEmail";
 import { COOKIE_NAME } from "../constants";
@@ -46,15 +46,6 @@ export class UserResolver {
     return null;
   }
 
-  // Hide current user username
-  @FieldResolver(() => String)
-  username(@Root() user: User, @Ctx() { req }: MyContext) {
-    if (req.session.userId === user.id) {
-      return user.username;
-    }
-    return null;
-  }
-
   // Current User
   @Query(() => User, { nullable: true })
   me(@Ctx() { req }: MyContext) {
@@ -62,6 +53,40 @@ export class UserResolver {
       return null;
     }
     return User.findOne(req.session.userId);
+  }
+
+  // Update Profile
+  @Mutation(() => UserResponse, {nullable: true})
+  async updateProfile(
+    @Ctx() { req }: MyContext,
+    @Arg("options") options: UpdateProfileInput,
+  ): Promise<UserResponse | null> {
+    const { userId } = req.session;
+
+    const user = await getConnection()
+    .createQueryBuilder()
+    .update(User)
+    .set({
+      firstName: options.firstName,
+      lastName: options.lastName,
+      username: options.username,
+      email: options.email,
+      dob: options.dob,
+      gender: options.gender,
+      phone: options.phone,
+      address: options.address,
+      city: options.city,
+      zipCode: options.zipCode,
+    })
+    .where("id = :id", { id: userId })
+    .returning("*")
+    .execute()
+    .then(response => {
+      return response.raw[0];
+    })
+
+    return { user } ;
+
   }
 
   // Register

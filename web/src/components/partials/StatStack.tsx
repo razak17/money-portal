@@ -64,7 +64,7 @@ export const StatStack: React.FC<StatStackProps> = ({
           </Flex>
           <Flex justifyContent="left" pl="3em">
             {loading ? (
-              <LoadingSpinner variant="small" />
+              <LoadingSpinner stackStack variant="small" />
             ) : (
               <Text
                 fontSize="3xl"

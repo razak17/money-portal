@@ -6,10 +6,27 @@ import { WrapperVariant } from "../../types";
 
 interface Props {
   variant?: WrapperVariant;
+  stackStack?: boolean;
 }
 
-export const LoadingSpinner: React.FC<Props> = ({ variant = "regular" }) => {
-  if (variant === "small") {
+export const LoadingSpinner: React.FC<Props> = ({ variant = "regular", stackStack }) => {
+  if (stackStack && variant === "small") {
+    return (
+      <Flex
+        width="100%"
+        m="0"
+        overflow="auto"
+        flexWrap="nowrap"
+        textAlign="left"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Box width="100%" overflow="auto">
+          <Spinner />
+        </Box>
+      </Flex>
+    );
+  } else if (variant === "small") {
     return (
       <Flex
         width="80%"

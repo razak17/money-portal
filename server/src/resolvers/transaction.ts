@@ -214,14 +214,14 @@ export class TransactionResolver {
   ): Promise<TransactionResponse> {
     const { userId } = req.session;
 
-    const res = updateTransactionController(
+    const transaction = updateTransactionController(
       input,
       bankAccountId,
       userId,
       id,
     );
 
-    return res;
+    return transaction;
   }
 
   // Delete Transaction

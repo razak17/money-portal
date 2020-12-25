@@ -71,7 +71,7 @@ export const SideBar: React.FC<SideBarProps> = () => {
     <SideBarWrapper>
       <Logo />
       <Box mb="1em" mt="1em" ml="2em">
-        <Heading size="sm">Personal Account</Heading>
+        <Heading color="brandGray.500" size="sm">Personal Account</Heading>
       </Box>
       <List maxHeight="none" mt={0} mb="2em">
         {lobby}

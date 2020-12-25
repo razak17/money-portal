@@ -41,7 +41,7 @@ export const updateTransactionController = async (
   console.log("VFFFF", vFilter);
 
 
-  const result = await getConnection()
+  const transaction = await getConnection()
     .createQueryBuilder()
     .update(Transaction)
     .set({ amount, type, memo, categoryId: vFilter })
@@ -54,7 +54,10 @@ export const updateTransactionController = async (
       }
     )
     .returning("*")
-    .execute();
+    .execute()
+    .then(response => {
+      return response.raw[0];
+    })
 
   if (oldTransaction?.type === TransactionOptions.DEPOSIT) {
     updateDeposit(oldTransaction.amount, amount, type, bankAccountId, userId);
@@ -73,6 +76,6 @@ export const updateTransactionController = async (
     );
   }
 
-  return result.raw;
+  return { transaction };
 }
 
