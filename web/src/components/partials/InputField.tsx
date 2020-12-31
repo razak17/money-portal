@@ -41,7 +41,7 @@ export const InputField: React.FC<InputFieldProps> = ({
       </InputGroup>
     );
   } else {
-    body = <Input fontSize="1em" ref={ref} {...props} type="text" id={field.name} />;
+    body = <Input fontSize="1em" ref={ref} {...props} id={field.name} />;
   }
   return (
     <FormControl isInvalid={error ? !!error : false}>

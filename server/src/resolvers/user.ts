@@ -63,6 +63,18 @@ export class UserResolver {
   ): Promise<UserResponse | null> {
     const { userId } = req.session;
 
+    if (options.address && options.address.trim().length < 2) {
+      return {
+        errors: [
+          {
+            field: "address",
+            message: "must be at least 2 characters."
+          }
+        ]
+
+      }
+    }
+
     const user = await getConnection()
     .createQueryBuilder()
     .update(User)

@@ -1,0 +1,41 @@
+mutation UpdateProfile($options: UpdateProfileInput!) {
+  updateProfile(options: $options) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      username
+      email
+      firstName
+      lastName
+      gender
+      dob
+      city
+      zipCode
+      address
+      phone
+    }
+  }
+}mutation UpdateProfile($options: UpdateProfileInput!) {
+  updateProfile(options: $options) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      username
+      email
+      firstName
+      lastName
+      gender
+      dob
+      city
+      zipCode
+      address
+      phone
+    }
+  }
+}
