@@ -94,7 +94,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             type
           )}`}</Heading>
         ) : (
-          <Heading size="md">{heading}lklklk</Heading>
+          <Heading size="md">{heading}</Heading>
         )}
       </Box>
       <ColorModeSwitcher justifySelf="flex-end" />

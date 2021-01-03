@@ -72,6 +72,8 @@ export const transactionOptions = [
   TransactionOptions.TRANSFER,
 ];
 
+export const genderOptions = ["male", "female", "other"]
+
 export const withdrawalOptions = [
   "cash withdrawal",
   "card number entered",

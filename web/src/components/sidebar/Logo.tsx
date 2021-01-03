@@ -20,8 +20,8 @@ export const Logo: React.FC<Props> = () => {
             textTransform="uppercase"
             alignItems="center"
           >
-            <Heading color="green.400" size="sm">Money</Heading>
-            <Heading size="sm">
+            <Heading color="green.400" size="md">Money</Heading>
+            <Heading size="md">
               Portal
             </Heading>
           </Flex>

@@ -3,7 +3,8 @@ import {
 } from '../resolvers/transaction';
 import {
   validateTransactionQuery,
-  validateFilter
+  validateFilter,
+  validateQuery
 } from "../utils/validateTransaction"
 import { getConnection } from "typeorm";
 import { ALL } from '../constants';
@@ -12,9 +13,10 @@ export const getTransactionsController = async (
   bankAccountId: number,
   userId: number | undefined,
   limit: number,
-  filter: string | null,
   offset: number,
-) : Promise<PaginatedTransactionsResponse>  => {
+  filter: string | null,
+  query: string | null,
+) : Promise<PaginatedTransactionsResponse | undefined>  => {
     const errors = validateTransactionQuery(filter);
     if (errors) {
       return {
@@ -33,12 +35,22 @@ export const getTransactionsController = async (
       replacements.push(vFilter);
     }
 
+    let realQuery = null;
+    if (query) {
+      realQuery = validateQuery(query);
+      realQuery ? replacements.push(realQuery) : "";
+    }
+
     const transactions = await getConnection().query(
     `select t.*
     from transaction t
     ${
+      vFilter && realQuery ?
+      `where t."creatorId" = $3 and t."bankAccountId" = $4 and t."categoryId" = $5 and t."memo" like $6`:
       vFilter ?
       `where t."creatorId" = $3 and t."bankAccountId" = $4 and t."categoryId" = $5`:
+      realQuery ?
+      `where t."creatorId" = $3 and t."bankAccountId" = $4 and t."memo" like $5`:
       `where t."creatorId" = $3 and t."bankAccountId" = $4`
     }
     order by t."createdAt" DESC

@@ -8,10 +8,10 @@ interface LobbyOptionsProps {
 }
 
 export const LobbyOptions: React.FC<LobbyOptionsProps> = ({ onOpen }) => {
-  const color = useColorModeValue("brandBlue.600", "green.500")
+  const color = useColorModeValue("brandBlue.600", "brandGreen.500")
 
   return (
-    <Flex flexWrap="wrap" alignItems="center"  padding="0 0.5em" mb="1em">
+    <Flex flexWrap="wrap" alignItems="center" mb="1em">
       <LobbyStack
         title="Create Household"
         onOpen={onOpen}

@@ -18,7 +18,8 @@ import { MyContext } from "../types";
 import { User } from "../entities/User";
 import { BankAccountOptions } from "../types";
 import { BankAccountInput } from "./BankAccountInput";
-import { validateNew, validateUpdate } from "../utils/validateBankAccount";
+import { validateNew } from "../utils/validateBankAccount";
+import { updateBankAccountController } from "../controllers/updateBankAccountController"
 
 @ObjectType()
 class BankAccountError {
@@ -29,7 +30,7 @@ class BankAccountError {
 }
 
 @ObjectType()
-class BankAccountResponse {
+export class BankAccountResponse {
   @Field(() => [BankAccountError], { nullable: true })
   errors?: BankAccountError[];
 
@@ -146,30 +147,16 @@ export class BankAccountResolver {
     @Ctx() { req }: MyContext
   ): Promise<BankAccountResponse> {
     const { userId } = req.session;
-    const oldBankAccount = await BankAccount.findOne({ id, creatorId: userId });
-    const errors = validateUpdate(
+
+    const bankAccount = updateBankAccountController(
+      id,
       name,
       type,
       lowBalanceAlert,
-      oldBankAccount?.currentBalance
+      userId
     );
-    if (errors) {
-      return { errors };
-    }
 
-    const res = await getConnection()
-      .createQueryBuilder()
-      .update(BankAccount)
-      .set({ name, type, lowBalanceAlert })
-      .where("id = :id and creatorId = :creatorId", {
-        id,
-        creatorId: userId,
-      })
-      .returning("*")
-      .execute();
-
-    console.log("RES", res);
-    return res.raw[0];
+    return bankAccount;
   }
 
   // Delete Account

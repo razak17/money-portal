@@ -87,10 +87,10 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
         <Text fontSize="sm">{memo}</Text>
       </TableData>
       <TableData>
-        <Text size="sm">
+        <Text fontSize="sm">
           {dayjs(new Date(parseInt(updatedAt))).format("dddd, MMMM D YYYY")}
         </Text>
-        <Text fontSize="sm">{dayjs(new Date(parseInt(updatedAt))).format("h:mm:ss A")}</Text>
+        <Text fontSize="xs">{dayjs(new Date(parseInt(updatedAt))).format("h:mm:ss A")}</Text>
       </TableData>
     </chakra.tr>
   );

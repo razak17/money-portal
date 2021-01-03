@@ -126,11 +126,13 @@ export class TransactionResolver {
     @Ctx() { req }: MyContext,
     @Arg("filter", () => String, { nullable: true })
     filter: string | null,
-    @Arg("bankAccountId", () => Int) bankAccountId: number
+    @Arg("bankAccountId", () => Int) bankAccountId: number,
+    @Arg("query", () => String, { nullable: true })
+    query: string | null,
   ): Promise<TotalTransactionsResponse> {
     const { userId } = req.session;
 
-    const res = totalTransactionsController(userId, bankAccountId, filter);
+    const res = totalTransactionsController(userId, bankAccountId, filter, query);
     return res;
   }
 
@@ -158,14 +160,16 @@ export class TransactionResolver {
   async transactions(
     @Arg("bankAccountId", () => Int) bankAccountId: number,
     @Arg("limit", () => Int) limit: number,
+    @Arg("offset", () => Int) offset: number,
     @Arg("filter", () => String, { nullable: true })
     filter: string | null,
-    @Arg("offset", () => Int) offset: number,
+    @Arg("query", () => String, { nullable: true })
+    query: string | null,
     @Ctx() { req }: MyContext
-  ): Promise<PaginatedTransactionsResponse> {
+  ): Promise<PaginatedTransactionsResponse | undefined> {
     const { userId } = req.session;
 
-    const res = getTransactionsController(bankAccountId, userId, limit, filter, offset)
+    const res = getTransactionsController(bankAccountId, userId, limit, offset, filter, query)
     return res;
   }
 
@@ -210,14 +214,14 @@ export class TransactionResolver {
   ): Promise<TransactionResponse> {
     const { userId } = req.session;
 
-    const res = updateTransactionController(
+    const transaction = updateTransactionController(
       input,
       bankAccountId,
       userId,
       id,
     );
 
-    return res;
+    return transaction;
   }
 
   // Delete Transaction

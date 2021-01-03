@@ -28,6 +28,7 @@ export type Query = {
 
 
 export type QueryTotalTransactionsArgs = {
+  query?: Maybe<Scalars['String']>;
   bankAccountId: Scalars['Int'];
   filter?: Maybe<Scalars['String']>;
 };
@@ -43,8 +44,9 @@ export type QuerySearchTransactionArgs = {
 
 
 export type QueryTransactionsArgs = {
-  offset: Scalars['Int'];
+  query?: Maybe<Scalars['String']>;
   filter?: Maybe<Scalars['String']>;
+  offset: Scalars['Int'];
   limit: Scalars['Int'];
   bankAccountId: Scalars['Int'];
 };
@@ -109,6 +111,14 @@ export type Transaction = {
 export type User = {
   __typename?: 'User';
   id: Scalars['Float'];
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  dob?: Maybe<Scalars['String']>;
+  gender?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  zipCode?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   email: Scalars['String'];
   createdAt: Scalars['String'];
@@ -155,6 +165,7 @@ export type Mutation = {
   updateBankAccount: BankAccountResponse;
   deleteBankAccount: Scalars['Boolean'];
   hello: Scalars['String'];
+  updateProfile?: Maybe<UserResponse>;
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
@@ -200,6 +211,11 @@ export type MutationDeleteBankAccountArgs = {
 
 export type MutationHelloArgs = {
   name: Scalars['String'];
+};
+
+
+export type MutationUpdateProfileArgs = {
+  options: UpdateProfileInput;
 };
 
 
@@ -254,6 +270,19 @@ export type FieldError = {
   __typename?: 'FieldError';
   field: Scalars['String'];
   message: Scalars['String'];
+};
+
+export type UpdateProfileInput = {
+  username: Scalars['String'];
+  email: Scalars['String'];
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  dob?: Maybe<Scalars['String']>;
+  gender?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  zipCode?: Maybe<Scalars['String']>;
 };
 
 export type UsernamePasswordInput = {
@@ -405,6 +434,25 @@ export type UpdateBankAccountMutation = (
   ) }
 );
 
+export type UpdateProfileMutationVariables = Exact<{
+  options: UpdateProfileInput;
+}>;
+
+
+export type UpdateProfileMutation = (
+  { __typename?: 'Mutation' }
+  & { updateProfile?: Maybe<(
+    { __typename?: 'UserResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & Pick<FieldError, 'field' | 'message'>
+    )>>, user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'email' | 'firstName' | 'lastName' | 'gender' | 'dob' | 'city' | 'zipCode' | 'address' | 'phone'>
+    )> }
+  )> }
+);
+
 export type UpdateTransactionMutationVariables = Exact<{
   input: TransactionInput;
   id: Scalars['Int'];
@@ -472,7 +520,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'email'>
+    & Pick<User, 'id' | 'username' | 'email' | 'firstName' | 'lastName' | 'gender' | 'dob' | 'city' | 'zipCode' | 'address' | 'phone'>
   )> }
 );
 
@@ -524,6 +572,7 @@ export type TotalBankAccountsQuery = (
 export type TotalTransactionsQueryVariables = Exact<{
   bankAccountId: Scalars['Int'];
   filter?: Maybe<Scalars['String']>;
+  query?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -563,8 +612,9 @@ export type TransactionQuery = (
 export type TransactionsQueryVariables = Exact<{
   bankAccountId: Scalars['Int'];
   limit: Scalars['Int'];
-  filter?: Maybe<Scalars['String']>;
   offset: Scalars['Int'];
+  filter?: Maybe<Scalars['String']>;
+  query?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -929,6 +979,54 @@ export function useUpdateBankAccountMutation(baseOptions?: Apollo.MutationHookOp
 export type UpdateBankAccountMutationHookResult = ReturnType<typeof useUpdateBankAccountMutation>;
 export type UpdateBankAccountMutationResult = Apollo.MutationResult<UpdateBankAccountMutation>;
 export type UpdateBankAccountMutationOptions = Apollo.BaseMutationOptions<UpdateBankAccountMutation, UpdateBankAccountMutationVariables>;
+export const UpdateProfileDocument = gql`
+    mutation UpdateProfile($options: UpdateProfileInput!) {
+  updateProfile(options: $options) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      username
+      email
+      firstName
+      lastName
+      gender
+      dob
+      city
+      zipCode
+      address
+      phone
+    }
+  }
+}
+    `;
+export type UpdateProfileMutationFn = Apollo.MutationFunction<UpdateProfileMutation, UpdateProfileMutationVariables>;
+
+/**
+ * __useUpdateProfileMutation__
+ *
+ * To run a mutation, you first call `useUpdateProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProfileMutation, { data, loading, error }] = useUpdateProfileMutation({
+ *   variables: {
+ *      options: // value for 'options'
+ *   },
+ * });
+ */
+export function useUpdateProfileMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProfileMutation, UpdateProfileMutationVariables>) {
+        return Apollo.useMutation<UpdateProfileMutation, UpdateProfileMutationVariables>(UpdateProfileDocument, baseOptions);
+      }
+export type UpdateProfileMutationHookResult = ReturnType<typeof useUpdateProfileMutation>;
+export type UpdateProfileMutationResult = Apollo.MutationResult<UpdateProfileMutation>;
+export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<UpdateProfileMutation, UpdateProfileMutationVariables>;
 export const UpdateTransactionDocument = gql`
     mutation UpdateTransaction($input: TransactionInput!, $id: Int!, $bankAccountId: Int!) {
   updateTransaction(input: $input, id: $id, bankAccountId: $bankAccountId) {
@@ -1078,6 +1176,14 @@ export const MeDocument = gql`
     id
     username
     email
+    firstName
+    lastName
+    gender
+    dob
+    city
+    zipCode
+    address
+    phone
   }
 }
     `;
@@ -1208,8 +1314,8 @@ export type TotalBankAccountsQueryHookResult = ReturnType<typeof useTotalBankAcc
 export type TotalBankAccountsLazyQueryHookResult = ReturnType<typeof useTotalBankAccountsLazyQuery>;
 export type TotalBankAccountsQueryResult = Apollo.QueryResult<TotalBankAccountsQuery, TotalBankAccountsQueryVariables>;
 export const TotalTransactionsDocument = gql`
-    query TotalTransactions($bankAccountId: Int!, $filter: String) {
-  totalTransactions(bankAccountId: $bankAccountId, filter: $filter) {
+    query TotalTransactions($bankAccountId: Int!, $filter: String, $query: String) {
+  totalTransactions(bankAccountId: $bankAccountId, filter: $filter, query: $query) {
     count
     errors {
       field
@@ -1233,6 +1339,7 @@ export const TotalTransactionsDocument = gql`
  *   variables: {
  *      bankAccountId: // value for 'bankAccountId'
  *      filter: // value for 'filter'
+ *      query: // value for 'query'
  *   },
  * });
  */
@@ -1292,12 +1399,13 @@ export type TransactionQueryHookResult = ReturnType<typeof useTransactionQuery>;
 export type TransactionLazyQueryHookResult = ReturnType<typeof useTransactionLazyQuery>;
 export type TransactionQueryResult = Apollo.QueryResult<TransactionQuery, TransactionQueryVariables>;
 export const TransactionsDocument = gql`
-    query Transactions($bankAccountId: Int!, $limit: Int!, $filter: String, $offset: Int!) {
+    query Transactions($bankAccountId: Int!, $limit: Int!, $offset: Int!, $filter: String, $query: String) {
   transactions(
     bankAccountId: $bankAccountId
     limit: $limit
-    filter: $filter
     offset: $offset
+    filter: $filter
+    query: $query
   ) {
     errors {
       field
@@ -1346,8 +1454,9 @@ export const TransactionsDocument = gql`
  *   variables: {
  *      bankAccountId: // value for 'bankAccountId'
  *      limit: // value for 'limit'
- *      filter: // value for 'filter'
  *      offset: // value for 'offset'
+ *      filter: // value for 'filter'
+ *      query: // value for 'query'
  *   },
  * });
  */

@@ -9,6 +9,7 @@ import {
   MenuItem,
   MenuGroup,
   MenuDivider,
+  useColorModeValue
 } from "@chakra-ui/react";
 import * as React from "react";
 import { useMeQuery, useLogoutMutation } from "../../generated/graphql";
@@ -17,14 +18,13 @@ import { ColorModeSwitcher } from "../";
 import { AuthRoutes, NonAuthRoutes } from "../../api/routes";
 import { toTitleCase } from "../../utils/toTitleCase";
 import { useRouter } from "next/router";
+import { BORDER_BG_LIGHT, BORDER_BG_DARK } from '../../constants';
 
 interface PageHeaderProps {
   heading: string;
   type?: string | undefined;
   name?: string | undefined;
   accountLoading?: boolean;
-  bg: string;
-  borderBg: string;
 }
 
 export const PageHeader: React.FC<PageHeaderProps> = ({
@@ -32,8 +32,6 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   name,
   heading,
   accountLoading = false,
-  bg,
-  borderBg
 }) => {
   const [logout] = useLogoutMutation();
   const { data, loading: MeLoading } = useMeQuery();
@@ -41,8 +39,11 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const apolloClient = useApolloClient();
   const router = useRouter();
 
+  const bg = useColorModeValue("gray.50", "brandDark.700")
+  const borderBg = useColorModeValue(BORDER_BG_LIGHT, BORDER_BG_DARK);
+
   const menu = (
-    <Menu closeOnSelect={false} isLazy>
+    <Menu closeOnSelect={true} isLazy>
       <MenuButton
         width="2em"
         height="2em"
@@ -93,13 +94,13 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const header = (
     <Box mr="auto">
       {accountLoading ? (
-        <Heading padding="0.5rem" size="sm">...</Heading>
+        <Heading padding="0.5em 0" size="sm">...</Heading>
       ) : type && name ? (
           <Flex
             flexWrap="wrap"
           >
             <Heading
-              padding="0.5rem 0"
+              padding="0.5em 0"
               size="sm"
             >
               {toTitleCase(name)}
@@ -114,13 +115,13 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             <Heading
               size="sm"
               ml={2}
-              padding="0.5rem 0"
+              padding="0.5em 0"
             >
               {" " + toTitleCase(type)}
             </Heading>
           </Flex>
       ) : (
-        <Heading padding="0.5rem" size="sm">{heading}</Heading>
+        <Heading padding="0.5em 0" size="sm">{heading}</Heading>
       )}
     </Box>
   )

@@ -2,6 +2,10 @@
 
 # dependencies
 .vscode
+.env
+.env.production
+/web/.env
+/server/.env
 /.vscode
 /.vscode/
 /web/public/

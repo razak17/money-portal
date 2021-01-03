@@ -19,7 +19,7 @@ export const AccountStats: React.FC<AccountStatsProps> = ({
   loading,
 }) => {
   return (
-    <Flex flexWrap="wrap" padding="0 1em" mb="1em">
+    <Flex flexWrap="wrap" mb="1em">
       <StatStack
         withSign
         title="Current Balalnce"

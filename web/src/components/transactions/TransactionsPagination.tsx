@@ -100,7 +100,11 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
   return (
     <Flex p="1em 0" flexWrap="wrap">
       {count ? (
-        <Box p={{base: "1em", md: "0.5 1em"}} w={{ base: "100%", md: "45%", xl: "25%" }} flex="0 auto">
+        <Box
+          p={{base: "1em", md: "0.5 1em"}}
+          w={{ base: "100%", md: "45%", xl: "25%" }}
+          flex="0 auto"
+        >
           <Text>
             Showing{" "}
             {`${page * limit - (limit - 1)} - ${Math.min(page * limit, count)}`}{" "}
@@ -112,4 +116,3 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
     </Flex>
   );
 };
-
