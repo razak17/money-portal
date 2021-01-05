@@ -101,6 +101,7 @@ export type Transaction = {
   creatorId: Scalars['Float'];
   bankAccountId: Scalars['Float'];
   categoryId: Scalars['Float'];
+  categoryName: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
   creator: User;

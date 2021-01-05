@@ -13,7 +13,10 @@ import { User } from "../entities/User";
 import { getConnection } from "typeorm";
 import { MyContext } from "../types";
 import argon2 from "argon2";
-import { UsernamePasswordInput, UpdateProfileInput } from "./UsernamePasswordInput";
+import {
+  UsernamePasswordInput,
+  UpdateProfileInput,
+} from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { validateEmail } from "../utils/validateEmail";
 import { COOKIE_NAME } from "../constants";
@@ -56,10 +59,10 @@ export class UserResolver {
   }
 
   // Update Profile
-  @Mutation(() => UserResponse, {nullable: true})
+  @Mutation(() => UserResponse, { nullable: true })
   async updateProfile(
     @Ctx() { req }: MyContext,
-    @Arg("options") options: UpdateProfileInput,
+    @Arg("options") options: UpdateProfileInput
   ): Promise<UserResponse | null> {
     const { userId } = req.session;
 
@@ -68,37 +71,35 @@ export class UserResolver {
         errors: [
           {
             field: "address",
-            message: "must be at least 2 characters."
-          }
-        ]
-
-      }
+            message: "must be at least 2 characters.",
+          },
+        ],
+      };
     }
 
     const user = await getConnection()
-    .createQueryBuilder()
-    .update(User)
-    .set({
-      firstName: options.firstName,
-      lastName: options.lastName,
-      username: options.username,
-      email: options.email,
-      dob: options.dob,
-      gender: options.gender,
-      phone: options.phone,
-      address: options.address,
-      city: options.city,
-      zipCode: options.zipCode,
-    })
-    .where("id = :id", { id: userId })
-    .returning("*")
-    .execute()
-    .then(response => {
-      return response.raw[0];
-    })
+      .createQueryBuilder()
+      .update(User)
+      .set({
+        firstName: options.firstName,
+        lastName: options.lastName,
+        username: options.username,
+        email: options.email,
+        dob: options.dob,
+        gender: options.gender,
+        phone: options.phone,
+        address: options.address,
+        city: options.city,
+        zipCode: options.zipCode,
+      })
+      .where("id = :id", { id: userId })
+      .returning("*")
+      .execute()
+      .then((response) => {
+        return response.raw[0];
+      });
 
-    return { user } ;
-
+    return { user };
   }
 
   // Register

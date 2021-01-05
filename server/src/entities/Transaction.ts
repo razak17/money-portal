@@ -48,6 +48,10 @@ export class Transaction extends BaseEntity {
   @Column()
   categoryId!: number;
 
+  @Field()
+  @Column()
+  categoryName!: string;
+
   @ManyToOne(() => User, (user) => user.transactions)
   creator: User;
 

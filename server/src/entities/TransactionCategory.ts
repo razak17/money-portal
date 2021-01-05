@@ -4,7 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   Column,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   BaseEntity,
   OneToMany,
 } from "typeorm";
@@ -14,11 +14,11 @@ import { Transaction } from "./Transaction";
 @Entity()
 export class TransactionCategory extends BaseEntity {
   @Field()
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @Field()
-  @Column()
+  @Column({ unique: true })
   name!: string;
 
   @OneToMany(() => Transaction, (transaction) => transaction.category)

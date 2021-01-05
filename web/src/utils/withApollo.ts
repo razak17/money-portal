@@ -1,15 +1,13 @@
 // import { withApollo as createWithApollo } from "next-apollo";
-import { createWithApollo } from './createWithApollo';
-import { ApolloClient, InMemoryCache } from "@apollo/client";
-import {
-  PaginatedBankAccounts,
-  PaginatedTransactions,
-} from "../generated/graphql";
-import { NextPageContext } from 'next';
+import { createWithApollo } from "./createWithApollo"
+import { ApolloClient, InMemoryCache } from "@apollo/client"
+import { PaginatedBankAccounts } from "../generated/graphql"
+import { NextPageContext } from "next"
 
 const createClient = (ctx: NextPageContext) =>
   new ApolloClient({
-    uri: 'http://localhost:4000/graphql',
+    // uri: "http://localhost:4000/graphql",
+    uri: process.env.NEXT_PUBLIC_API_URL as string,
     credentials: "include",
     headers: {
       cookie:
@@ -18,41 +16,41 @@ const createClient = (ctx: NextPageContext) =>
           : undefined) || "",
     },
     cache: new InMemoryCache({
-       typePolicies: {
-          Query: {
-            fields: {
-              bankAccounts: {
-                keyArgs: [],
-                merge(
-                  existing: PaginatedBankAccounts | undefined,
-                  incoming: PaginatedBankAccounts
-                ): PaginatedBankAccounts {
-                  return {
-                    ...incoming,
-                    bankAccounts: [
-                      ...(existing?.bankAccounts || []),
-                      ...incoming.bankAccounts,
-                    ],
-                  };
-                },
+      typePolicies: {
+        Query: {
+          fields: {
+            bankAccounts: {
+              keyArgs: [],
+              merge(
+                existing: PaginatedBankAccounts | undefined,
+                incoming: PaginatedBankAccounts
+              ): PaginatedBankAccounts {
+                return {
+                  ...incoming,
+                  bankAccounts: [
+                    ...(existing?.bankAccounts || []),
+                    ...incoming.bankAccounts,
+                  ],
+                }
               },
-              // transactions: {
-                // keyArgs: [],
-                // merge(
-                  // _: PaginatedTransactions | undefined,
-                  // incoming: PaginatedTransactions
-                // ): PaginatedTransactions {
-                  // const merged = {
-                    // ...incoming,
-                    // transactions: [...incoming.transactions],
-                  // };
-                  // return merged;
-                // },
-              // },
             },
+            // transactions: {
+            // keyArgs: [],
+            // merge(
+            // _: PaginatedTransactions | undefined,
+            // incoming: PaginatedTransactions
+            // ): PaginatedTransactions {
+            // const merged = {
+            // ...incoming,
+            // transactions: [...incoming.transactions],
+            // };
+            // return merged;
+            // },
+            // },
           },
         },
+      },
     }),
-  });
+  })
 
-export const withApollo = createWithApollo(createClient);
+export const withApollo = createWithApollo(createClient)
