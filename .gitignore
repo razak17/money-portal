@@ -1,28 +1,34 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
+*.sh
+docker-compose.yaml
+redis*.conf
 .vscode
 .env
 .env.production
-/web/.env
-/server/.env
 /.vscode
-/.vscode/
-/web/public/
-/web2/public/
 /node_modules
-/public/
-/web/node_modules
-/web/.next
-/web2/node_modules
+
+# server
 /server/node_modules
 /server/dist
+/server/pgdata
+
+# web
+/web/node_modules
+/web/public
+/web2/public
+/web2/node_modules
+/public/
+
 /.pnp
 .pnp.js
 # testing
 /coverage
 
 # next.js
+/web/.next/
 /.next/
 /out/
 
