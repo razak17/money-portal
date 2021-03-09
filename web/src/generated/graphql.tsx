@@ -279,11 +279,7 @@ export type UpdateProfileInput = {
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   dob?: Maybe<Scalars['String']>;
-  gender?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
-  address?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  zipCode?: Maybe<Scalars['String']>;
 };
 
 export type UsernamePasswordInput = {
@@ -521,7 +517,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'email' | 'firstName' | 'lastName' | 'gender' | 'dob' | 'city' | 'zipCode' | 'address' | 'phone'>
+    & Pick<User, 'id' | 'username' | 'email' | 'firstName' | 'lastName' | 'gender' | 'dob' | 'phone'>
   )> }
 );
 
@@ -1181,9 +1177,6 @@ export const MeDocument = gql`
     lastName
     gender
     dob
-    city
-    zipCode
-    address
     phone
   }
 }

@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { Layout, PageHeader, InputField, SelectField } from '../../components';
+import { InputField } from '../../components';
 import { useRouter } from "next/router";
-import { Box, Heading, Flex, Button, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, Button, useColorModeValue } from '@chakra-ui/react';
 import { useFormik } from 'formik';
 import { useUpdateProfileMutation, useMeQuery } from '../../generated/graphql';
-import { genderOptions } from "../../types";
 
 
-const FormItem: React.FC = ({children}) => {
+const FormItem: React.FC = ({ children }) => {
   return (
     <Box
       flex={{ base: "0 0 auto", xl: "0 0 50%" }}
@@ -29,11 +28,10 @@ interface Props {
 
 }
 
-export const UpdateProfileForm: React.FC<Props> = ()  => {
+export const UpdateProfileForm: React.FC<Props> = () => {
   const router = useRouter();
-  const bg = useColorModeValue("gray.50", "brandDark.700")
   const { data: MeData } = useMeQuery();
-  const  [ updateProfile ] = useUpdateProfileMutation();
+  const [updateProfile] = useUpdateProfileMutation();
   console.log('AAAA', MeData);
 
   const formik = useFormik({
@@ -42,11 +40,7 @@ export const UpdateProfileForm: React.FC<Props> = ()  => {
       email: MeData?.me ? MeData.me?.email : "",
       firstName: MeData?.me?.firstName ? MeData.me?.firstName : "",
       lastName: MeData?.me?.lastName ? MeData.me?.lastName : "",
-      city: MeData?.me?.email ? MeData.me?.city : "",
-      zipCode: MeData?.me?.zipCode ? MeData.me?.zipCode : "",
-      address: MeData?.me?.address ? MeData.me?.address : "",
       dob: MeData?.me?.dob ? MeData.me?.dob : "",
-      gender: MeData?.me?.gender ? MeData.me?.gender : "",
       phone: MeData?.me?.phone ? MeData.me?.phone : "",
     },
     validateOnBlur: false,
@@ -59,10 +53,7 @@ export const UpdateProfileForm: React.FC<Props> = ()  => {
         email,
         username,
         dob,
-        gender,
         phone,
-        zipCode,
-        address
       } = values
       const response = await updateProfile({
         variables: {
@@ -72,10 +63,7 @@ export const UpdateProfileForm: React.FC<Props> = ()  => {
             username,
             email,
             dob,
-            gender,
-            phone,
-            zipCode,
-            address
+            phone: phone.toString(),
           }
         }
       })
@@ -135,16 +123,8 @@ export const UpdateProfileForm: React.FC<Props> = ()  => {
           />
         </FormItem>
         <FormItem>
-          <SelectField
-            label="Gender"
-            {...getFieldProps("gender")}
-            name="gender"
-            error={errors.gender}
-            selectOptions={genderOptions}
-          />
-        </FormItem>
-        <FormItem>
           <InputField
+            number
             label="Phone"
             placeholder="Phone"
             {...getFieldProps("phone")}

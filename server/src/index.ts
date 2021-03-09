@@ -24,7 +24,6 @@ import { createTransactionCategoryLoader } from "./utils/createTransactionCatego
 
 const main = async () => {
   const conn = await createConnection({
-    // await createConnection({
     type: "postgres",
     url: process.env.DATABASE_URL,
     logging: true,

@@ -11,6 +11,7 @@ import {
 type InputFieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
   name: string;
   label?: string;
+  number?: boolean;
   amount?: boolean;
   elementRef?: React.RefObject<HTMLInputElement>;
   error: any;
@@ -20,6 +21,7 @@ export const InputField: React.FC<InputFieldProps> = ({
   label,
   size: _,
   amount = false,
+  number = false,
   elementRef: ref = null,
   error,
   ...props
@@ -40,6 +42,14 @@ export const InputField: React.FC<InputFieldProps> = ({
         <Input fontSize="1em" ref={ref} {...props} type="number" id={field.name} />
       </InputGroup>
     );
+
+  }
+  else if (number) {
+    body = (
+      <InputGroup>
+        <Input fontSize="1em" ref={ref} {...props} type="number" id={field.name} />
+      </InputGroup>
+    )
   } else {
     body = <Input fontSize="1em" ref={ref} {...props} id={field.name} />;
   }

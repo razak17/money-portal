@@ -23,14 +23,6 @@ export class UpdateProfileInput {
   @Field(() => String, { nullable: true })
   dob: string;
   @Field(() => String, { nullable: true })
-  gender: string;
-  @Field(() => String, { nullable: true })
   phone: string;
-  @Field(() => String, { nullable: true })
-  address: string;
-  @Field(() => String, { nullable: true })
-  city: string;
-  @Field(() => String, { nullable: true })
-  zipCode: string;
 }
 

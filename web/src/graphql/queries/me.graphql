@@ -7,9 +7,6 @@ query Me {
     lastName
     gender
     dob
-    city
-    zipCode
-    address
     phone
   }
 }
